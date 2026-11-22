@@ -30,7 +30,7 @@ window.SCARLETTE_DEMOS_EDITOR = (() => {
         <div class="row g-4">
           <!-- Columna Izquierda: Lista de Demos -->
           <div class="col-12 col-md-5">
-            <h3 class="fs-6 mb-2 text-muted">Secuencias Registradas</h3>
+            <h3 class="fs-6 mb-2" style="color:var(--pink-light); font-weight:600">Secuencias Registradas</h3>
             <div id="lista-demos" class="list-group">
               <div class="text-center p-3 text-muted">Cargando secuencias...</div>
             </div>
@@ -39,7 +39,7 @@ window.SCARLETTE_DEMOS_EDITOR = (() => {
           <!-- Columna Derecha: Pasos de la Demo Seleccionada -->
           <div class="col-12 col-md-7">
             <div class="d-flex justify-content-between align-items-center mb-2">
-              <h3 id="titulo-pasos-demo" class="fs-6 m-0 text-muted">Pasos de la Secuencia</h3>
+              <h3 id="titulo-pasos-demo" class="fs-6 m-0" style="color:var(--pink-light); font-weight:600">Pasos de la Secuencia</h3>
               <div class="d-flex gap-2">
                 <button id="btn-ejecutar-demo-editor" class="neon-button py-1 px-3" style="width:auto; font-size:13px" disabled>▶ Ejecutar</button>
                 <button id="btn-detener-demo-editor" class="outline-button m-0 py-1 px-3" style="width:auto; font-size:13px" disabled>■ Detener</button>

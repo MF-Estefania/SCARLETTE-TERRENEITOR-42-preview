@@ -1662,8 +1662,18 @@ select.form-select {
     min-height: 28px !important;
   }
 
+  /* Ocultar pestañas inactivas en portrait */
+  .panel-page.user-navigation [role="tabpanel"][hidden],
+  .panel-page.user-navigation #user-monitoring-panel[hidden],
+  .panel-page.user-navigation #panel-control[hidden],
+  .panel-page.user-navigation #panel-admin[hidden] {
+    display: none !important;
+  }
+
   /* PESTAÑA MONITOREO (Móvil Vertical) */
-  .panel-page.user-navigation #user-monitoring-panel {
+  .panel-page.user-navigation #user-monitoring-panel:not([hidden]) {
+    display: flex !important;
+    flex-direction: column !important;
     gap: 2px !important;
     padding: 0 !important;
     background: transparent !important;
