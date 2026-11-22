@@ -120,10 +120,12 @@ document.addEventListener("scarlette:sesion-verificada", async evento => {
   function aplicarUnidadHUD(u) {
     const estado = String(u.estado_comercial || "").toLowerCase();
     const nombreBase = u.nombre || "Terreneitor";
-    const modelo = u.modelo ? String(u.modelo).trim() : "";
-    const titulo = modelo && !nombreBase.toUpperCase().includes(modelo.toUpperCase())
-      ? `#${u.id_vehiculo} ${nombreBase} ${modelo}`
-      : `#${u.id_vehiculo} ${nombreBase}`;
+    const modelo = (u.nombre_modelo || u.modelo) ? String(u.nombre_modelo || u.modelo).trim() : "";
+    const titulo = modelo && modelo.toUpperCase().includes(nombreBase.toUpperCase())
+      ? `#${u.id_vehiculo} ${modelo}`
+      : (modelo && !nombreBase.toUpperCase().includes(modelo.toUpperCase())
+          ? `#${u.id_vehiculo} ${nombreBase} · ${modelo}`
+          : `#${u.id_vehiculo} ${nombreBase}`);
 
     hud.querySelector("#hud-unit-name").textContent = titulo;
     hud.querySelector("#hud-unit-sn").textContent = u.numero_serie || "S/N";

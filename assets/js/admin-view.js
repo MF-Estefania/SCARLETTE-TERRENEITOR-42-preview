@@ -116,9 +116,14 @@ window.SCARLETTE_ADMIN = (() => {
               <div id="form-nueva-unidad" class="glass-card p-2 mb-2" style="display:none; background:#1b1522">
                 <h4 id="titulo-form-unidad" class="mb-1" style="color:var(--pink-light); font-size:13px">Registrar Nueva Unidad Física</h4>
                 <div class="row g-2">
-                  <div class="col-md-3"><input id="new-u-nombre" class="form-control form-control-sm" placeholder="Nombre (ej. Terreneitor 3)"></div>
-                  <div class="col-md-3"><input id="new-u-serie" class="form-control form-control-sm" placeholder="Número de Serie (ej. TR01-SN-003)"></div>
+                  <div class="col-md-2"><input id="new-u-nombre" class="form-control form-control-sm" placeholder="Nombre (ej. Excavadora 2)"></div>
                   <div class="col-md-3">
+                    <select id="new-u-modelo" class="form-select form-select-sm" title="Modelo Comercial">
+                      <option value="1">#1 Terreneitor TR-01 (ESP8266)</option>
+                    </select>
+                  </div>
+                  <div class="col-md-2"><input id="new-u-serie" class="form-control form-control-sm" placeholder="Serie (ej. EX01-002)"></div>
+                  <div class="col-md-2">
                     <select id="new-u-estado" class="form-select form-select-sm">
                       <option value="disponible">Disponible (Stock)</option>
                       <option value="exhibicion">Exhibición (Demo)</option>
@@ -127,8 +132,8 @@ window.SCARLETTE_ADMIN = (() => {
                     </select>
                   </div>
                   <div class="col-md-3 d-flex gap-2">
-                    <button id="btn-guardar-unidad" class="neon-button py-1 px-3" style="font-size:13px">Guardar</button>
-                    <button id="btn-cancelar-unidad" class="outline-button m-0 py-1 px-3" style="font-size:13px">Cancelar</button>
+                    <button id="btn-guardar-unidad" class="neon-button py-1 px-2" style="font-size:13px">Guardar</button>
+                    <button id="btn-cancelar-unidad" class="outline-button m-0 py-1 px-2" style="font-size:13px">Cancelar</button>
                   </div>
                 </div>
               </div>
@@ -311,12 +316,28 @@ window.SCARLETTE_ADMIN = (() => {
     const selClienteAsignar = contenedor.querySelector("#asignar-cliente-select");
     const selEstadoAsignar = contenedor.querySelector("#asignar-estado-select");
 
+    function poblarSelectorModelosUnidad(seleccionadoId = null) {
+      const selMod = contenedor.querySelector("#new-u-modelo");
+      if (!selMod) return;
+      if (!modelosCache || modelosCache.length === 0) {
+        selMod.innerHTML = '<option value="1">#1 Terreneitor TR-01 (ESP8266)</option>';
+        return;
+      }
+      selMod.innerHTML = modelosCache.map(m =>
+        `<option value="${m.id_modelo}">#${m.id_modelo} ${m.nombre_modelo} (${m.microcontrolador})</option>`
+      ).join("");
+      if (seleccionadoId && modelosCache.some(m => Number(m.id_modelo) === Number(seleccionadoId))) {
+        selMod.value = String(seleccionadoId);
+      }
+    }
+
     contenedor.querySelector("#btn-nueva-unidad")?.addEventListener("click", () => {
       if (formAsignar) formAsignar.style.display = "none";
       const abrir = formNueva.style.display === "none" || unidadEditandoId !== null;
       unidadEditandoId = null;
       if (tituloFormUnidad) tituloFormUnidad.textContent = "Registrar Nueva Unidad Física";
       if (btnGuardarUnidad) btnGuardarUnidad.textContent = "Guardar";
+      poblarSelectorModelosUnidad();
       contenedor.querySelector("#new-u-nombre").value = "";
       contenedor.querySelector("#new-u-serie").value = "";
       contenedor.querySelector("#new-u-estado").value = "disponible";
@@ -330,6 +351,8 @@ window.SCARLETTE_ADMIN = (() => {
       const nombre = contenedor.querySelector("#new-u-nombre").value.trim();
       const serie = contenedor.querySelector("#new-u-serie").value.trim();
       const estado = contenedor.querySelector("#new-u-estado").value;
+      const idModelo = parseInt(contenedor.querySelector("#new-u-modelo")?.value, 10) || 1;
+      const modSel = modelosCache.find(m => Number(m.id_modelo) === idModelo);
       if (!nombre || !serie) {
         alert("Completa el nombre y número de serie");
         return;
@@ -340,12 +363,12 @@ window.SCARLETTE_ADMIN = (() => {
           await api.solicitar(`/admin/unidades/${unidadEditandoId}`, {
             method: "PUT",
             body: JSON.stringify({
-              id_modelo: orig?.id_modelo || 1,
+              id_modelo: idModelo,
               nombre: nombre,
-              modelo: orig?.modelo || "TR-01",
+              modelo: modSel?.nombre_modelo || orig?.modelo || "Terreneitor TR-01",
               numero_serie: serie,
               descripcion: orig?.descripcion || "Unidad registrada desde panel de administración",
-              microcontrolador: orig?.microcontrolador || "ESP8266",
+              microcontrolador: modSel?.microcontrolador || orig?.microcontrolador || "ESP8266",
               id_propietario: orig?.id_propietario ?? null,
               estado_comercial: estado,
               activo: true
@@ -355,12 +378,12 @@ window.SCARLETTE_ADMIN = (() => {
           await api.solicitar("/admin/unidades", {
             method: "POST",
             body: JSON.stringify({
-              id_modelo: 1,
+              id_modelo: idModelo,
               nombre: nombre,
-              modelo: "TR-01",
+              modelo: modSel?.nombre_modelo || "Terreneitor TR-01",
               numero_serie: serie,
               descripcion: "Unidad registrada desde panel de administración",
-              microcontrolador: "ESP8266",
+              microcontrolador: modSel?.microcontrolador || "ESP8266",
               estado_comercial: estado,
               activo: true
             })
@@ -461,6 +484,7 @@ window.SCARLETTE_ADMIN = (() => {
         contenedor.querySelector("#new-m-nombre").value = "";
         contenedor.querySelector("#new-m-desc").value = "";
         await recargarDatos(contenedor);
+        document.dispatchEvent(new CustomEvent("scarlette:unidades-actualizadas"));
       } catch (e) {
         alert("Error al guardar modelo: " + (e.message || "desconocido"));
       }
@@ -595,6 +619,68 @@ window.SCARLETTE_ADMIN = (() => {
       });
     }
 
+    // Modelos (cargar antes de Unidades para poblar el selector de modelos)
+    const modelos = await cargarModelos();
+    modelosCache = Array.isArray(modelos) ? modelos : [];
+    const selModUnidad = contenedor.querySelector("#new-u-modelo");
+    if (selModUnidad && modelosCache.length > 0) {
+      selModUnidad.innerHTML = modelosCache.map(m =>
+        `<option value="${m.id_modelo}">#${m.id_modelo} ${m.nombre_modelo} (${m.microcontrolador})</option>`
+      ).join("");
+    }
+    const tbodyM = contenedor.querySelector("#tbody-modelos");
+    if (tbodyM) {
+      tbodyM.innerHTML = modelosCache.map(m => `
+        <tr>
+          <td><strong style="color:var(--pink-light)">#${m.id_modelo}</strong></td>
+          <td>
+            <div style="color:#ffffff; font-weight:700">${m.nombre_modelo}</div>
+            <div class="d-md-none text-muted" style="font-size:9px">${m.descripcion || '-'}</div>
+          </td>
+          <td><span class="badge" style="background:#2a1a2b; border:1px solid #614765; color:#f6b5d8; font-size:9.5px">${m.microcontrolador}</span></td>
+          <td class="d-none d-md-table-cell" style="color:#d5cbe0; font-size:12px">${m.descripcion || '-'}</td>
+          <td style="white-space:nowrap">
+            <div class="d-inline-flex gap-1 align-items-center">
+              <button class="outline-button-sm btn-editar-modelo" data-id="${m.id_modelo}" title="Editar modelo" style="padding:2px 5px; font-size:9.5px">✎</button>
+              <button class="outline-button-sm btn-eliminar-modelo" data-id="${m.id_modelo}" data-nombre="${m.nombre_modelo}" title="Eliminar modelo" style="padding:2px 5px; font-size:9.5px; border-color:#a93b5c; color:#ff8fb3">🗑</button>
+            </div>
+          </td>
+        </tr>
+      `).join("");
+
+      tbodyM.querySelectorAll(".btn-editar-modelo").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const idM = parseInt(btn.getAttribute("data-id"), 10);
+          const m = modelosCache.find(x => Number(x.id_modelo) === idM);
+          if (!m) return;
+          const formModelo = contenedor.querySelector("#form-nuevo-modelo");
+          const tituloFormModelo = contenedor.querySelector("#titulo-form-modelo");
+          const btnGuardarModelo = contenedor.querySelector("#btn-guardar-modelo");
+          modeloEditandoId = idM;
+          if (tituloFormModelo) tituloFormModelo.textContent = `Editar Modelo #${idM}`;
+          if (btnGuardarModelo) btnGuardarModelo.textContent = "Actualizar";
+          contenedor.querySelector("#new-m-nombre").value = m.nombre_modelo || "";
+          contenedor.querySelector("#new-m-micro").value = m.microcontrolador || "ESP8266";
+          contenedor.querySelector("#new-m-desc").value = m.descripcion || "";
+          if (formModelo) formModelo.style.display = "block";
+        });
+      });
+
+      tbodyM.querySelectorAll(".btn-eliminar-modelo").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const idM = parseInt(btn.getAttribute("data-id"), 10);
+          const nom = btn.getAttribute("data-nombre");
+          if (!confirm(`¿Eliminar el modelo #${idM} (${nom})?`)) return;
+          try {
+            await api.solicitar(`/admin/modelos/${idM}`, { method: "DELETE" });
+            await recargarDatos(contenedor);
+          } catch (e) {
+            alert("No se pudo eliminar el modelo: " + (e.message || "puede tener unidades activas asociadas"));
+          }
+        });
+      });
+    }
+
     // Unidades
     const unidades = await cargarUnidades();
     unidadesCache = Array.isArray(unidades) ? unidades : [];
@@ -604,15 +690,16 @@ window.SCARLETTE_ADMIN = (() => {
         let badgeClass = "badge-scarlette-disponible";
         if (u.estado_comercial === "vendido") badgeClass = "badge-scarlette-vendido";
         if (u.estado_comercial === "exhibicion") badgeClass = "badge-scarlette-exhibicion";
+        const modeloLabel = u.nombre_modelo || u.modelo || "TR-01";
 
         return `
           <tr>
             <td><strong style="color:var(--pink-light)">#${u.id_vehiculo}</strong></td>
             <td>
               <div style="color:#ffffff; font-weight:700; line-height:1.2">${u.nombre}</div>
-              <div class="d-md-none" style="font-size:9px; color:#ffbce6; margin-top:1px">${u.modelo || 'TR-01'} · ${u.microcontrolador || 'ESP8266'}</div>
+              <div class="d-md-none" style="font-size:9px; color:#ffbce6; margin-top:1px">${modeloLabel} · ${u.microcontrolador || 'ESP8266'}</div>
             </td>
-            <td class="d-none d-md-table-cell"><span class="badge" style="background:#2a1a2b; border:1px solid #614765; color:#f6b5d8">${u.modelo || 'TR-01'}</span></td>
+            <td class="d-none d-md-table-cell"><span class="badge" style="background:#2a1a2b; border:1px solid #614765; color:#f6b5d8">${modeloLabel}</span></td>
             <td><span class="hud-sn" style="white-space:nowrap; font-size:9.5px; padding:2px 5px">${u.numero_serie || 'S/N'}</span></td>
             <td class="d-none d-md-table-cell"><span class="badge" style="background:#1f192b; border:1px solid #5a4163; color:#e0d2ea">${u.microcontrolador || 'ESP8266'}</span></td>
             <td><span class="${badgeClass}" style="font-size:9.5px; padding:2px 6px">${u.estado_comercial.toUpperCase()}</span></td>
@@ -666,10 +753,17 @@ window.SCARLETTE_ADMIN = (() => {
           const formAsignar = contenedor.querySelector("#form-asignar-unidad");
           const tituloFormUnidad = contenedor.querySelector("#titulo-form-unidad");
           const btnGuardarUnidad = contenedor.querySelector("#btn-guardar-unidad");
+          const selMod = contenedor.querySelector("#new-u-modelo");
           if (formAsignar) formAsignar.style.display = "none";
           unidadEditandoId = idV;
           if (tituloFormUnidad) tituloFormUnidad.textContent = `Editar Unidad #${idV}`;
           if (btnGuardarUnidad) btnGuardarUnidad.textContent = "Actualizar";
+          if (selMod && modelosCache.length > 0) {
+            selMod.innerHTML = modelosCache.map(m =>
+              `<option value="${m.id_modelo}">#${m.id_modelo} ${m.nombre_modelo} (${m.microcontrolador})</option>`
+            ).join("");
+            selMod.value = String(u.id_modelo || modelosCache[0].id_modelo);
+          }
           contenedor.querySelector("#new-u-nombre").value = u.nombre || "";
           contenedor.querySelector("#new-u-serie").value = u.numero_serie || "";
           contenedor.querySelector("#new-u-estado").value = u.estado_comercial || "disponible";
@@ -688,62 +782,6 @@ window.SCARLETTE_ADMIN = (() => {
             document.dispatchEvent(new CustomEvent("scarlette:unidades-actualizadas"));
           } catch (e) {
             alert("Error al eliminar unidad: " + (e.message || "desconocido"));
-          }
-        });
-      });
-    }
-
-    // Modelos
-    const modelos = await cargarModelos();
-    modelosCache = Array.isArray(modelos) ? modelos : [];
-    const tbodyM = contenedor.querySelector("#tbody-modelos");
-    if (tbodyM) {
-      tbodyM.innerHTML = modelosCache.map(m => `
-        <tr>
-          <td><strong style="color:var(--pink-light)">#${m.id_modelo}</strong></td>
-          <td>
-            <div style="color:#ffffff; font-weight:700">${m.nombre_modelo}</div>
-            <div class="d-md-none text-muted" style="font-size:9px">${m.descripcion || '-'}</div>
-          </td>
-          <td><span class="badge" style="background:#2a1a2b; border:1px solid #614765; color:#f6b5d8; font-size:9.5px">${m.microcontrolador}</span></td>
-          <td class="d-none d-md-table-cell" style="color:#d5cbe0; font-size:12px">${m.descripcion || '-'}</td>
-          <td style="white-space:nowrap">
-            <div class="d-inline-flex gap-1 align-items-center">
-              <button class="outline-button-sm btn-editar-modelo" data-id="${m.id_modelo}" title="Editar modelo" style="padding:2px 5px; font-size:9.5px">✎</button>
-              <button class="outline-button-sm btn-eliminar-modelo" data-id="${m.id_modelo}" data-nombre="${m.nombre_modelo}" title="Eliminar modelo" style="padding:2px 5px; font-size:9.5px; border-color:#a93b5c; color:#ff8fb3">🗑</button>
-            </div>
-          </td>
-        </tr>
-      `).join("");
-
-      tbodyM.querySelectorAll(".btn-editar-modelo").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const idM = parseInt(btn.getAttribute("data-id"), 10);
-          const m = modelosCache.find(x => Number(x.id_modelo) === idM);
-          if (!m) return;
-          const formModelo = contenedor.querySelector("#form-nuevo-modelo");
-          const tituloFormModelo = contenedor.querySelector("#titulo-form-modelo");
-          const btnGuardarModelo = contenedor.querySelector("#btn-guardar-modelo");
-          modeloEditandoId = idM;
-          if (tituloFormModelo) tituloFormModelo.textContent = `Editar Modelo #${idM}`;
-          if (btnGuardarModelo) btnGuardarModelo.textContent = "Actualizar";
-          contenedor.querySelector("#new-m-nombre").value = m.nombre_modelo || "";
-          contenedor.querySelector("#new-m-micro").value = m.microcontrolador || "ESP8266";
-          contenedor.querySelector("#new-m-desc").value = m.descripcion || "";
-          if (formModelo) formModelo.style.display = "block";
-        });
-      });
-
-      tbodyM.querySelectorAll(".btn-eliminar-modelo").forEach(btn => {
-        btn.addEventListener("click", async () => {
-          const idM = parseInt(btn.getAttribute("data-id"), 10);
-          const nom = btn.getAttribute("data-nombre");
-          if (!confirm(`¿Eliminar el modelo #${idM} (${nom})?`)) return;
-          try {
-            await api.solicitar(`/admin/modelos/${idM}`, { method: "DELETE" });
-            await recargarDatos(contenedor);
-          } catch (e) {
-            alert("No se pudo eliminar el modelo: " + (e.message || "puede tener unidades activas asociadas"));
           }
         });
       });
