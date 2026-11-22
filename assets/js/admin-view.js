@@ -128,8 +128,8 @@ window.SCARLETTE_ADMIN = (() => {
               </div>
 
               <!-- Selector visual de asignación de cliente -->
-              <div id="form-asignar-unidad" class="glass-card p-3 mb-2" style="display:none; background:#1b1522">
-                <h4 id="titulo-asignar-unidad" class="fs-6 mb-2" style="color:var(--pink-light)">Asignar Unidad a Cliente</h4>
+              <div id="form-asignar-unidad" class="glass-card p-2 mb-2" style="display:none; background:#1b1522">
+                <h4 id="titulo-asignar-unidad" class="mb-1" style="color:var(--pink-light); font-size:13px">Asignar Unidad a Cliente</h4>
                 <div class="row g-2">
                   <div class="col-md-5">
                     <select id="asignar-cliente-select" class="form-select form-select-sm"></select>
@@ -218,8 +218,8 @@ window.SCARLETTE_ADMIN = (() => {
               </div>
 
               <!-- Formulario de nuevo cliente -->
-              <div id="form-nuevo-cliente" class="glass-card p-3 mb-2" style="display:none; background:#1b1522">
-                <h4 class="fs-6 mb-2" style="color:var(--pink-light)">Registrar Nuevo Cliente (Cuenta Usuario)</h4>
+              <div id="form-nuevo-cliente" class="glass-card p-2 mb-2" style="display:none; background:#1b1522">
+                <h4 class="mb-1" style="color:var(--pink-light); font-size:13px">Registrar Nuevo Cliente (Cuenta Usuario)</h4>
                 <div class="row g-2">
                   <div class="col-md-4"><input id="new-c-usuario" class="form-control form-control-sm" placeholder="Usuario (ej. carlos)" autocomplete="off"></div>
                   <div class="col-md-5"><input id="new-c-password" type="password" class="form-control form-control-sm" placeholder="Contraseña (mín. 6 caracteres)" autocomplete="new-password"></div>
