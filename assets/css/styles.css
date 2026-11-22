@@ -1744,6 +1744,173 @@ select.form-select {
     text-overflow: ellipsis !important;
     white-space: nowrap !important;
   }
+  /* MODAL DISEÑADOR / CREAR DEMO (Móvil Vertical - Ultra Compacto) */
+  #modal-demos-overlay {
+    padding: 8px !important;
+  }
+  #modal-demos-overlay > .glass-card {
+    max-width: 360px !important;
+    margin: 8px auto !important;
+    padding: 8px !important;
+    border-radius: 12px !important;
+    max-height: 92vh !important;
+    overflow-y: auto !important;
+  }
+  #modal-demos-overlay > .glass-card > .d-flex {
+    margin-bottom: 5px !important;
+    padding-bottom: 4px !important;
+    gap: 6px !important;
+  }
+  #modal-demos-overlay > .glass-card > .d-flex h2 {
+    font-size: 11px !important;
+    line-height: 1.15 !important;
+  }
+  #modal-demos-overlay > .glass-card > .d-flex h2 .icon {
+    width: 13px !important;
+    height: 13px !important;
+  }
+  #modal-demos-overlay #btn-cerrar-modal-demos {
+    font-size: 9px !important;
+    padding: 2px 7px !important;
+    height: 22px !important;
+    min-height: 22px !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+  }
+  #modal-demos-mount-point > .glass-card {
+    padding: 6px !important;
+    border-radius: 8px !important;
+    margin: 0 !important;
+  }
+  #modal-demos-mount-point > .glass-card > .d-flex {
+    margin-bottom: 5px !important;
+    padding-bottom: 4px !important;
+    gap: 6px !important;
+  }
+  #modal-demos-mount-point > .glass-card > .d-flex h2 {
+    font-size: 10.5px !important;
+    line-height: 1.15 !important;
+  }
+  #modal-demos-mount-point > .glass-card > .d-flex h2 .icon {
+    width: 12px !important;
+    height: 12px !important;
+  }
+  #modal-demos-overlay .neon-button,
+  #modal-demos-overlay .outline-button {
+    font-size: 9.5px !important;
+    padding: 2px 8px !important;
+    height: 24px !important;
+    min-height: 24px !important;
+    line-height: 1.1 !important;
+    white-space: nowrap !important;
+    border-radius: 999px !important;
+  }
+  #modal-demos-overlay #btn-crear-demo-modal {
+    width: auto !important;
+    flex-shrink: 0 !important;
+  }
+  #modal-demos-mount-point #form-crear-demo,
+  #modal-demos-mount-point #form-agregar-paso {
+    padding: 6px !important;
+    margin-bottom: 6px !important;
+    border-radius: 8px !important;
+  }
+  #modal-demos-mount-point #form-crear-demo h4,
+  #modal-demos-mount-point #form-agregar-paso h4 {
+    font-size: 10px !important;
+    margin-bottom: 4px !important;
+    color: var(--pink-light) !important;
+  }
+  #modal-demos-mount-point #form-crear-demo .row {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 4px !important;
+    margin: 0 !important;
+  }
+  #modal-demos-mount-point #form-crear-demo .row > div {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  #modal-demos-mount-point #form-crear-demo .row > div:nth-child(3) {
+    grid-column: 1 / -1 !important;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 4px !important;
+  }
+  #modal-demos-mount-point #form-agregar-paso .row {
+    display: grid !important;
+    grid-template-columns: 1.3fr 0.8fr 0.8fr auto !important;
+    gap: 3px !important;
+    margin: 0 !important;
+  }
+  #modal-demos-mount-point #form-agregar-paso .row > div {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  #modal-demos-mount-point input,
+  #modal-demos-mount-point select {
+    height: 24px !important;
+    min-height: 24px !important;
+    font-size: 9.5px !important;
+    padding: 2px 6px !important;
+    border-radius: 6px !important;
+  }
+  #modal-demos-mount-point .row.g-4 {
+    --bs-gutter-x: 6px !important;
+    --bs-gutter-y: 6px !important;
+    margin-top: 0 !important;
+  }
+  #modal-demos-mount-point h3 {
+    font-size: 10.5px !important;
+    margin-bottom: 3px !important;
+  }
+  #modal-demos-mount-point #lista-demos {
+    max-height: 110px !important;
+    overflow-y: auto !important;
+  }
+  #modal-demos-mount-point .item-demo {
+    padding: 4px 7px !important;
+  }
+  #modal-demos-mount-point .item-demo .d-flex {
+    align-items: center !important;
+    gap: 4px !important;
+  }
+  #modal-demos-mount-point .item-demo h5 {
+    font-size: 10px !important;
+    margin-bottom: 1px !important;
+    line-height: 1.15 !important;
+  }
+  #modal-demos-mount-point .item-demo .badge {
+    font-size: 8px !important;
+    padding: 2px 5px !important;
+    flex-shrink: 0 !important;
+  }
+  #modal-demos-mount-point .item-demo p {
+    font-size: 8.5px !important;
+    margin-bottom: 0 !important;
+    line-height: 1.15 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+  #modal-demos-mount-point #btn-mostrar-form-paso {
+    font-size: 9px !important;
+    padding: 2px 6px !important;
+    margin-bottom: 4px !important;
+  }
+  #modal-demos-mount-point .table-responsive {
+    max-height: 120px !important;
+    overflow-y: auto !important;
+  }
+  #modal-demos-mount-point table {
+    margin-bottom: 0 !important;
+  }
+  #modal-demos-mount-point table th,
+  #modal-demos-mount-point table td {
+    padding: 2px 4px !important;
+    font-size: 9px !important;
+  }
+
   .panel-page.user-navigation .page-footer {
     display: none !important;
   }
@@ -2175,42 +2342,174 @@ select.form-select {
     white-space: nowrap !important;
   }
 
-  /* Modal Demos en landscape */
+  /* Modal Demos en landscape (Ultra Compacto en 2 Columnas) */
   #modal-demos-overlay {
-    padding: 4px !important;
+    padding: 4px 8px !important;
+    overflow: hidden !important;
   }
   #modal-demos-overlay > .glass-card {
-    margin: 2px auto !important;
-    padding: 6px 10px !important;
-    max-height: 96vh !important;
+    max-width: 700px !important;
+    margin: 4px auto !important;
+    padding: 5px 8px !important;
+    max-height: 95vh !important;
+    overflow-y: auto !important;
     border-radius: 10px !important;
   }
-  #modal-demos-overlay h2 {
-    font-size: 13px !important;
+  #modal-demos-overlay > .glass-card > .d-flex {
+    margin-bottom: 3px !important;
+    padding-bottom: 2px !important;
+    gap: 6px !important;
   }
-  #modal-demos-overlay button {
-    font-size: 9.5px !important;
-    padding: 2px 6px !important;
+  #modal-demos-overlay > .glass-card > .d-flex h2 {
+    font-size: 11px !important;
+    line-height: 1.1 !important;
   }
-  #modal-demos-mount-point .glass-card {
+  #modal-demos-overlay > .glass-card > .d-flex h2 .icon {
+    width: 12px !important;
+    height: 12px !important;
+  }
+  #modal-demos-overlay #btn-cerrar-modal-demos {
+    font-size: 8.5px !important;
+    padding: 1px 6px !important;
+    height: 20px !important;
+    min-height: 20px !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+  }
+  #modal-demos-mount-point > .glass-card {
     padding: 4px 6px !important;
+    border-radius: 6px !important;
+    margin: 0 !important;
   }
-  #modal-demos-mount-point .row.g-4 {
-    --bs-gutter-x: 6px !important;
-    --bs-gutter-y: 6px !important;
+  #modal-demos-mount-point > .glass-card > .d-flex {
+    margin-bottom: 3px !important;
+    padding-bottom: 2px !important;
+    gap: 6px !important;
+  }
+  #modal-demos-mount-point > .glass-card > .d-flex h2 {
+    font-size: 10px !important;
+    line-height: 1.1 !important;
+  }
+  #modal-demos-mount-point > .glass-card > .d-flex h2 .icon {
+    width: 11px !important;
+    height: 11px !important;
+  }
+  #modal-demos-overlay .neon-button,
+  #modal-demos-overlay .outline-button {
+    font-size: 8.5px !important;
+    padding: 1px 8px !important;
+    height: 20px !important;
+    min-height: 20px !important;
+    line-height: 1.1 !important;
+    white-space: nowrap !important;
+    width: auto !important;
+    border-radius: 999px !important;
+  }
+  #modal-demos-mount-point #form-crear-demo,
+  #modal-demos-mount-point #form-agregar-paso {
+    padding: 4px 6px !important;
+    margin-bottom: 4px !important;
+    border-radius: 6px !important;
+  }
+  #modal-demos-mount-point #form-crear-demo h4,
+  #modal-demos-mount-point #form-agregar-paso h4 {
+    display: none !important;
+  }
+  #modal-demos-mount-point #form-crear-demo .row {
+    display: grid !important;
+    grid-template-columns: 1fr 1.3fr auto !important;
+    gap: 4px !important;
+    align-items: center !important;
+    margin: 0 !important;
+  }
+  #modal-demos-mount-point #form-crear-demo .row > div,
+  #modal-demos-mount-point #form-agregar-paso .row > div {
+    width: auto !important;
+    max-width: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  #modal-demos-mount-point #form-crear-demo .row > div:nth-child(3) {
+    grid-column: auto !important;
+    display: flex !important;
+    gap: 3px !important;
+  }
+  #modal-demos-mount-point #form-agregar-paso .row {
+    display: grid !important;
+    grid-template-columns: 1.3fr 0.8fr 0.8fr auto !important;
+    gap: 4px !important;
+    align-items: center !important;
+    margin: 0 !important;
   }
   #modal-demos-mount-point input,
   #modal-demos-mount-point select {
-    height: 22px !important;
-    font-size: 9px !important;
-    padding: 1px 4px !important;
+    height: 20px !important;
+    min-height: 20px !important;
+    font-size: 8.5px !important;
+    padding: 1px 5px !important;
+    border-radius: 5px !important;
   }
-  #modal-demos-mount-point .table-responsive {
-    max-height: 100px !important;
+  #modal-demos-mount-point .row.g-4 {
+    display: grid !important;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr) !important;
+    gap: 6px !important;
+    margin: 0 !important;
+  }
+  #modal-demos-mount-point .row.g-4 > div {
+    width: auto !important;
+    max-width: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  #modal-demos-mount-point h3 {
+    font-size: 9.5px !important;
+    margin-bottom: 2px !important;
   }
   #modal-demos-mount-point #lista-demos {
-    max-height: 100px !important;
+    max-height: 135px !important;
     overflow-y: auto !important;
+  }
+  #modal-demos-mount-point .item-demo {
+    padding: 3px 6px !important;
+  }
+  #modal-demos-mount-point .item-demo .d-flex {
+    align-items: center !important;
+    gap: 4px !important;
+  }
+  #modal-demos-mount-point .item-demo h5 {
+    font-size: 9.5px !important;
+    margin-bottom: 1px !important;
+    line-height: 1.1 !important;
+  }
+  #modal-demos-mount-point .item-demo .badge {
+    font-size: 7.5px !important;
+    padding: 1px 4px !important;
+    flex-shrink: 0 !important;
+  }
+  #modal-demos-mount-point .item-demo p {
+    font-size: 8px !important;
+    margin-bottom: 0 !important;
+    line-height: 1.1 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+  #modal-demos-mount-point #btn-mostrar-form-paso {
+    font-size: 8.5px !important;
+    padding: 1px 5px !important;
+    margin-bottom: 2px !important;
+  }
+  #modal-demos-mount-point .table-responsive {
+    max-height: 125px !important;
+    overflow-y: auto !important;
+  }
+  #modal-demos-mount-point table {
+    margin-bottom: 0 !important;
+  }
+  #modal-demos-mount-point table th,
+  #modal-demos-mount-point table td {
+    padding: 2px 3px !important;
+    font-size: 8.5px !important;
   }
 
   .panel-page .page-footer {
