@@ -1244,12 +1244,16 @@
    RESPONSIVA MOVIL 4.3 (CELULAR VERTICAL Y HORIZONTAL - ZERO SCROLL)
    ===================================================================== */
 
-/* Selects consistentes: elimina la doble flecha en todos los navegadores */
+/* Selects consistentes: elimina la doble flecha y desbordamiento en todos los navegadores */
 select.hud-select,
 select.form-select {
   appearance: none !important;
   -webkit-appearance: none !important;
   -moz-appearance: none !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+  line-height: 1.2 !important;
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ff66b5' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") !important;
   background-repeat: no-repeat !important;
   background-position: right 10px center !important;
@@ -1812,12 +1816,19 @@ select.form-select {
     display: none !important;
   }
   .panel-page.user-navigation .movement-grid {
-    grid-template-columns: repeat(4, 1fr) !important;
-    gap: 2px !important;
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    grid-template-rows: repeat(2, 32px) !important;
+    gap: 3px !important;
     margin-top: 2px !important;
   }
-  .panel-page.user-navigation .movement {
+  .panel-page.user-navigation .movement-grid > .movement {
+    grid-column: auto !important;
+    grid-row: auto !important;
+    grid-area: auto !important;
+    width: 100% !important;
     min-height: 32px !important;
+    max-height: 32px !important;
     font-size: 8.5px !important;
     padding: 1px !important;
     border-radius: 5px !important;
@@ -1873,8 +1884,16 @@ select.form-select {
     padding: 1px 8px !important;
   }
 
-  /* MONITOREO en landscape */
-  .panel-page.user-navigation #user-monitoring-panel {
+  /* Ocultar estrictamente cualquier pestaña inactiva en landscape para evitar fugas de altura */
+  .panel-page.user-navigation [role="tabpanel"][hidden],
+  .panel-page.user-navigation #user-monitoring-panel[hidden],
+  .panel-page.user-navigation #panel-control[hidden],
+  .panel-page.user-navigation #panel-admin[hidden] {
+    display: none !important;
+  }
+
+  /* MONITOREO en landscape (solo visible cuando esté activo) */
+  .panel-page.user-navigation #user-monitoring-panel:not([hidden]) {
     display: grid !important;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr) !important;
     gap: 4px !important;
