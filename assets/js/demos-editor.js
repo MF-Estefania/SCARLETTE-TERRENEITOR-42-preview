@@ -18,11 +18,11 @@ window.SCARLETTE_DEMOS_EDITOR = (() => {
         <div id="form-crear-demo" class="p-3 border rounded mb-3 bg-dark" style="display:none">
           <h4 class="fs-6 mb-2">Nueva Secuencia DEMO</h4>
           <div class="row g-2">
-            <div class="col-md-5"><input id="demo-nombre" class="form-control form-control-sm" placeholder="Nombre (ej. DEMO ZIG-ZAG)"></div>
+            <div class="col-md-4"><input id="demo-nombre" class="form-control form-control-sm" placeholder="Nombre (ej. DEMO ZIG-ZAG)"></div>
             <div class="col-md-5"><input id="demo-desc" class="form-control form-control-sm" placeholder="Descripción de la secuencia"></div>
-            <div class="col-md-2 d-flex gap-2">
-              <button id="btn-guardar-demo" class="neon-button py-1 px-3" style="font-size:13px">Crear</button>
-              <button id="btn-cancelar-demo" class="outline-button m-0 py-1 px-3" style="font-size:13px">Cancelar</button>
+            <div class="col-md-3 d-flex gap-2">
+              <button id="btn-guardar-demo" class="neon-button py-1 px-2" style="font-size:13px">Crear</button>
+              <button id="btn-cancelar-demo" class="outline-button m-0 py-1 px-2" style="font-size:13px">Cancelar</button>
             </div>
           </div>
         </div>
