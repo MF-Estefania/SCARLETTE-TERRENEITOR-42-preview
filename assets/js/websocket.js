@@ -137,26 +137,26 @@ window.SCARLETTE_WS = (() => {
       socket.readyState === WebSocket.CONNECTING
     )) return;
 
+    const cfg = window.SCARLETTE_CONFIG || config;
+    const vId = cfg?.VEHICLE_ID;
+    if (!vId) {
+      indicadorWebSocket("Sin unidad", false);
+      return;
+    }
+
     conectando = true;
     indicadorWebSocket("Conectando...");
 
     try {
       const respuesta = await api.solicitar(
-        "/auth/ws-ticket",
+        `/auth/ws-ticket?id_vehiculo=${encodeURIComponent(vId)}`,
         { method: "POST" }
       );
 
-      if (!activo) return;
+      if (!activo || (window.SCARLETTE_CONFIG || config)?.VEHICLE_ID !== vId) return;
 
       if (!respuesta?.ticket) {
         throw new Error("AWS no devolvió un ticket WebSocket.");
-      }
-
-      const cfg = window.SCARLETTE_CONFIG || config;
-      const vId = cfg?.VEHICLE_ID;
-      if (!vId) {
-        indicadorWebSocket("Sin unidad", false);
-        return;
       }
 
       const url =

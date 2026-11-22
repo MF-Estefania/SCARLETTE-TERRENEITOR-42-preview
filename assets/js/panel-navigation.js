@@ -288,6 +288,9 @@ document.addEventListener("scarlette:sesion-verificada", async evento => {
 
   // Mostrar el panel inicial
   panels[0].hidden = false;
+  document.addEventListener("scarlette:unidades-actualizadas", () => {
+    void cargarUnidadesHUD();
+  });
   await cargarUnidadesHUD();
   if (tabConfigs[0].id === "admin" && window.SCARLETTE_ADMIN) {
     await window.SCARLETTE_ADMIN.renderizarEn(panels[0]);

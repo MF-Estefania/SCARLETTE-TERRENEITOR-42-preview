@@ -1464,31 +1464,41 @@ select.form-select {
     border-radius: 6px !important;
   }
   .panel-page.user-navigation #form-nueva-unidad,
-  .panel-page.user-navigation #form-nuevo-modelo {
+  .panel-page.user-navigation #form-asignar-unidad,
+  .panel-page.user-navigation #form-nuevo-modelo,
+  .panel-page.user-navigation #form-nuevo-cliente {
     padding: 4px 6px !important;
     margin-bottom: 3px !important;
   }
   .panel-page.user-navigation #form-nueva-unidad h4,
-  .panel-page.user-navigation #form-nuevo-modelo h4 {
+  .panel-page.user-navigation #form-asignar-unidad h4,
+  .panel-page.user-navigation #form-nuevo-modelo h4,
+  .panel-page.user-navigation #form-nuevo-cliente h4 {
     font-size: 10px !important;
     margin-bottom: 2px !important;
   }
   .panel-page.user-navigation #form-nueva-unidad .row,
-  .panel-page.user-navigation #form-nuevo-modelo .row {
+  .panel-page.user-navigation #form-asignar-unidad .row,
+  .panel-page.user-navigation #form-nuevo-modelo .row,
+  .panel-page.user-navigation #form-nuevo-cliente .row {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 3px !important;
   }
   .panel-page.user-navigation #form-nueva-unidad input,
   .panel-page.user-navigation #form-nueva-unidad select,
+  .panel-page.user-navigation #form-asignar-unidad select,
   .panel-page.user-navigation #form-nuevo-modelo input,
-  .panel-page.user-navigation #form-nuevo-modelo select {
+  .panel-page.user-navigation #form-nuevo-modelo select,
+  .panel-page.user-navigation #form-nuevo-cliente input {
     height: 22px !important;
     font-size: 9px !important;
     padding: 1px 4px !important;
   }
   .panel-page.user-navigation #form-nueva-unidad button,
-  .panel-page.user-navigation #form-nuevo-modelo button {
+  .panel-page.user-navigation #form-asignar-unidad button,
+  .panel-page.user-navigation #form-nuevo-modelo button,
+  .panel-page.user-navigation #form-nuevo-cliente button {
     height: 22px !important;
     font-size: 9px !important;
     padding: 1px 4px !important;
@@ -2202,38 +2212,50 @@ select.form-select {
     border-radius: 5px !important;
   }
   .panel-page.user-navigation #form-nueva-unidad,
-  .panel-page.user-navigation #form-nuevo-modelo {
+  .panel-page.user-navigation #form-asignar-unidad,
+  .panel-page.user-navigation #form-nuevo-modelo,
+  .panel-page.user-navigation #form-nuevo-cliente {
     padding: 2px 4px !important;
     margin-bottom: 2px !important;
   }
   .panel-page.user-navigation #form-nueva-unidad h4,
-  .panel-page.user-navigation #form-nuevo-modelo h4 {
+  .panel-page.user-navigation #form-asignar-unidad h4,
+  .panel-page.user-navigation #form-nuevo-modelo h4,
+  .panel-page.user-navigation #form-nuevo-cliente h4 {
     font-size: 8.5px !important;
     margin-bottom: 1px !important;
   }
   .panel-page.user-navigation #form-nueva-unidad .row,
-  .panel-page.user-navigation #form-nuevo-modelo .row {
+  .panel-page.user-navigation #form-asignar-unidad .row,
+  .panel-page.user-navigation #form-nuevo-modelo .row,
+  .panel-page.user-navigation #form-nuevo-cliente .row {
     display: flex !important;
     flex-direction: row !important;
     flex-wrap: wrap !important;
     gap: 2px !important;
   }
   .panel-page.user-navigation #form-nueva-unidad .row > div,
-  .panel-page.user-navigation #form-nuevo-modelo .row > div {
+  .panel-page.user-navigation #form-asignar-unidad .row > div,
+  .panel-page.user-navigation #form-nuevo-modelo .row > div,
+  .panel-page.user-navigation #form-nuevo-cliente .row > div {
     flex: 1 1 110px !important;
     max-width: none !important;
     padding: 0 !important;
   }
   .panel-page.user-navigation #form-nueva-unidad input,
   .panel-page.user-navigation #form-nueva-unidad select,
+  .panel-page.user-navigation #form-asignar-unidad select,
   .panel-page.user-navigation #form-nuevo-modelo input,
-  .panel-page.user-navigation #form-nuevo-modelo select {
+  .panel-page.user-navigation #form-nuevo-modelo select,
+  .panel-page.user-navigation #form-nuevo-cliente input {
     height: 20px !important;
     font-size: 8.5px !important;
     padding: 1px 3px !important;
   }
   .panel-page.user-navigation #form-nueva-unidad button,
-  .panel-page.user-navigation #form-nuevo-modelo button {
+  .panel-page.user-navigation #form-asignar-unidad button,
+  .panel-page.user-navigation #form-nuevo-modelo button,
+  .panel-page.user-navigation #form-nuevo-cliente button {
     height: 20px !important;
     font-size: 8.5px !important;
     padding: 1px 5px !important;

@@ -2,6 +2,8 @@
 
 window.SCARLETTE_ADMIN = (() => {
   const api = window.SCARLETTE_API;
+  let clientesCache = [];
+  let unidadAsignandoId = null;
 
   async function cargarDashboard() {
     try {
@@ -125,6 +127,28 @@ window.SCARLETTE_ADMIN = (() => {
                 </div>
               </div>
 
+              <!-- Selector visual de asignación de cliente -->
+              <div id="form-asignar-unidad" class="glass-card p-3 mb-2" style="display:none; background:#1b1522">
+                <h4 id="titulo-asignar-unidad" class="fs-6 mb-2" style="color:var(--pink-light)">Asignar Unidad a Cliente</h4>
+                <div class="row g-2">
+                  <div class="col-md-5">
+                    <select id="asignar-cliente-select" class="form-select form-select-sm"></select>
+                  </div>
+                  <div class="col-md-4">
+                    <select id="asignar-estado-select" class="form-select form-select-sm">
+                      <option value="vendido">Vendido (Asignado)</option>
+                      <option value="disponible">Disponible (Stock)</option>
+                      <option value="exhibicion">Exhibición (Demo)</option>
+                      <option value="mantenimiento">Mantenimiento</option>
+                    </select>
+                  </div>
+                  <div class="col-md-3 d-flex gap-2">
+                    <button id="btn-confirmar-asignacion" class="neon-button py-1 px-3" style="font-size:13px">Confirmar</button>
+                    <button id="btn-cancelar-asignacion" class="outline-button m-0 py-1 px-3" style="font-size:13px">Cancelar</button>
+                  </div>
+                </div>
+              </div>
+
               <div class="table-responsive" style="max-height: 48vh; overflow-y: auto;">
                 <table class="table table-dark table-hover table-sm align-middle m-0" style="background:transparent; font-size:13px">
                   <thead>
@@ -188,7 +212,24 @@ window.SCARLETTE_ADMIN = (() => {
 
             <!-- Pestaña 3: Clientes -->
             <div class="admin-subtab-pane" id="tab-clientes" style="display:none">
-              <h3 class="fs-6 mb-2 text-white">Clientes y Asignaciones</h3>
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h3 class="fs-6 m-0 text-white">Clientes y Asignaciones</h3>
+                <button id="btn-nuevo-cliente" class="neon-button py-1 px-3" style="width:auto; font-size:13px">+ Nuevo Cliente</button>
+              </div>
+
+              <!-- Formulario de nuevo cliente -->
+              <div id="form-nuevo-cliente" class="glass-card p-3 mb-2" style="display:none; background:#1b1522">
+                <h4 class="fs-6 mb-2" style="color:var(--pink-light)">Registrar Nuevo Cliente (Cuenta Usuario)</h4>
+                <div class="row g-2">
+                  <div class="col-md-4"><input id="new-c-usuario" class="form-control form-control-sm" placeholder="Usuario (ej. carlos)" autocomplete="off"></div>
+                  <div class="col-md-5"><input id="new-c-password" type="password" class="form-control form-control-sm" placeholder="Contraseña (mín. 6 caracteres)" autocomplete="new-password"></div>
+                  <div class="col-md-3 d-flex gap-2">
+                    <button id="btn-guardar-cliente" class="neon-button py-1 px-3" style="font-size:13px">Guardar</button>
+                    <button id="btn-cancelar-cliente" class="outline-button m-0 py-1 px-3" style="font-size:13px">Cancelar</button>
+                  </div>
+                </div>
+              </div>
+
               <div class="table-responsive">
                 <table class="table table-dark table-hover align-middle m-0" style="background:transparent">
                   <thead>
@@ -244,7 +285,12 @@ window.SCARLETTE_ADMIN = (() => {
     // Eventos
     contenedor.querySelector("#btn-refrescar-admin")?.addEventListener("click", () => recargarDatos(contenedor));
     const formNueva = contenedor.querySelector("#form-nueva-unidad");
+    const formAsignar = contenedor.querySelector("#form-asignar-unidad");
+    const selClienteAsignar = contenedor.querySelector("#asignar-cliente-select");
+    const selEstadoAsignar = contenedor.querySelector("#asignar-estado-select");
+
     contenedor.querySelector("#btn-nueva-unidad")?.addEventListener("click", () => {
+      if (formAsignar) formAsignar.style.display = "none";
       formNueva.style.display = formNueva.style.display === "none" ? "block" : "none";
     });
     contenedor.querySelector("#btn-cancelar-unidad")?.addEventListener("click", () => {
@@ -273,9 +319,47 @@ window.SCARLETTE_ADMIN = (() => {
           })
         });
         formNueva.style.display = "none";
+        contenedor.querySelector("#new-u-nombre").value = "";
+        contenedor.querySelector("#new-u-serie").value = "";
         await recargarDatos(contenedor);
+        document.dispatchEvent(new CustomEvent("scarlette:unidades-actualizadas"));
       } catch (e) {
         alert("Error al registrar unidad: " + (e.message || "desconocido"));
+      }
+    });
+
+    // Asignar / Reasignar Cliente con selector visual
+    selClienteAsignar?.addEventListener("change", () => {
+      if (!selEstadoAsignar) return;
+      if (selClienteAsignar.value) {
+        selEstadoAsignar.value = "vendido";
+      } else if (selEstadoAsignar.value === "vendido") {
+        selEstadoAsignar.value = "disponible";
+      }
+    });
+    contenedor.querySelector("#btn-cancelar-asignacion")?.addEventListener("click", () => {
+      unidadAsignandoId = null;
+      if (formAsignar) formAsignar.style.display = "none";
+    });
+    contenedor.querySelector("#btn-confirmar-asignacion")?.addEventListener("click", async () => {
+      if (!unidadAsignandoId) return;
+      const clienteVal = selClienteAsignar?.value || "";
+      const estadoVal = selEstadoAsignar?.value || (clienteVal ? "vendido" : "disponible");
+      try {
+        await api.solicitar("/admin/asignaciones", {
+          method: "POST",
+          body: JSON.stringify({
+            id_vehiculo: parseInt(unidadAsignandoId, 10),
+            id_usuario: clienteVal ? parseInt(clienteVal, 10) : null,
+            estado_comercial: estadoVal
+          })
+        });
+        unidadAsignandoId = null;
+        if (formAsignar) formAsignar.style.display = "none";
+        await recargarDatos(contenedor);
+        document.dispatchEvent(new CustomEvent("scarlette:unidades-actualizadas"));
+      } catch (e) {
+        alert("Error al asignar unidad: " + (e.message || "desconocido"));
       }
     });
 
@@ -314,6 +398,42 @@ window.SCARLETTE_ADMIN = (() => {
       }
     });
 
+    // Nuevo Cliente (rol usuario)
+    const formCliente = contenedor.querySelector("#form-nuevo-cliente");
+    contenedor.querySelector("#btn-nuevo-cliente")?.addEventListener("click", () => {
+      formCliente.style.display = formCliente.style.display === "none" ? "block" : "none";
+    });
+    contenedor.querySelector("#btn-cancelar-cliente")?.addEventListener("click", () => {
+      formCliente.style.display = "none";
+    });
+    contenedor.querySelector("#btn-guardar-cliente")?.addEventListener("click", async () => {
+      const nombreUsuario = contenedor.querySelector("#new-c-usuario").value.trim();
+      const password = contenedor.querySelector("#new-c-password").value;
+      if (!nombreUsuario || nombreUsuario.length < 3 || /\s/.test(nombreUsuario)) {
+        alert("Ingresa un nombre de usuario válido (mínimo 3 caracteres y sin espacios)");
+        return;
+      }
+      if (!password || password.length < 6) {
+        alert("La contraseña debe tener al menos 6 caracteres");
+        return;
+      }
+      try {
+        await api.solicitar("/admin/clientes", {
+          method: "POST",
+          body: JSON.stringify({
+            nombre_usuario: nombreUsuario,
+            password: password
+          })
+        });
+        formCliente.style.display = "none";
+        contenedor.querySelector("#new-c-usuario").value = "";
+        contenedor.querySelector("#new-c-password").value = "";
+        await recargarDatos(contenedor);
+      } catch (e) {
+        alert("Error al registrar cliente: " + (e.message || "desconocido"));
+      }
+    });
+
     await recargarDatos(contenedor);
   }
 
@@ -324,6 +444,21 @@ window.SCARLETTE_ADMIN = (() => {
       contenedor.querySelector("#metric-unidades").textContent = metricas.unidades_totales;
       contenedor.querySelector("#metric-exhibicion").textContent = metricas.exhibicion;
       contenedor.querySelector("#metric-clientes").textContent = metricas.clientes;
+    }
+
+    // Clientes (cargar primero para alimentar también el selector de asignación)
+    const clientes = await cargarClientes();
+    clientesCache = Array.isArray(clientes) ? clientes : [];
+    const tbodyC = contenedor.querySelector("#tbody-clientes");
+    if (tbodyC) {
+      tbodyC.innerHTML = clientesCache.map(c => `
+        <tr>
+          <td><strong style="color:var(--pink-light)">#${c.id_usuario}</strong></td>
+          <td style="color:#ffffff; font-weight:700">${c.nombre_usuario}</td>
+          <td><span class="badge" style="background:#2a1a2b; border:1px solid #614765; color:var(--pink-light)">${c.rol}</span></td>
+          <td><span class="badge-scarlette-vendido">${c.unidades_asignadas} unidad(es)</span></td>
+        </tr>
+      `).join("");
     }
 
     // Unidades
@@ -357,23 +492,31 @@ window.SCARLETTE_ADMIN = (() => {
       }).join("");
 
       tbodyU.querySelectorAll(".btn-asignar").forEach(btn => {
-        btn.addEventListener("click", async () => {
-          const idV = btn.getAttribute("data-id");
-          const usuarioId = prompt("Ingresa el ID del cliente al que deseas asignar esta unidad (o déjalo vacío para devolver a stock):", "2");
-          if (usuarioId === null) return;
-          try {
-            await api.solicitar("/admin/asignaciones", {
-              method: "POST",
-              body: JSON.stringify({
-                id_vehiculo: parseInt(idV, 10),
-                id_usuario: usuarioId.trim() ? parseInt(usuarioId.trim(), 10) : null,
-                estado_comercial: usuarioId.trim() ? "vendido" : "disponible"
-              })
-            });
-            await recargarDatos(contenedor);
-          } catch (e) {
-            alert("Error al asignar unidad: " + (e.message || "desconocido"));
-          }
+        btn.addEventListener("click", () => {
+          const idV = parseInt(btn.getAttribute("data-id"), 10);
+          const unidad = unidades.find(x => Number(x.id_vehiculo) === idV);
+          const formNueva = contenedor.querySelector("#form-nueva-unidad");
+          const formAsignar = contenedor.querySelector("#form-asignar-unidad");
+          const titulo = contenedor.querySelector("#titulo-asignar-unidad");
+          const selCliente = contenedor.querySelector("#asignar-cliente-select");
+          const selEstado = contenedor.querySelector("#asignar-estado-select");
+          if (!formAsignar || !selCliente || !selEstado) return;
+
+          unidadAsignandoId = idV;
+          if (formNueva) formNueva.style.display = "none";
+          if (titulo) titulo.textContent = `Asignar Unidad #${idV} (${unidad?.nombre || "Terreneitor"})`;
+
+          const soloClientes = clientesCache.filter(c => c.rol === "usuario");
+          selCliente.innerHTML = [
+            `<option value="">Sin propietario (Stock / Exhibición)</option>`,
+            ...soloClientes.map(c =>
+              `<option value="${c.id_usuario}">#${c.id_usuario} — ${c.nombre_usuario} (${c.unidades_asignadas} u.)</option>`
+            )
+          ].join("");
+
+          selCliente.value = unidad?.id_propietario ? String(unidad.id_propietario) : "";
+          selEstado.value = unidad?.estado_comercial || (unidad?.id_propietario ? "vendido" : "disponible");
+          formAsignar.style.display = "block";
         });
       });
     }
@@ -391,20 +534,6 @@ window.SCARLETTE_ADMIN = (() => {
           </td>
           <td><span class="badge" style="background:#2a1a2b; border:1px solid #614765; color:#f6b5d8; font-size:9.5px">${m.microcontrolador}</span></td>
           <td class="d-none d-md-table-cell" style="color:#d5cbe0; font-size:12px">${m.descripcion || '-'}</td>
-        </tr>
-      `).join("");
-    }
-
-    // Clientes
-    const clientes = await cargarClientes();
-    const tbodyC = contenedor.querySelector("#tbody-clientes");
-    if (tbodyC) {
-      tbodyC.innerHTML = clientes.map(c => `
-        <tr>
-          <td><strong style="color:var(--pink-light)">#${c.id_usuario}</strong></td>
-          <td style="color:#ffffff; font-weight:700">${c.nombre_usuario}</td>
-          <td><span class="badge" style="background:#2a1a2b; border:1px solid #614765; color:var(--pink-light)">${c.rol}</span></td>
-          <td><span class="badge-scarlette-vendido">${c.unidades_asignadas} unidad(es)</span></td>
         </tr>
       `).join("");
     }
