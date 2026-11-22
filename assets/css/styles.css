@@ -1266,7 +1266,8 @@ select.form-select {
   box-sizing: border-box !important;
 }
 #modal-demos-overlay .text-muted,
-#panel-demos .text-muted {
+#panel-demos .text-muted,
+#subview-custom .text-muted {
   color: #c4b5cd !important;
 }
 #modal-demos-overlay > .glass-card {
