@@ -1566,7 +1566,7 @@ select.form-select {
 
   /* PESTAÑA MONITOREO (Móvil Vertical) */
   .panel-page.user-navigation #user-monitoring-panel {
-    gap: 4px !important;
+    gap: 3px !important;
     padding: 0 !important;
     background: transparent !important;
     border: none !important;
@@ -1574,35 +1574,36 @@ select.form-select {
   }
   .panel-page.user-navigation #user-monitoring-panel .last-movement,
   .panel-page.user-navigation #user-monitoring-panel .movement-history {
-    padding: 6px 8px !important;
-    border-radius: 10px !important;
+    padding: 4px 6px !important;
+    border-radius: 8px !important;
     margin-bottom: 0 !important;
   }
   .panel-page.user-navigation #user-monitoring-panel .last-movement-fields {
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-    gap: 4px !important;
-    margin: 2px 0 !important;
+    gap: 3px !important;
+    margin: 1px 0 !important;
   }
   .panel-page.user-navigation #user-monitoring-panel .last-movement-fields dt {
-    font-size: 8px !important;
-    margin-bottom: 2px !important;
+    font-size: 7.5px !important;
+    margin-bottom: 1px !important;
   }
   .panel-page.user-navigation #user-monitoring-panel .last-movement-fields dd {
-    font-size: 11px !important;
+    font-size: 10px !important;
+    line-height: 1.15 !important;
   }
   .panel-page.user-navigation #user-monitoring-panel .history-table-scroll {
-    max-height: 30vh !important;
-    margin-top: 4px !important;
+    max-height: 25vh !important;
+    margin-top: 2px !important;
   }
   .panel-page.user-navigation #user-monitoring-panel .history-table th,
   .panel-page.user-navigation #user-monitoring-panel .history-table td {
-    padding: 3px 5px !important;
-    font-size: 9.5px !important;
+    padding: 2px 4px !important;
+    font-size: 9px !important;
   }
   .panel-page.user-navigation .page-footer {
-    padding: 2px 0 !important;
-    font-size: 8.5px !important;
-    margin-top: 4px !important;
+    padding: 1px 0 !important;
+    font-size: 8px !important;
+    margin-top: 2px !important;
   }
 }
 
@@ -1818,7 +1819,7 @@ select.form-select {
   .panel-page.user-navigation .movement-grid {
     display: grid !important;
     grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-    grid-template-rows: repeat(2, 32px) !important;
+    grid-template-rows: repeat(2, 34px) !important;
     gap: 3px !important;
     margin-top: 2px !important;
   }
@@ -1827,16 +1828,21 @@ select.form-select {
     grid-row: auto !important;
     grid-area: auto !important;
     width: 100% !important;
-    min-height: 32px !important;
-    max-height: 32px !important;
-    font-size: 8.5px !important;
+    min-height: 34px !important;
+    max-height: 34px !important;
+    font-size: 8px !important;
     padding: 1px !important;
     border-radius: 5px !important;
-    line-height: 1.1 !important;
+    line-height: 1.05 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 1px !important;
   }
   .panel-page.user-navigation .movement .icon {
-    width: 13px !important;
-    height: 13px !important;
+    width: 11px !important;
+    height: 11px !important;
   }
   .panel-page.user-navigation .lights-estimation,
   .panel-page.user-navigation .lights-estimation-status,
