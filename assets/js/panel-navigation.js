@@ -150,8 +150,12 @@ document.addEventListener("scarlette:sesion-verificada", async evento => {
       if (switching || selectedIndex === index) return;
       switching = true;
       try {
-        if (cfg.id !== "control" && window.SCARLETTE_CONTROLS?.prepararOcultacion) {
-          await window.SCARLETTE_CONTROLS.prepararOcultacion();
+        if (tabConfigs[selectedIndex]?.id === "control" && window.SCARLETTE_CONTROLS?.prepararOcultacion) {
+          try {
+            await window.SCARLETTE_CONTROLS.prepararOcultacion();
+          } catch (e) {
+            console.warn("Aviso en prepararOcultacion:", e);
+          }
         }
 
         panels[selectedIndex].hidden = true;
