@@ -11,21 +11,23 @@ document.addEventListener("scarlette:sesion-verificada", evento => {
   card.setAttribute("aria-labelledby", "last-movement-title");
   const title = document.createElement("h2");
   title.id = "last-movement-title";
-  title.className = "card-heading";
+  title.className = "card-heading m-0 mb-2 pb-2";
+  title.style.fontSize = "16px";
   title.innerHTML = `
-    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-    <span>Último movimiento registrado</span>
+    <div class="d-flex justify-content-between align-items-center w-100">
+      <span class="d-flex align-items-center gap-2">
+        <svg class="icon" style="width:20px;height:20px;color:var(--pink-light)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        <span>Último movimiento</span>
+      </span>
+      <span id="last-movement-unit-label" class="badge-scarlette-usuario" style="font-size:11px">Unidad #${window.SCARLETTE_CONFIG?.VEHICLE_ID || 1}</span>
+    </div>
   `;
-  const unitBadge = document.createElement("p");
-  unitBadge.className = "small m-0 text-muted";
-  unitBadge.id = "last-movement-unit-label";
-  unitBadge.innerHTML = `Telemetría en vivo · Unidad conectada: <strong style="color:var(--pink-light)">#${window.SCARLETTE_CONFIG?.VEHICLE_ID || 1}</strong>`;
 
   const status = document.createElement("p");
-  status.className = "last-movement-status";
+  status.className = "last-movement-status small py-1 my-1";
   status.setAttribute("role", "status");
   const fields = document.createElement("dl");
-  fields.className = "last-movement-fields";
+  fields.className = "last-movement-fields my-2";
   const values = ["Comando", "Código", "Fecha y hora de actualización"].map(label => {
     const group = document.createElement("div");
     const term = document.createElement("dt");
@@ -36,20 +38,22 @@ document.addEventListener("scarlette:sesion-verificada", evento => {
     return value;
   });
   const note = document.createElement("p");
-  note.className = "last-movement-note text-muted small";
+  note.className = "last-movement-note text-muted small mt-auto pt-2";
+  note.style.fontSize = "11px";
   note.textContent = "Registro persistido en Amazon RDS MySQL; confirma recepción por la API";
   const retry = document.createElement("button");
   retry.type = "button";
-  retry.className = "outline-button-sm last-movement-retry mt-3";
+  retry.className = "outline-button-sm last-movement-retry mt-2";
+  retry.style.width = "auto";
   retry.textContent = "↻ Reintentar estado";
   retry.addEventListener("click", () => window.SCARLETTE_CONNECTIONS.solicitarActualizacion());
-  card.append(title, unitBadge, status, fields, note, retry);
+  card.append(title, status, fields, note, retry);
   panel.prepend(card);
 
   document.addEventListener("scarlette:panel-cambiado", ev => {
     const vId = window.SCARLETTE_CONFIG?.VEHICLE_ID || 1;
     const lbl = document.getElementById("last-movement-unit-label");
-    if (lbl) lbl.innerHTML = `Telemetría en vivo · Unidad conectada: <strong style="color:var(--pink-light)">#${vId}</strong>`;
+    if (lbl) lbl.textContent = `Unidad #${vId}`;
   });
 
   function render(snapshot) {

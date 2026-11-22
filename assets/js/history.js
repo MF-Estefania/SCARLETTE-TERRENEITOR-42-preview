@@ -11,21 +11,24 @@ document.addEventListener("scarlette:sesion-verificada", evento => {
   section.setAttribute("aria-labelledby", "movement-history-title");
   const heading = document.createElement("h2");
   heading.id = "movement-history-title";
-  heading.className = "card-heading";
+  heading.className = "card-heading m-0 mb-2 pb-2";
+  heading.style.fontSize = "16px";
   heading.innerHTML = `
-    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/></svg>
-    <span>Historial de los últimos 10 movimientos</span>
+    <div class="d-flex justify-content-between align-items-center w-100">
+      <span class="d-flex align-items-center gap-2">
+        <svg class="icon" style="width:20px;height:20px;color:var(--pink-light)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/></svg>
+        <span>Historial (10 movimientos)</span>
+      </span>
+      <span id="history-unit-label" class="badge-scarlette-vendido" style="font-size:11px">Unidad #${window.SCARLETTE_CONFIG?.VEHICLE_ID || 1}</span>
+    </div>
   `;
-  const unitLabel = document.createElement("p");
-  unitLabel.className = "small m-0 text-muted";
-  unitLabel.id = "history-unit-label";
-  unitLabel.innerHTML = `Historial del vehículo conectado: <strong style="color:var(--pink-light)">#${window.SCARLETTE_CONFIG?.VEHICLE_ID || 1}</strong>`;
 
   const note = document.createElement("p");
-  note.className = "history-note text-muted small mt-1";
-  note.textContent = "Últimos diez movimientos individuales registrados en AWS RDS MySQL. Orden cronológico descendente.";
+  note.className = "history-note text-muted small my-1";
+  note.style.fontSize = "11px";
+  note.textContent = "Últimos 10 movimientos registrados en AWS RDS MySQL en orden cronológico descendente.";
   const status = document.createElement("p");
-  status.className = "history-status";
+  status.className = "history-status small py-1 my-0";
   status.setAttribute("role", "status");
   status.setAttribute("aria-live", "polite");
   status.textContent = "El historial se consultará al abrir MONITOREO.";
@@ -55,7 +58,7 @@ document.addEventListener("scarlette:sesion-verificada", evento => {
   table.prepend(caption);
   const body = table.createTBody();
   scroll.append(table);
-  section.append(heading, unitLabel, note, status, retry, scroll);
+  section.append(heading, note, status, retry, scroll);
   panel.append(section);
 
   let visited = false;
@@ -135,7 +138,7 @@ document.addEventListener("scarlette:sesion-verificada", evento => {
   document.addEventListener("scarlette:panel-cambiado", event => {
     const vId = window.SCARLETTE_CONFIG?.VEHICLE_ID || 1;
     const lbl = document.getElementById("history-unit-label");
-    if (lbl) lbl.innerHTML = `Historial del vehículo conectado: <strong style="color:var(--pink-light)">#${vId}</strong>`;
+    if (lbl) lbl.textContent = `Unidad #${vId}`;
     if (event.detail?.panel === "monitoring" || event.detail?.vehiculoId) {
       visited = false;
       void load();

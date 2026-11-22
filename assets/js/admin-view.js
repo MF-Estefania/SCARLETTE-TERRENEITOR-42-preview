@@ -51,79 +51,46 @@ window.SCARLETTE_ADMIN = (() => {
   async function renderizarEn(contenedor) {
     contenedor.innerHTML = `
       <div class="admin-panel-content">
-        <!-- 1. Encabezado de métricas -->
-        <div class="glass-card mb-4 p-4">
-          <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2" style="border-color:#60405b !important">
-            <h2 class="card-heading m-0" style="border:none">
+        <!-- 1. Encabezado de métricas compacto -->
+        <div class="glass-card mb-3 p-3">
+          <div class="d-flex justify-content-between align-items-center mb-2 border-bottom pb-2" style="border-color:#60405b !important">
+            <h2 class="card-heading m-0" style="border:none; font-size:17px">
               <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
               Dashboard Comercial & Métricas Reales
             </h2>
-            <button id="btn-refrescar-admin" class="neon-button py-2 px-3" style="width:auto; font-size:14px">↻ Actualizar</button>
+            <button id="btn-refrescar-admin" class="neon-button py-1 px-3" style="width:auto; font-size:13px">↻ Actualizar</button>
           </div>
-          <div id="admin-metrics-row" class="row g-3">
+          <div id="admin-metrics-row" class="row g-2">
             <div class="col-6 col-md-3">
-              <div class="metric-card">
-                <span class="metric-label">Modelos Registrados</span>
-                <h3 id="metric-modelos" class="metric-value">-</h3>
+              <div class="metric-card" style="padding:10px 14px">
+                <span class="metric-label" style="font-size:10px; margin-bottom:4px">Modelos Registrados</span>
+                <h3 id="metric-modelos" class="metric-value" style="font-size:26px">-</h3>
               </div>
             </div>
             <div class="col-6 col-md-3">
-              <div class="metric-card">
-                <span class="metric-label">Unidades Físicas</span>
-                <h3 id="metric-unidades" class="metric-value">-</h3>
+              <div class="metric-card" style="padding:10px 14px">
+                <span class="metric-label" style="font-size:10px; margin-bottom:4px">Unidades Físicas</span>
+                <h3 id="metric-unidades" class="metric-value" style="font-size:26px">-</h3>
               </div>
             </div>
             <div class="col-6 col-md-3">
-              <div class="metric-card">
-                <span class="metric-label">En Exhibición</span>
-                <h3 id="metric-exhibicion" class="metric-value">-</h3>
+              <div class="metric-card" style="padding:10px 14px">
+                <span class="metric-label" style="font-size:10px; margin-bottom:4px">En Exhibición</span>
+                <h3 id="metric-exhibicion" class="metric-value" style="font-size:26px">-</h3>
               </div>
             </div>
             <div class="col-6 col-md-3">
-              <div class="metric-card">
-                <span class="metric-label">Clientes Compradores</span>
-                <h3 id="metric-clientes" class="metric-value">-</h3>
+              <div class="metric-card" style="padding:10px 14px">
+                <span class="metric-label" style="font-size:10px; margin-bottom:4px">Clientes Compradores</span>
+                <h3 id="metric-clientes" class="metric-value" style="font-size:26px">-</h3>
               </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 1.5 Telemetría de Infraestructura y Estado de la Flota -->
-        <div class="fleet-status-banner mb-4">
-          <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2 pb-2 border-bottom" style="border-color:#4d3b55 !important">
-            <h3 class="fs-6 m-0 text-white d-flex align-items-center gap-2">
-              <span class="status-dot" style="width:8px;height:8px;border-radius:50%;background:#39e6a3;box-shadow:0 0 8px #39e6a3;display:inline-block"></span>
-              Infraestructura Cloud AWS & Estado Operativo de la Flota
-            </h3>
-            <span class="badge-scarlette-vendido" style="font-size:11px">SISTEMA EN LÍNEA · RDS ACTIVA</span>
-          </div>
-          <div class="row g-3 text-muted small">
-            <div class="col-md-3">
-              <strong class="text-white d-block">Servidor IoT (AWS EC2)</strong>
-              <span>IP Pública: <code style="color:var(--pink-light)">100.59.62.212</code></span><br>
-              <span>Daemon: FastAPI · Puerto 8000</span>
-            </div>
-            <div class="col-md-3">
-              <strong class="text-white d-block">Base de Datos (Amazon RDS)</strong>
-              <span>Motor: MySQL 8.0 · 9 Tablas</span><br>
-              <span>Seguridad: Argon2id + SSL</span>
-            </div>
-            <div class="col-md-3">
-              <strong class="text-white d-block">Showroom / Exhibición</strong>
-              <span>Unidad Demo: #2 Terreneitor</span><br>
-              <span>Sesiones Invitado: 3 min máx</span>
-            </div>
-            <div class="col-md-3">
-              <strong class="text-white d-block">Protección BOLA / IDOR</strong>
-              <span>Aislamiento de Vehículos: Activo</span><br>
-              <span>Permisos: Estrictos por rol</span>
             </div>
           </div>
         </div>
 
         <!-- 2. Secciones con sub-pestañas estilizadas SCARLETTE -->
-        <div class="glass-card p-4">
-          <div class="scarlette-pills" id="admin-subtabs" role="tablist">
+        <div class="glass-card p-3">
+          <div class="scarlette-pills mb-3 pb-2" id="admin-subtabs" role="tablist">
             <button class="scarlette-pill active" data-target="tab-unidades" type="button">Inventario de Unidades</button>
             <button class="scarlette-pill" data-target="tab-modelos" type="button">Modelos Comerciales</button>
             <button class="scarlette-pill" data-target="tab-clientes" type="button">Clientes y Asignaciones</button>
@@ -133,13 +100,13 @@ window.SCARLETTE_ADMIN = (() => {
           <div class="admin-tab-panels">
             <!-- Pestaña 1: Inventario -->
             <div class="admin-subtab-pane" id="tab-unidades">
-              <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3 class="m-0 fs-5 text-white">Unidades Físicas Registradas</h3>
-                <button id="btn-nueva-unidad" class="neon-button py-2 px-3" style="width:auto; font-size:14px">+ Nueva Unidad</button>
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h3 class="m-0 fs-6 text-white">Unidades Físicas Registradas en Flota</h3>
+                <button id="btn-nueva-unidad" class="neon-button py-1 px-3" style="width:auto; font-size:13px">+ Nueva Unidad</button>
               </div>
 
               <!-- Formulario de alta rápida -->
-              <div id="form-nueva-unidad" class="glass-card p-3 mb-3" style="display:none; background:#1b1522">
+              <div id="form-nueva-unidad" class="glass-card p-3 mb-2" style="display:none; background:#1b1522">
                 <h4 class="fs-6 mb-2" style="color:var(--pink-light)">Registrar Nueva Unidad Física</h4>
                 <div class="row g-2">
                   <div class="col-md-3"><input id="new-u-nombre" class="form-control form-control-sm" placeholder="Nombre (ej. Terreneitor 3)"></div>
@@ -158,20 +125,21 @@ window.SCARLETTE_ADMIN = (() => {
                 </div>
               </div>
 
-              <div class="table-responsive">
-                <table class="table table-dark table-hover align-middle m-0" style="background:transparent">
+              <div class="table-responsive" style="max-height: 48vh; overflow-y: auto;">
+                <table class="table table-dark table-hover table-sm align-middle m-0" style="background:transparent; font-size:13px">
                   <thead>
-                    <tr style="border-bottom: 2px solid #8a3463">
-                      <th style="background:#ff349f18; color:var(--pink-light)">ID</th>
-                      <th style="background:#ff349f18; color:var(--pink-light)">Nombre</th>
-                      <th style="background:#ff349f18; color:var(--pink-light)">Modelo</th>
-                      <th style="background:#ff349f18; color:var(--pink-light)">Número de Serie</th>
-                      <th style="background:#ff349f18; color:var(--pink-light)">Estado Comercial</th>
-                      <th style="background:#ff349f18; color:var(--pink-light)">Propietario</th>
-                      <th style="background:#ff349f18; color:var(--pink-light)">Acción</th>
+                    <tr style="border-bottom: 2px solid #8a3463; position:sticky; top:0; background:#1f1522; z-index:2">
+                      <th style="color:var(--pink-light)">ID</th>
+                      <th style="color:var(--pink-light)">Unidad / Nombre</th>
+                      <th style="color:var(--pink-light)">Modelo</th>
+                      <th style="color:var(--pink-light)">Número de Serie</th>
+                      <th style="color:var(--pink-light)">Microcontrolador</th>
+                      <th style="color:var(--pink-light)">Estado Comercial</th>
+                      <th style="color:var(--pink-light)">Propietario Asignado</th>
+                      <th style="color:var(--pink-light)">Acción</th>
                     </tr>
                   </thead>
-                  <tbody id="tbody-unidades"><tr><td colspan="7" class="text-center p-3 text-muted">Cargando inventario...</td></tr></tbody>
+                  <tbody id="tbody-unidades"><tr><td colspan="8" class="text-center p-3 text-muted">Cargando inventario...</td></tr></tbody>
                 </table>
               </div>
             </div>
@@ -373,6 +341,7 @@ window.SCARLETTE_ADMIN = (() => {
             <td style="color:#ffffff; font-weight:700">${u.nombre}</td>
             <td><span class="badge" style="background:#2a1a2b; border:1px solid #614765; color:#f6b5d8">${u.modelo || 'TR-01'}</span></td>
             <td><span class="hud-sn">${u.numero_serie || 'S/N'}</span></td>
+            <td><span class="badge" style="background:#1f192b; border:1px solid #5a4163; color:#e0d2ea">${u.microcontrolador || 'ESP8266'}</span></td>
             <td><span class="${badgeClass}">${u.estado_comercial.toUpperCase()}</span></td>
             <td>${u.propietario ? `<span class="badge-scarlette-usuario">${u.propietario}</span>` : '<em style="color:#a899b5">Stock Empresa</em>'}</td>
             <td>

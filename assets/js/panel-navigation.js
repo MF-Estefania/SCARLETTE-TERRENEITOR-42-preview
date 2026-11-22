@@ -244,27 +244,18 @@ function configurarModoInvitado(shell) {
 
 function configurarControlesAvanzados(layout, shell) {
   const demoCard = layout.querySelector(".demo-card");
-  const demoColumn = layout.querySelector(".demo-column");
-  if (!demoCard || document.getElementById("custom-movement-section")) return;
+  if (!demoCard || demoCard.querySelector("#tab-toggle-demo")) return;
 
-  // 1. Botón para abrir el diseñador de DEMOs directamente desde CONTROL
-  const btnAbrirDemos = document.createElement("button");
-  btnAbrirDemos.id = "btn-abrir-editor-demos";
-  btnAbrirDemos.type = "button";
-  btnAbrirDemos.className = "outline-button-sm w-100 mt-3";
-  btnAbrirDemos.innerHTML = `<svg class="icon" style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> ⚙ Diseñar / Personalizar DEMOs`;
-  demoCard.appendChild(btnAbrirDemos);
-
-  // 2. Modal Flotante para el Editor de DEMOs
+  // 1. Modal Flotante para el Editor de DEMOs
   let modalDemos = document.getElementById("modal-demos-overlay");
   if (!modalDemos) {
     modalDemos = document.createElement("div");
     modalDemos.id = "modal-demos-overlay";
     modalDemos.style.cssText = "display:none; position:fixed; inset:0; z-index:99999; background:rgba(0,0,0,0.85); backdrop-filter:blur(6px); padding:20px; overflow-y:auto;";
     modalDemos.innerHTML = `
-      <div class="glass-card" style="max-width:1100px; margin:20px auto; padding:24px; border:2px solid var(--pink); border-radius:24px; background:#120e17; box-shadow:0 0 40px rgba(242,11,131,0.4);">
+      <div class="glass-card" style="max-width:1100px; margin:20px auto; padding:20px; border:2px solid var(--pink); border-radius:24px; background:#120e17; box-shadow:0 0 40px rgba(242,11,131,0.4);">
         <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom" style="border-color:#4d3b55 !important">
-          <h2 class="card-heading m-0" style="border:none">
+          <h2 class="card-heading m-0" style="border:none; font-size:18px">
             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="m7 3 14 9-14 9Z"/></svg>
             Diseñador Interactivo de Secuencias DEMO
           </h2>
@@ -281,6 +272,46 @@ function configurarControlesAvanzados(layout, shell) {
     });
   }
 
+  // 2. Modificar el interior de demoCard para integrar subpestañas sin aumentar altura
+  const heading = demoCard.querySelector(".card-heading");
+  if (heading) {
+    heading.innerHTML = `
+      <div class="d-flex justify-content-between align-items-center w-100">
+        <span class="d-flex align-items-center gap-2" style="font-size:16px">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="m7 3 14 9-14 9Z"/></svg>
+          DEMO & Rutinas
+        </span>
+      </div>
+    `;
+  }
+
+  // Sub-tabs switcher en la tarjeta
+  const switcher = document.createElement("div");
+  switcher.className = "scarlette-pills my-2 pb-1";
+  switcher.style.cssText = "border:none; gap:6px; margin:0;";
+  switcher.innerHTML = `
+    <button type="button" id="tab-toggle-demo" class="scarlette-pill active" style="padding:2px 10px; font-size:11px">Secuencia DEMO</button>
+    <button type="button" id="tab-toggle-custom" class="scarlette-pill" style="padding:2px 10px; font-size:11px">Personalizado</button>
+  `;
+
+  // Contenedor DEMO existente
+  const subviewDemo = document.createElement("div");
+  subviewDemo.id = "subview-demo";
+  subviewDemo.style.display = "flex";
+  subviewDemo.style.flexDirection = "column";
+  subviewDemo.style.height = "100%";
+
+  // Mover elementos de DEMO al contenedor
+  const elementosDemo = Array.from(demoCard.children).filter(el => el !== heading);
+  elementosDemo.forEach(el => subviewDemo.appendChild(el));
+
+  // Botón para abrir el diseñador de DEMOs dentro de subviewDemo
+  const btnAbrirDemos = document.createElement("button");
+  btnAbrirDemos.id = "btn-abrir-editor-demos";
+  btnAbrirDemos.type = "button";
+  btnAbrirDemos.className = "outline-button-sm w-100 mt-2 mb-2";
+  btnAbrirDemos.style.fontSize = "11px";
+  btnAbrirDemos.innerHTML = `⚙ Diseñar / Editar DEMOs`;
   btnAbrirDemos.addEventListener("click", async () => {
     modalDemos.style.display = "block";
     const vId = window.SCARLETTE_CONFIG?.VEHICLE_ID || 1;
@@ -290,96 +321,110 @@ function configurarControlesAvanzados(layout, shell) {
     }
   });
 
-  // 3. Tarjeta de Movimiento Personalizado (Ángulo / Duración)
-  const customCard = document.createElement("div");
-  customCard.id = "custom-movement-section";
-  customCard.className = "glass-card custom-movement-card";
-  customCard.innerHTML = `
-    <h2 class="card-heading" style="font-size:17px; margin-bottom:12px">
-      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/><circle cx="12" cy="12" r="7"/></svg>
-      Movimiento Personalizado
-    </h2>
-    
-    <div class="mb-2">
-      <label class="small text-muted mb-1 d-block">Movimiento:</label>
-      <select id="custom-mov-comando" class="form-select form-select-sm">
-        <option value="1">Avanzar (Recto)</option>
-        <option value="2">Retroceder (Recto)</option>
-        <option value="12">Girar a la Izquierda</option>
-        <option value="13">Girar a la Derecha</option>
-        <option value="6">Desplazar a la Izquierda</option>
-        <option value="8">Desplazar a la Derecha</option>
-        <option value="3">Avanzar Diag. Izquierda</option>
-        <option value="5">Avanzar Diag. Derecha</option>
-        <option value="11">Giro 360° Continuo</option>
-        <option value="7">Enderezar / Jorobar Postura</option>
-      </select>
-    </div>
+  const outlineBtn = subviewDemo.querySelector(".outline-button");
+  if (outlineBtn) {
+    outlineBtn.after(btnAbrirDemos);
+  } else {
+    subviewDemo.appendChild(btnAbrirDemos);
+  }
 
-    <div class="mb-2">
-      <div class="d-flex justify-content-between align-items-center mb-1">
-        <label class="small text-muted m-0">Modo:</label>
-        <div class="d-flex gap-1">
-          <button type="button" id="btn-modo-tiempo" class="chip-btn active">Por Segundos</button>
-          <button type="button" id="btn-modo-grados" class="chip-btn">Por Grados</button>
-        </div>
-      </div>
+  // Contenedor Movimiento Personalizado
+  const subviewCustom = document.createElement("div");
+  subviewCustom.id = "subview-custom";
+  subviewCustom.style.display = "none";
+  subviewCustom.style.flexDirection = "column";
+  subviewCustom.innerHTML = `
+    <label class="small text-muted mb-1 d-block" style="font-size:11px">Movimiento:</label>
+    <select id="custom-mov-comando" class="form-select form-select-sm mb-2" style="font-size:12px; padding:6px 10px">
+      <option value="1">Avanzar (Recto)</option>
+      <option value="2">Retroceder (Recto)</option>
+      <option value="12">Girar a la Izquierda</option>
+      <option value="13">Girar a la Derecha</option>
+      <option value="6">Desplazar a la Izquierda</option>
+      <option value="8">Desplazar a la Derecha</option>
+      <option value="3">Diagonal Izquierda</option>
+      <option value="5">Diagonal Derecha</option>
+      <option value="11">Giro 360° Continuo</option>
+      <option value="7">Enderezar / Jorobar Postura</option>
+    </select>
 
-      <!-- Ajuste por Segundos -->
-      <div id="seccion-tiempo">
-        <div class="chip-grid">
-          <button type="button" class="chip-btn chip-tiempo" data-segundos="0.5">0.5s</button>
-          <button type="button" class="chip-btn chip-tiempo" data-segundos="1.0">1.0s</button>
-          <button type="button" class="chip-btn chip-tiempo active" data-segundos="2.0">2.0s</button>
-          <button type="button" class="chip-btn chip-tiempo" data-segundos="3.0">3.0s</button>
-          <button type="button" class="chip-btn chip-tiempo" data-segundos="5.0">5.0s</button>
-        </div>
-        <div class="d-flex align-items-center gap-2 mt-2">
-          <input type="number" id="input-tiempo-seg" class="form-control form-control-sm text-center" min="0.2" max="10.0" step="0.1" value="2.0" style="width:90px">
-          <span class="small text-muted">segundos de duración</span>
-        </div>
-      </div>
-
-      <!-- Ajuste por Grados -->
-      <div id="seccion-grados" style="display:none">
-        <div class="chip-grid">
-          <button type="button" class="chip-btn chip-grados" data-grados="45">45°</button>
-          <button type="button" class="chip-btn chip-grados active" data-grados="90">90°</button>
-          <button type="button" class="chip-btn chip-grados" data-grados="180">180°</button>
-          <button type="button" class="chip-btn chip-grados" data-grados="360">360°</button>
-        </div>
-        <div class="d-flex align-items-center gap-2 mt-2">
-          <input type="number" id="input-grados" class="form-control form-control-sm text-center" min="15" max="720" step="15" value="90" style="width:90px">
-          <span class="small text-muted">grados (≈ <span id="lbl-ms-estimado" style="color:var(--pink-light)">800</span> ms)</span>
-        </div>
+    <div class="d-flex justify-content-between align-items-center mb-1">
+      <label class="small text-muted m-0" style="font-size:11px">Modo:</label>
+      <div class="d-flex gap-1">
+        <button type="button" id="btn-modo-tiempo" class="chip-btn active" style="padding:2px 8px; font-size:10px">Segundos</button>
+        <button type="button" id="btn-modo-grados" class="chip-btn" style="padding:2px 8px; font-size:10px">Grados</button>
       </div>
     </div>
 
-    <div class="execution-progress mb-2" id="progreso-ejecucion" style="display:none">
+    <!-- Ajuste por Segundos -->
+    <div id="seccion-tiempo">
+      <div class="chip-grid my-1" style="gap:4px">
+        <button type="button" class="chip-btn chip-tiempo" data-segundos="0.5" style="padding:2px 6px; font-size:10px">0.5s</button>
+        <button type="button" class="chip-btn chip-tiempo" data-segundos="1.0" style="padding:2px 6px; font-size:10px">1.0s</button>
+        <button type="button" class="chip-btn chip-tiempo active" data-segundos="2.0" style="padding:2px 6px; font-size:10px">2.0s</button>
+        <button type="button" class="chip-btn chip-tiempo" data-segundos="3.0" style="padding:2px 6px; font-size:10px">3.0s</button>
+        <button type="button" class="chip-btn chip-tiempo" data-segundos="5.0" style="padding:2px 6px; font-size:10px">5.0s</button>
+      </div>
+      <div class="d-flex align-items-center gap-2 mt-1">
+        <input type="number" id="input-tiempo-seg" class="form-control form-control-sm text-center" min="0.2" max="10.0" step="0.1" value="2.0" style="width:70px; padding:4px; font-size:12px">
+        <span class="small text-muted" style="font-size:11px">segundos</span>
+      </div>
+    </div>
+
+    <!-- Ajuste por Grados -->
+    <div id="seccion-grados" style="display:none">
+      <div class="chip-grid my-1" style="gap:4px">
+        <button type="button" class="chip-btn chip-grados" data-grados="45" style="padding:2px 6px; font-size:10px">45°</button>
+        <button type="button" class="chip-btn chip-grados active" data-grados="90" style="padding:2px 6px; font-size:10px">90°</button>
+        <button type="button" class="chip-btn chip-grados" data-grados="180" style="padding:2px 6px; font-size:10px">180°</button>
+        <button type="button" class="chip-btn chip-grados" data-grados="360" style="padding:2px 6px; font-size:10px">360°</button>
+      </div>
+      <div class="d-flex align-items-center gap-2 mt-1">
+        <input type="number" id="input-grados" class="form-control form-control-sm text-center" min="15" max="720" step="15" value="90" style="width:70px; padding:4px; font-size:12px">
+        <span class="small text-muted" style="font-size:11px">grados (≈ <span id="lbl-ms-estimado" style="color:var(--pink-light)">800</span> ms)</span>
+      </div>
+    </div>
+
+    <div class="execution-progress my-1" id="progreso-ejecucion" style="display:none">
       <div class="execution-progress-bar" id="barra-progreso"></div>
     </div>
 
-    <button id="btn-ejecutar-custom" class="neon-button py-2 w-100 mt-2" style="font-size:15px">
+    <button id="btn-ejecutar-custom" class="neon-button py-2 w-100 mt-2" style="font-size:14px">
       ▶ Ejecutar Movimiento
     </button>
-    <div id="status-custom-mov" class="small text-center mt-2" style="color:var(--muted); min-height:18px"></div>
+    <div id="status-custom-mov" class="small text-center mt-1" style="color:var(--muted); min-height:16px; font-size:11px"></div>
   `;
 
-  if (demoColumn) {
-    demoColumn.appendChild(customCard);
-  } else {
-    demoCard.after(customCard);
-  }
+  // Insertar en demoCard
+  demoCard.appendChild(switcher);
+  demoCard.appendChild(subviewDemo);
+  demoCard.appendChild(subviewCustom);
+
+  // Manejador del toggle de subpestañas
+  const tabDemo = switcher.querySelector("#tab-toggle-demo");
+  const tabCustom = switcher.querySelector("#tab-toggle-custom");
+  tabDemo.addEventListener("click", () => {
+    tabDemo.classList.add("active");
+    tabCustom.classList.remove("active");
+    subviewDemo.style.display = "flex";
+    subviewCustom.style.display = "none";
+  });
+  tabCustom.addEventListener("click", () => {
+    tabCustom.classList.add("active");
+    tabDemo.classList.remove("active");
+    subviewDemo.style.display = "none";
+    subviewCustom.style.display = "flex";
+  });
 
   // Lógica interactiva de Movimiento Personalizado
   let modoActual = "tiempo";
-  const btnTiempo = customCard.querySelector("#btn-modo-tiempo");
-  const btnGrados = customCard.querySelector("#btn-modo-grados");
-  const secTiempo = customCard.querySelector("#seccion-tiempo");
-  const secGrados = customCard.querySelector("#seccion-grados");
-  const inputTiempo = customCard.querySelector("#input-tiempo-seg");
-  const inputGrados = customCard.querySelector("#input-grados");
-  const lblMs = customCard.querySelector("#lbl-ms-estimado");
+  const btnTiempo = subviewCustom.querySelector("#btn-modo-tiempo");
+  const btnGrados = subviewCustom.querySelector("#btn-modo-grados");
+  const secTiempo = subviewCustom.querySelector("#seccion-tiempo");
+  const secGrados = subviewCustom.querySelector("#seccion-grados");
+  const inputTiempo = subviewCustom.querySelector("#input-tiempo-seg");
+  const inputGrados = subviewCustom.querySelector("#input-grados");
+  const lblMs = subviewCustom.querySelector("#lbl-ms-estimado");
 
   btnTiempo.addEventListener("click", () => {
     modoActual = "tiempo";
@@ -397,17 +442,17 @@ function configurarControlesAvanzados(layout, shell) {
     secTiempo.style.display = "none";
   });
 
-  customCard.querySelectorAll(".chip-tiempo").forEach(chip => {
+  subviewCustom.querySelectorAll(".chip-tiempo").forEach(chip => {
     chip.addEventListener("click", () => {
-      customCard.querySelectorAll(".chip-tiempo").forEach(c => c.classList.remove("active"));
+      subviewCustom.querySelectorAll(".chip-tiempo").forEach(c => c.classList.remove("active"));
       chip.classList.add("active");
       inputTiempo.value = chip.getAttribute("data-segundos");
     });
   });
 
-  customCard.querySelectorAll(".chip-grados").forEach(chip => {
+  subviewCustom.querySelectorAll(".chip-grados").forEach(chip => {
     chip.addEventListener("click", () => {
-      customCard.querySelectorAll(".chip-grados").forEach(c => c.classList.remove("active"));
+      subviewCustom.querySelectorAll(".chip-grados").forEach(c => c.classList.remove("active"));
       chip.classList.add("active");
       const g = parseInt(chip.getAttribute("data-grados"), 10);
       inputGrados.value = g;
@@ -421,15 +466,15 @@ function configurarControlesAvanzados(layout, shell) {
   });
 
   let ejecutandoCustom = false;
-  const btnEjecutar = customCard.querySelector("#btn-ejecutar-custom");
-  const statusLbl = customCard.querySelector("#status-custom-mov");
-  const progBox = customCard.querySelector("#progreso-ejecucion");
-  const progBar = customCard.querySelector("#barra-progreso");
+  const btnEjecutar = subviewCustom.querySelector("#btn-ejecutar-custom");
+  const statusLbl = subviewCustom.querySelector("#status-custom-mov");
+  const progBox = subviewCustom.querySelector("#progreso-ejecucion");
+  const progBar = subviewCustom.querySelector("#barra-progreso");
 
   btnEjecutar.addEventListener("click", async () => {
     if (ejecutandoCustom) return;
     const vId = window.SCARLETTE_CONFIG?.VEHICLE_ID || 1;
-    const idComando = parseInt(customCard.querySelector("#custom-mov-comando").value, 10);
+    const idComando = parseInt(subviewCustom.querySelector("#custom-mov-comando").value, 10);
 
     let duracionMs = 2000;
     if (modoActual === "tiempo") {
@@ -456,7 +501,7 @@ function configurarControlesAvanzados(layout, shell) {
         body: JSON.stringify({ id_comando: idComando, origen: "scarlette_personalizado" })
       });
 
-      statusLbl.textContent = `Movimiento activo. Parada automática en ${(duracionMs / 1000).toFixed(1)}s.`;
+      statusLbl.textContent = `Movimiento activo. Parada en ${(duracionMs / 1000).toFixed(1)}s.`;
 
       const inicio = Date.now();
       const animInterval = setInterval(() => {
@@ -471,7 +516,7 @@ function configurarControlesAvanzados(layout, shell) {
       // Enviar STOP automático
       await window.SCARLETTE_API.solicitar(`/vehiculos/${vId}/detener`, { method: "POST" });
       statusLbl.style.color = "#39e6a3";
-      statusLbl.textContent = `✓ Movimiento completado y detenido con seguridad.`;
+      statusLbl.textContent = `✓ Movimiento completado y detenido.`;
     } catch (err) {
       statusLbl.style.color = "#ff6b6b";
       statusLbl.textContent = `Error: ${err.message || "desconocido"}`;
@@ -483,7 +528,7 @@ function configurarControlesAvanzados(layout, shell) {
       setTimeout(() => {
         progBox.style.display = "none";
         progBar.style.width = "0%";
-      }, 3000);
+      }, 2500);
     }
   });
 }
