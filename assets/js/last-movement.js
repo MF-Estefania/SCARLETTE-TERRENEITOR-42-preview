@@ -12,7 +12,15 @@ document.addEventListener("scarlette:sesion-verificada", evento => {
   const title = document.createElement("h2");
   title.id = "last-movement-title";
   title.className = "card-heading";
-  title.textContent = "Último movimiento registrado";
+  title.innerHTML = `
+    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+    <span>Último movimiento registrado</span>
+  `;
+  const unitBadge = document.createElement("p");
+  unitBadge.className = "small m-0 text-muted";
+  unitBadge.id = "last-movement-unit-label";
+  unitBadge.innerHTML = `Telemetría en vivo · Unidad conectada: <strong style="color:var(--pink-light)">#${window.SCARLETTE_CONFIG?.VEHICLE_ID || 1}</strong>`;
+
   const status = document.createElement("p");
   status.className = "last-movement-status";
   status.setAttribute("role", "status");
@@ -28,21 +36,21 @@ document.addEventListener("scarlette:sesion-verificada", evento => {
     return value;
   });
   const note = document.createElement("p");
-  note.className = "last-movement-note";
-  note.textContent = "Registro de la API; no confirma ejecución física";
+  note.className = "last-movement-note text-muted small";
+  note.textContent = "Registro persistido en Amazon RDS MySQL; confirma recepción por la API";
   const retry = document.createElement("button");
   retry.type = "button";
-  retry.className = "outline-button last-movement-retry";
-  retry.textContent = "Reintentar estado";
+  retry.className = "outline-button-sm last-movement-retry mt-3";
+  retry.textContent = "↻ Reintentar estado";
   retry.addEventListener("click", () => window.SCARLETTE_CONNECTIONS.solicitarActualizacion());
-  card.append(title, status, fields, note, retry);
-  const summaryRegion = document.createElement("div");
-  summaryRegion.className = "monitoring-summary-region";
-  summaryRegion.tabIndex = 0;
-  summaryRegion.setAttribute("role", "region");
-  summaryRegion.setAttribute("aria-label", "Último movimiento y actividad en tiempo real");
-  summaryRegion.append(card, panel.querySelector(".events-disclosure"));
-  panel.prepend(summaryRegion);
+  card.append(title, unitBadge, status, fields, note, retry);
+  panel.prepend(card);
+
+  document.addEventListener("scarlette:panel-cambiado", ev => {
+    const vId = window.SCARLETTE_CONFIG?.VEHICLE_ID || 1;
+    const lbl = document.getElementById("last-movement-unit-label");
+    if (lbl) lbl.innerHTML = `Telemetría en vivo · Unidad conectada: <strong style="color:var(--pink-light)">#${vId}</strong>`;
+  });
 
   function render(snapshot) {
     const data = snapshot.datos;

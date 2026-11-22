@@ -94,17 +94,14 @@ document.addEventListener("scarlette:sesion-verificada", async evento => {
   const controlPanel = panels.find(p => p.id === "panel-control");
   if (controlPanel && layout) {
     controlPanel.append(layout, stopBand);
+    configurarControlesAvanzados(layout, shell);
   }
 
-  // Monitoring panel
+  // Monitoring panel: ocultar la bandeja de eventos WebSocket repetitiva para dar espacio completo a las 10 filas
   const monitorPanel = panels.find(p => p.id === "user-monitoring-panel");
-  if (monitorPanel && events) {
-    const heading = document.createElement("h2");
-    heading.className = "card-heading";
-    heading.textContent = "Actividad en tiempo real (WebSocket)";
-    events.querySelector(".events-toggle")?.replaceChildren(heading);
-    monitorPanel.append(events);
-    events.open = true; // Abierto para no dejar espacio vacío
+  if (events) {
+    events.hidden = true;
+    events.style.display = "none";
   }
 
   // Selector de HUD
@@ -242,5 +239,251 @@ function configurarModoInvitado(shell) {
     clearInterval(intervalo);
     await window.SCARLETTE_API.solicitar(`/vehiculos/${window.SCARLETTE_CONFIG.VEHICLE_ID}/detener`, { method: "POST" });
     window.location.replace("index.html");
+  });
+}
+
+function configurarControlesAvanzados(layout, shell) {
+  const demoCard = layout.querySelector(".demo-card");
+  const demoColumn = layout.querySelector(".demo-column");
+  if (!demoCard || document.getElementById("custom-movement-section")) return;
+
+  // 1. Botón para abrir el diseñador de DEMOs directamente desde CONTROL
+  const btnAbrirDemos = document.createElement("button");
+  btnAbrirDemos.id = "btn-abrir-editor-demos";
+  btnAbrirDemos.type = "button";
+  btnAbrirDemos.className = "outline-button-sm w-100 mt-3";
+  btnAbrirDemos.innerHTML = `<svg class="icon" style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> ⚙ Diseñar / Personalizar DEMOs`;
+  demoCard.appendChild(btnAbrirDemos);
+
+  // 2. Modal Flotante para el Editor de DEMOs
+  let modalDemos = document.getElementById("modal-demos-overlay");
+  if (!modalDemos) {
+    modalDemos = document.createElement("div");
+    modalDemos.id = "modal-demos-overlay";
+    modalDemos.style.cssText = "display:none; position:fixed; inset:0; z-index:99999; background:rgba(0,0,0,0.85); backdrop-filter:blur(6px); padding:20px; overflow-y:auto;";
+    modalDemos.innerHTML = `
+      <div class="glass-card" style="max-width:1100px; margin:20px auto; padding:24px; border:2px solid var(--pink); border-radius:24px; background:#120e17; box-shadow:0 0 40px rgba(242,11,131,0.4);">
+        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom" style="border-color:#4d3b55 !important">
+          <h2 class="card-heading m-0" style="border:none">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="m7 3 14 9-14 9Z"/></svg>
+            Diseñador Interactivo de Secuencias DEMO
+          </h2>
+          <button id="btn-cerrar-modal-demos" class="outline-button-sm">✕ Cerrar Editor</button>
+        </div>
+        <div id="modal-demos-mount-point"></div>
+      </div>
+    `;
+    document.body.appendChild(modalDemos);
+
+    modalDemos.querySelector("#btn-cerrar-modal-demos").addEventListener("click", () => {
+      modalDemos.style.display = "none";
+      window.SCARLETTE_CONTROLS?.cargarDemos?.();
+    });
+  }
+
+  btnAbrirDemos.addEventListener("click", async () => {
+    modalDemos.style.display = "block";
+    const vId = window.SCARLETTE_CONFIG?.VEHICLE_ID || 1;
+    const mount = modalDemos.querySelector("#modal-demos-mount-point");
+    if (window.SCARLETTE_DEMOS_EDITOR) {
+      await window.SCARLETTE_DEMOS_EDITOR.renderizarEn(mount, vId);
+    }
+  });
+
+  // 3. Tarjeta de Movimiento Personalizado (Ángulo / Duración)
+  const customCard = document.createElement("div");
+  customCard.id = "custom-movement-section";
+  customCard.className = "glass-card custom-movement-card";
+  customCard.innerHTML = `
+    <h2 class="card-heading" style="font-size:17px; margin-bottom:12px">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/><circle cx="12" cy="12" r="7"/></svg>
+      Movimiento Personalizado
+    </h2>
+    
+    <div class="mb-2">
+      <label class="small text-muted mb-1 d-block">Movimiento:</label>
+      <select id="custom-mov-comando" class="form-select form-select-sm">
+        <option value="1">Avanzar (Recto)</option>
+        <option value="2">Retroceder (Recto)</option>
+        <option value="12">Girar a la Izquierda</option>
+        <option value="13">Girar a la Derecha</option>
+        <option value="6">Desplazar a la Izquierda</option>
+        <option value="8">Desplazar a la Derecha</option>
+        <option value="3">Avanzar Diag. Izquierda</option>
+        <option value="5">Avanzar Diag. Derecha</option>
+        <option value="11">Giro 360° Continuo</option>
+        <option value="7">Enderezar / Jorobar Postura</option>
+      </select>
+    </div>
+
+    <div class="mb-2">
+      <div class="d-flex justify-content-between align-items-center mb-1">
+        <label class="small text-muted m-0">Modo:</label>
+        <div class="d-flex gap-1">
+          <button type="button" id="btn-modo-tiempo" class="chip-btn active">Por Segundos</button>
+          <button type="button" id="btn-modo-grados" class="chip-btn">Por Grados</button>
+        </div>
+      </div>
+
+      <!-- Ajuste por Segundos -->
+      <div id="seccion-tiempo">
+        <div class="chip-grid">
+          <button type="button" class="chip-btn chip-tiempo" data-segundos="0.5">0.5s</button>
+          <button type="button" class="chip-btn chip-tiempo" data-segundos="1.0">1.0s</button>
+          <button type="button" class="chip-btn chip-tiempo active" data-segundos="2.0">2.0s</button>
+          <button type="button" class="chip-btn chip-tiempo" data-segundos="3.0">3.0s</button>
+          <button type="button" class="chip-btn chip-tiempo" data-segundos="5.0">5.0s</button>
+        </div>
+        <div class="d-flex align-items-center gap-2 mt-2">
+          <input type="number" id="input-tiempo-seg" class="form-control form-control-sm text-center" min="0.2" max="10.0" step="0.1" value="2.0" style="width:90px">
+          <span class="small text-muted">segundos de duración</span>
+        </div>
+      </div>
+
+      <!-- Ajuste por Grados -->
+      <div id="seccion-grados" style="display:none">
+        <div class="chip-grid">
+          <button type="button" class="chip-btn chip-grados" data-grados="45">45°</button>
+          <button type="button" class="chip-btn chip-grados active" data-grados="90">90°</button>
+          <button type="button" class="chip-btn chip-grados" data-grados="180">180°</button>
+          <button type="button" class="chip-btn chip-grados" data-grados="360">360°</button>
+        </div>
+        <div class="d-flex align-items-center gap-2 mt-2">
+          <input type="number" id="input-grados" class="form-control form-control-sm text-center" min="15" max="720" step="15" value="90" style="width:90px">
+          <span class="small text-muted">grados (≈ <span id="lbl-ms-estimado" style="color:var(--pink-light)">800</span> ms)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="execution-progress mb-2" id="progreso-ejecucion" style="display:none">
+      <div class="execution-progress-bar" id="barra-progreso"></div>
+    </div>
+
+    <button id="btn-ejecutar-custom" class="neon-button py-2 w-100 mt-2" style="font-size:15px">
+      ▶ Ejecutar Movimiento
+    </button>
+    <div id="status-custom-mov" class="small text-center mt-2" style="color:var(--muted); min-height:18px"></div>
+  `;
+
+  if (demoColumn) {
+    demoColumn.appendChild(customCard);
+  } else {
+    demoCard.after(customCard);
+  }
+
+  // Lógica interactiva de Movimiento Personalizado
+  let modoActual = "tiempo";
+  const btnTiempo = customCard.querySelector("#btn-modo-tiempo");
+  const btnGrados = customCard.querySelector("#btn-modo-grados");
+  const secTiempo = customCard.querySelector("#seccion-tiempo");
+  const secGrados = customCard.querySelector("#seccion-grados");
+  const inputTiempo = customCard.querySelector("#input-tiempo-seg");
+  const inputGrados = customCard.querySelector("#input-grados");
+  const lblMs = customCard.querySelector("#lbl-ms-estimado");
+
+  btnTiempo.addEventListener("click", () => {
+    modoActual = "tiempo";
+    btnTiempo.classList.add("active");
+    btnGrados.classList.remove("active");
+    secTiempo.style.display = "block";
+    secGrados.style.display = "none";
+  });
+
+  btnGrados.addEventListener("click", () => {
+    modoActual = "grados";
+    btnGrados.classList.add("active");
+    btnTiempo.classList.remove("active");
+    secGrados.style.display = "block";
+    secTiempo.style.display = "none";
+  });
+
+  customCard.querySelectorAll(".chip-tiempo").forEach(chip => {
+    chip.addEventListener("click", () => {
+      customCard.querySelectorAll(".chip-tiempo").forEach(c => c.classList.remove("active"));
+      chip.classList.add("active");
+      inputTiempo.value = chip.getAttribute("data-segundos");
+    });
+  });
+
+  customCard.querySelectorAll(".chip-grados").forEach(chip => {
+    chip.addEventListener("click", () => {
+      customCard.querySelectorAll(".chip-grados").forEach(c => c.classList.remove("active"));
+      chip.classList.add("active");
+      const g = parseInt(chip.getAttribute("data-grados"), 10);
+      inputGrados.value = g;
+      lblMs.textContent = Math.round((g / 360) * 3200);
+    });
+  });
+
+  inputGrados.addEventListener("input", () => {
+    const g = parseInt(inputGrados.value, 10) || 0;
+    lblMs.textContent = Math.round((g / 360) * 3200);
+  });
+
+  let ejecutandoCustom = false;
+  const btnEjecutar = customCard.querySelector("#btn-ejecutar-custom");
+  const statusLbl = customCard.querySelector("#status-custom-mov");
+  const progBox = customCard.querySelector("#progreso-ejecucion");
+  const progBar = customCard.querySelector("#barra-progreso");
+
+  btnEjecutar.addEventListener("click", async () => {
+    if (ejecutandoCustom) return;
+    const vId = window.SCARLETTE_CONFIG?.VEHICLE_ID || 1;
+    const idComando = parseInt(customCard.querySelector("#custom-mov-comando").value, 10);
+
+    let duracionMs = 2000;
+    if (modoActual === "tiempo") {
+      duracionMs = Math.round(parseFloat(inputTiempo.value || 2.0) * 1000);
+    } else {
+      const g = parseInt(inputGrados.value || 90, 10);
+      duracionMs = Math.round((g / 360) * 3200);
+    }
+
+    if (duracionMs < 200) duracionMs = 200;
+    if (duracionMs > 12000) duracionMs = 12000;
+
+    ejecutandoCustom = true;
+    btnEjecutar.disabled = true;
+    btnEjecutar.textContent = `⏳ Ejecutando (${(duracionMs / 1000).toFixed(1)}s)...`;
+    statusLbl.style.color = "var(--pink-light)";
+    statusLbl.textContent = `Enviando comando #${idComando} a unidad #${vId}...`;
+    progBox.style.display = "block";
+    progBar.style.width = "0%";
+
+    try {
+      await window.SCARLETTE_API.solicitar(`/vehiculos/${vId}/movimientos`, {
+        method: "POST",
+        body: JSON.stringify({ id_comando: idComando, origen: "scarlette_personalizado" })
+      });
+
+      statusLbl.textContent = `Movimiento activo. Parada automática en ${(duracionMs / 1000).toFixed(1)}s.`;
+
+      const inicio = Date.now();
+      const animInterval = setInterval(() => {
+        const transcurrido = Date.now() - inicio;
+        const pct = Math.min(100, (transcurrido / duracionMs) * 100);
+        progBar.style.width = `${pct}%`;
+        if (transcurrido >= duracionMs) clearInterval(animInterval);
+      }, 50);
+
+      await new Promise(res => setTimeout(res, duracionMs));
+
+      // Enviar STOP automático
+      await window.SCARLETTE_API.solicitar(`/vehiculos/${vId}/detener`, { method: "POST" });
+      statusLbl.style.color = "#39e6a3";
+      statusLbl.textContent = `✓ Movimiento completado y detenido con seguridad.`;
+    } catch (err) {
+      statusLbl.style.color = "#ff6b6b";
+      statusLbl.textContent = `Error: ${err.message || "desconocido"}`;
+      await window.SCARLETTE_API.solicitar(`/vehiculos/${vId}/detener`, { method: "POST" }).catch(() => {});
+    } finally {
+      ejecutandoCustom = false;
+      btnEjecutar.disabled = false;
+      btnEjecutar.textContent = "▶ Ejecutar Movimiento";
+      setTimeout(() => {
+        progBox.style.display = "none";
+        progBar.style.width = "0%";
+      }, 3000);
+    }
   });
 }

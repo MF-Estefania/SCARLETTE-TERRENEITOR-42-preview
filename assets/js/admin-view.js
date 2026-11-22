@@ -58,7 +58,7 @@ window.SCARLETTE_ADMIN = (() => {
               <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
               Dashboard Comercial & Métricas Reales
             </h2>
-            <button id="btn-refrescar-admin" class="neon-button py-2 px-3" style="width:auto; font-size:14px">Actualizar</button>
+            <button id="btn-refrescar-admin" class="neon-button py-2 px-3" style="width:auto; font-size:14px">↻ Actualizar</button>
           </div>
           <div id="admin-metrics-row" class="row g-3">
             <div class="col-6 col-md-3">
@@ -84,6 +84,39 @@ window.SCARLETTE_ADMIN = (() => {
                 <span class="metric-label">Clientes Compradores</span>
                 <h3 id="metric-clientes" class="metric-value">-</h3>
               </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 1.5 Telemetría de Infraestructura y Estado de la Flota -->
+        <div class="fleet-status-banner mb-4">
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2 pb-2 border-bottom" style="border-color:#4d3b55 !important">
+            <h3 class="fs-6 m-0 text-white d-flex align-items-center gap-2">
+              <span class="status-dot" style="width:8px;height:8px;border-radius:50%;background:#39e6a3;box-shadow:0 0 8px #39e6a3;display:inline-block"></span>
+              Infraestructura Cloud AWS & Estado Operativo de la Flota
+            </h3>
+            <span class="badge-scarlette-vendido" style="font-size:11px">SISTEMA EN LÍNEA · RDS ACTIVA</span>
+          </div>
+          <div class="row g-3 text-muted small">
+            <div class="col-md-3">
+              <strong class="text-white d-block">Servidor IoT (AWS EC2)</strong>
+              <span>IP Pública: <code style="color:var(--pink-light)">100.59.62.212</code></span><br>
+              <span>Daemon: FastAPI · Puerto 8000</span>
+            </div>
+            <div class="col-md-3">
+              <strong class="text-white d-block">Base de Datos (Amazon RDS)</strong>
+              <span>Motor: MySQL 8.0 · 9 Tablas</span><br>
+              <span>Seguridad: Argon2id + SSL</span>
+            </div>
+            <div class="col-md-3">
+              <strong class="text-white d-block">Showroom / Exhibición</strong>
+              <span>Unidad Demo: #2 Terreneitor</span><br>
+              <span>Sesiones Invitado: 3 min máx</span>
+            </div>
+            <div class="col-md-3">
+              <strong class="text-white d-block">Protección BOLA / IDOR</strong>
+              <span>Aislamiento de Vehículos: Activo</span><br>
+              <span>Permisos: Estrictos por rol</span>
             </div>
           </div>
         </div>
@@ -145,7 +178,31 @@ window.SCARLETTE_ADMIN = (() => {
 
             <!-- Pestaña 2: Modelos -->
             <div class="admin-subtab-pane" id="tab-modelos" style="display:none">
-              <h3 class="fs-5 mb-3 text-white">Catálogo de Modelos Comerciales</h3>
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="fs-5 m-0 text-white">Catálogo de Modelos Comerciales</h3>
+                <button id="btn-nuevo-modelo" class="neon-button py-2 px-3" style="width:auto; font-size:14px">+ Nuevo Modelo</button>
+              </div>
+
+              <!-- Formulario de nuevo modelo -->
+              <div id="form-nuevo-modelo" class="glass-card p-3 mb-3" style="display:none; background:#1b1522">
+                <h4 class="fs-6 mb-2" style="color:var(--pink-light)">Registrar Nuevo Modelo Comercial</h4>
+                <div class="row g-2">
+                  <div class="col-md-4"><input id="new-m-nombre" class="form-control form-control-sm" placeholder="Nombre (ej. TR-02 Monster Edition)"></div>
+                  <div class="col-md-3">
+                    <select id="new-m-micro" class="form-select form-select-sm">
+                      <option value="ESP8266">ESP8266 NodeMCU</option>
+                      <option value="ESP32">ESP32 Dual-Core</option>
+                      <option value="Raspberry Pi Pico W">Raspberry Pi Pico W</option>
+                    </select>
+                  </div>
+                  <div class="col-md-3"><input id="new-m-desc" class="form-control form-control-sm" placeholder="Descripción de ingeniería"></div>
+                  <div class="col-md-2 d-flex gap-2">
+                    <button id="btn-guardar-modelo" class="neon-button py-1 px-3" style="font-size:13px">Guardar</button>
+                    <button id="btn-cancelar-modelo" class="outline-button m-0 py-1 px-3" style="font-size:13px">Cancelar</button>
+                  </div>
+                </div>
+              </div>
+
               <div class="table-responsive">
                 <table class="table table-dark table-hover align-middle m-0" style="background:transparent">
                   <thead>
@@ -251,6 +308,41 @@ window.SCARLETTE_ADMIN = (() => {
         await recargarDatos(contenedor);
       } catch (e) {
         alert("Error al registrar unidad: " + (e.message || "desconocido"));
+      }
+    });
+
+    // Nuevo Modelo
+    const formModelo = contenedor.querySelector("#form-nuevo-modelo");
+    contenedor.querySelector("#btn-nuevo-modelo")?.addEventListener("click", () => {
+      formModelo.style.display = formModelo.style.display === "none" ? "block" : "none";
+    });
+    contenedor.querySelector("#btn-cancelar-modelo")?.addEventListener("click", () => {
+      formModelo.style.display = "none";
+    });
+    contenedor.querySelector("#btn-guardar-modelo")?.addEventListener("click", async () => {
+      const nombre = contenedor.querySelector("#new-m-nombre").value.trim();
+      const micro = contenedor.querySelector("#new-m-micro").value;
+      const desc = contenedor.querySelector("#new-m-desc").value.trim();
+      if (!nombre) {
+        alert("Ingresa el nombre del modelo");
+        return;
+      }
+      try {
+        await api.solicitar("/admin/modelos", {
+          method: "POST",
+          body: JSON.stringify({
+            nombre_modelo: nombre,
+            microcontrolador: micro,
+            descripcion: desc || "Modelo comercial IoT",
+            activo: true
+          })
+        });
+        formModelo.style.display = "none";
+        contenedor.querySelector("#new-m-nombre").value = "";
+        contenedor.querySelector("#new-m-desc").value = "";
+        await recargarDatos(contenedor);
+      } catch (e) {
+        alert("Error al registrar modelo: " + (e.message || "desconocido"));
       }
     });
 

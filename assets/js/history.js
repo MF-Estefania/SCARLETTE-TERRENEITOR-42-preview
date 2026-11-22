@@ -12,10 +12,18 @@ document.addEventListener("scarlette:sesion-verificada", evento => {
   const heading = document.createElement("h2");
   heading.id = "movement-history-title";
   heading.className = "card-heading";
-  heading.textContent = "Historial de movimientos";
+  heading.innerHTML = `
+    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/></svg>
+    <span>Historial de los últimos 10 movimientos</span>
+  `;
+  const unitLabel = document.createElement("p");
+  unitLabel.className = "small m-0 text-muted";
+  unitLabel.id = "history-unit-label";
+  unitLabel.innerHTML = `Historial del vehículo conectado: <strong style="color:var(--pink-light)">#${window.SCARLETTE_CONFIG?.VEHICLE_ID || 1}</strong>`;
+
   const note = document.createElement("p");
-  note.className = "history-note";
-  note.textContent = "Hasta diez movimientos individuales recientes. Fechas del backend, sin conversión de zona horaria.";
+  note.className = "history-note text-muted small mt-1";
+  note.textContent = "Últimos diez movimientos individuales registrados en AWS RDS MySQL. Orden cronológico descendente.";
   const status = document.createElement("p");
   status.className = "history-status";
   status.setAttribute("role", "status");
@@ -23,8 +31,8 @@ document.addEventListener("scarlette:sesion-verificada", evento => {
   status.textContent = "El historial se consultará al abrir MONITOREO.";
   const retry = document.createElement("button");
   retry.type = "button";
-  retry.className = "outline-button history-retry";
-  retry.textContent = "Reintentar consulta";
+  retry.className = "outline-button-sm history-retry mb-2";
+  retry.textContent = "↻ Reintentar consulta";
   retry.hidden = true;
   const scroll = document.createElement("div");
   scroll.className = "history-table-scroll";
@@ -47,8 +55,8 @@ document.addEventListener("scarlette:sesion-verificada", evento => {
   table.prepend(caption);
   const body = table.createTBody();
   scroll.append(table);
-  section.append(heading, note, status, retry, scroll);
-  panel.prepend(section);
+  section.append(heading, unitLabel, note, status, retry, scroll);
+  panel.append(section);
 
   let visited = false;
   let active = true;
@@ -88,16 +96,25 @@ document.addEventListener("scarlette:sesion-verificada", evento => {
       records.slice(0, 10).forEach(record => {
         const row = document.createElement("tr");
         const date = String(record.fecha_hora ?? "—").replace(/^(\d{4}-\d{2}-\d{2})T(?=\d{2}:)/, "$1 ");
-        [record.comando, record.codigo, date, record.origen].forEach(value => {
-          const cell = document.createElement("td");
-          cell.textContent = String(value ?? "—");
-          row.append(cell);
-        });
+        
+        const tdCmd = document.createElement("td");
+        tdCmd.innerHTML = `<strong style="color:#ffffff">${record.comando || '—'}</strong>`;
+        
+        const tdCod = document.createElement("td");
+        tdCod.innerHTML = `<span class="badge" style="background:#2a1a2b; border:1px solid #614765; color:var(--pink-light)">${record.codigo || '—'}</span>`;
+        
+        const tdDate = document.createElement("td");
+        tdDate.innerHTML = `<span style="color:#d5cbe0; font-family:monospace; font-size:12px">${date}</span>`;
+        
+        const tdOrig = document.createElement("td");
+        tdOrig.innerHTML = `<span class="badge-scarlette-usuario">${record.origen || 'web'}</span>`;
+        
+        row.append(tdCmd, tdCod, tdDate, tdOrig);
         rows.append(row);
       });
       body.replaceChildren(rows);
       scroll.hidden = body.rows.length === 0;
-      status.textContent = body.rows.length ? `${body.rows.length} movimientos recientes.` : "No hay movimientos individuales registrados.";
+      status.textContent = body.rows.length ? `${body.rows.length} movimientos recientes cargados.` : "No hay movimientos individuales registrados.";
     } catch (error) {
       if (!active) return;
       status.textContent = `No se pudo consultar el historial${error.status ? ` (HTTP ${error.status})` : ""}.` +
@@ -116,9 +133,13 @@ document.addEventListener("scarlette:sesion-verificada", evento => {
     void load();
   });
   document.addEventListener("scarlette:panel-cambiado", event => {
-    if (event.detail?.panel !== "monitoring" || visited) return;
-    visited = true;
-    void load();
+    const vId = window.SCARLETTE_CONFIG?.VEHICLE_ID || 1;
+    const lbl = document.getElementById("history-unit-label");
+    if (lbl) lbl.innerHTML = `Historial del vehículo conectado: <strong style="color:var(--pink-light)">#${vId}</strong>`;
+    if (event.detail?.panel === "monitoring" || event.detail?.vehiculoId) {
+      visited = false;
+      void load();
+    }
   });
   document.addEventListener("scarlette:evento-ws", event => {
     if (event.detail?.tipo === "movimiento_individual") schedule();
