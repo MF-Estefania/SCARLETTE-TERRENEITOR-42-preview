@@ -20,6 +20,53 @@ window.SCARLETTE_CONTROLS = (() => {
     giroDerecha: 13
   });
 
+  const CODIGO_POR_BASE_ID = Object.freeze({
+    1: "B",
+    2: "C",
+    3: "D",
+    4: "E",
+    5: "F",
+    6: "G",
+    7: "H",
+    8: "I",
+    10: "K",
+    11: "L",
+    12: "M",
+    13: "N"
+  });
+
+  let comandosVehiculo = [];
+  let mapaCodigoAId = {};
+
+  async function cargarComandos() {
+    const idVehiculo = obtenerIdVehiculo();
+    if (!idVehiculo) {
+      comandosVehiculo = [];
+      mapaCodigoAId = {};
+      return [];
+    }
+    try {
+      const lista = await api.solicitar(`/vehiculos/${idVehiculo}/comandos`, { method: "GET" });
+      comandosVehiculo = Array.isArray(lista) ? lista : [];
+      mapaCodigoAId = {};
+      comandosVehiculo.forEach(c => {
+        if (c.activo && c.codigo) {
+          mapaCodigoAId[String(c.codigo).trim().toUpperCase()] = Number(c.id_comando);
+        }
+      });
+      return comandosVehiculo;
+    } catch (e) {
+      console.warn("SCARLETTE: no se pudieron cargar los comandos del vehículo:", e);
+      return comandosVehiculo;
+    }
+  }
+
+  function resolverIdComando(idLogico) {
+    const codigo = CODIGO_POR_BASE_ID[idLogico];
+    if (codigo && mapaCodigoAId[codigo]) return mapaCodigoAId[codigo];
+    return idLogico;
+  }
+
   let controlesActivos = false;
   let movimientoEnCurso = null;
   let movimientoPendiente = null;
@@ -39,15 +86,16 @@ window.SCARLETTE_CONTROLS = (() => {
   async function procesarMovimiento() {
     const idVehiculo = obtenerIdVehiculo();
     if (!idVehiculo || movimientoEnCurso || paradasPendientes || movimientoPendiente === null) return;
-    const idComando = movimientoPendiente;
+    const idComandoLogico = movimientoPendiente;
     movimientoPendiente = null;
+    const idComandoReal = resolverIdComando(idComandoLogico);
     const peticion = api.solicitar(`/vehiculos/${idVehiculo}/movimientos`, {
       method: "POST",
-      body: JSON.stringify({ id_comando: idComando, origen: "scarlette_web" })
+      body: JSON.stringify({ id_comando: idComandoReal, origen: "scarlette_web" })
     });
     movimientoEnCurso = peticion;
-    comandoEnCurso = idComando;
-    if (idComando === COMANDOS.luces) window.SCARLETTE_LIGHTS?.observeRequest?.(peticion);
+    comandoEnCurso = idComandoLogico;
+    if (idComandoLogico === COMANDOS.luces) window.SCARLETTE_LIGHTS?.observeRequest?.(peticion);
     try {
       return await peticion;
     } catch (error) {
@@ -371,10 +419,21 @@ window.SCARLETTE_CONTROLS = (() => {
       cancelar.addEventListener("click", cancelarDemo);
     }
 
+    cargarComandos();
     cargarDemos();
   }
 
   document.addEventListener("scarlette:sesion-verificada", prepararControlesDemo);
+
+  document.addEventListener("scarlette:panel-cambiado", evento => {
+    if (evento.detail?.vehiculoId) {
+      void cargarComandos();
+    }
+  });
+
+  document.addEventListener("scarlette:comandos-actualizados", () => {
+    void cargarComandos();
+  });
 
   document.addEventListener("scarlette:evento-ws", evento => {
     const tipo = evento.detail?.tipo;
@@ -394,6 +453,8 @@ window.SCARLETTE_CONTROLS = (() => {
     ejecutarMovimiento,
     detenerVehiculo,
     cargarDemos,
+    cargarComandos,
+    obtenerComandos: () => comandosVehiculo,
     async prepararOcultacion() {
       // No duplicar una parada ya en vuelo; conservar CONTROL en ese caso.
       if (paradasPendientes) return false;

@@ -1466,21 +1466,24 @@ select.form-select {
   .panel-page.user-navigation #form-nueva-unidad,
   .panel-page.user-navigation #form-asignar-unidad,
   .panel-page.user-navigation #form-nuevo-modelo,
-  .panel-page.user-navigation #form-nuevo-cliente {
+  .panel-page.user-navigation #form-nuevo-cliente,
+  .panel-page.user-navigation #form-reset-password {
     padding: 4px 6px !important;
     margin-bottom: 3px !important;
   }
   .panel-page.user-navigation #form-nueva-unidad h4,
   .panel-page.user-navigation #form-asignar-unidad h4,
   .panel-page.user-navigation #form-nuevo-modelo h4,
-  .panel-page.user-navigation #form-nuevo-cliente h4 {
+  .panel-page.user-navigation #form-nuevo-cliente h4,
+  .panel-page.user-navigation #form-reset-password h4 {
     font-size: 10px !important;
     margin-bottom: 2px !important;
   }
   .panel-page.user-navigation #form-nueva-unidad .row,
   .panel-page.user-navigation #form-asignar-unidad .row,
   .panel-page.user-navigation #form-nuevo-modelo .row,
-  .panel-page.user-navigation #form-nuevo-cliente .row {
+  .panel-page.user-navigation #form-nuevo-cliente .row,
+  .panel-page.user-navigation #form-reset-password .row {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 3px !important;
@@ -1490,7 +1493,8 @@ select.form-select {
   .panel-page.user-navigation #form-asignar-unidad select,
   .panel-page.user-navigation #form-nuevo-modelo input,
   .panel-page.user-navigation #form-nuevo-modelo select,
-  .panel-page.user-navigation #form-nuevo-cliente input {
+  .panel-page.user-navigation #form-nuevo-cliente input,
+  .panel-page.user-navigation #form-reset-password input {
     height: 22px !important;
     font-size: 9px !important;
     padding: 1px 4px !important;
@@ -1498,7 +1502,8 @@ select.form-select {
   .panel-page.user-navigation #form-nueva-unidad button,
   .panel-page.user-navigation #form-asignar-unidad button,
   .panel-page.user-navigation #form-nuevo-modelo button,
-  .panel-page.user-navigation #form-nuevo-cliente button {
+  .panel-page.user-navigation #form-nuevo-cliente button,
+  .panel-page.user-navigation #form-reset-password button {
     height: 22px !important;
     font-size: 9px !important;
     padding: 1px 4px !important;
@@ -1821,28 +1826,33 @@ select.form-select {
     flex-shrink: 0 !important;
   }
   #modal-demos-mount-point #form-crear-demo,
+  #modal-demos-mount-point #form-crear-comando,
   #modal-demos-mount-point #form-agregar-paso {
     padding: 6px !important;
     margin-bottom: 6px !important;
     border-radius: 8px !important;
   }
   #modal-demos-mount-point #form-crear-demo h4,
+  #modal-demos-mount-point #form-crear-comando h4,
   #modal-demos-mount-point #form-agregar-paso h4 {
     font-size: 10px !important;
     margin-bottom: 4px !important;
     color: var(--pink-light) !important;
   }
-  #modal-demos-mount-point #form-crear-demo .row {
+  #modal-demos-mount-point #form-crear-demo .row,
+  #modal-demos-mount-point #form-crear-comando .row {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
     gap: 4px !important;
     margin: 0 !important;
   }
-  #modal-demos-mount-point #form-crear-demo .row > div {
+  #modal-demos-mount-point #form-crear-demo .row > div,
+  #modal-demos-mount-point #form-crear-comando .row > div {
     padding: 0 !important;
     margin: 0 !important;
   }
-  #modal-demos-mount-point #form-crear-demo .row > div:nth-child(3) {
+  #modal-demos-mount-point #form-crear-demo .row > div:nth-child(3),
+  #modal-demos-mount-point #form-crear-comando .row > div:nth-child(3) {
     grid-column: 1 / -1 !important;
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
@@ -1959,29 +1969,34 @@ select.form-select {
     flex-shrink: 0 !important;
   }
   .panel-page.user-navigation #panel-demos #form-crear-demo,
+  .panel-page.user-navigation #panel-demos #form-crear-comando,
   .panel-page.user-navigation #panel-demos #form-agregar-paso {
     padding: 6px !important;
     margin-bottom: 6px !important;
     border-radius: 8px !important;
   }
   .panel-page.user-navigation #panel-demos #form-crear-demo h4,
+  .panel-page.user-navigation #panel-demos #form-crear-comando h4,
   .panel-page.user-navigation #panel-demos #form-agregar-paso h4 {
     font-size: 10px !important;
     margin-bottom: 4px !important;
     color: var(--pink-light) !important;
   }
-  .panel-page.user-navigation #panel-demos #form-crear-demo .row {
+  .panel-page.user-navigation #panel-demos #form-crear-demo .row,
+  .panel-page.user-navigation #panel-demos #form-crear-comando .row {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
     gap: 4px !important;
     margin: 0 !important;
   }
   .panel-page.user-navigation #panel-demos #form-crear-demo .row > div,
+  .panel-page.user-navigation #panel-demos #form-crear-comando .row > div,
   .panel-page.user-navigation #panel-demos #form-agregar-paso .row > div {
     padding: 0 !important;
     margin: 0 !important;
   }
-  .panel-page.user-navigation #panel-demos #form-crear-demo .row > div:nth-child(3) {
+  .panel-page.user-navigation #panel-demos #form-crear-demo .row > div:nth-child(3),
+  .panel-page.user-navigation #panel-demos #form-crear-comando .row > div:nth-child(3) {
     grid-column: 1 / -1 !important;
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
@@ -2214,21 +2229,24 @@ select.form-select {
   .panel-page.user-navigation #form-nueva-unidad,
   .panel-page.user-navigation #form-asignar-unidad,
   .panel-page.user-navigation #form-nuevo-modelo,
-  .panel-page.user-navigation #form-nuevo-cliente {
+  .panel-page.user-navigation #form-nuevo-cliente,
+  .panel-page.user-navigation #form-reset-password {
     padding: 2px 4px !important;
     margin-bottom: 2px !important;
   }
   .panel-page.user-navigation #form-nueva-unidad h4,
   .panel-page.user-navigation #form-asignar-unidad h4,
   .panel-page.user-navigation #form-nuevo-modelo h4,
-  .panel-page.user-navigation #form-nuevo-cliente h4 {
+  .panel-page.user-navigation #form-nuevo-cliente h4,
+  .panel-page.user-navigation #form-reset-password h4 {
     font-size: 8.5px !important;
     margin-bottom: 1px !important;
   }
   .panel-page.user-navigation #form-nueva-unidad .row,
   .panel-page.user-navigation #form-asignar-unidad .row,
   .panel-page.user-navigation #form-nuevo-modelo .row,
-  .panel-page.user-navigation #form-nuevo-cliente .row {
+  .panel-page.user-navigation #form-nuevo-cliente .row,
+  .panel-page.user-navigation #form-reset-password .row {
     display: flex !important;
     flex-direction: row !important;
     flex-wrap: wrap !important;
@@ -2237,7 +2255,8 @@ select.form-select {
   .panel-page.user-navigation #form-nueva-unidad .row > div,
   .panel-page.user-navigation #form-asignar-unidad .row > div,
   .panel-page.user-navigation #form-nuevo-modelo .row > div,
-  .panel-page.user-navigation #form-nuevo-cliente .row > div {
+  .panel-page.user-navigation #form-nuevo-cliente .row > div,
+  .panel-page.user-navigation #form-reset-password .row > div {
     flex: 1 1 110px !important;
     max-width: none !important;
     padding: 0 !important;
@@ -2247,7 +2266,8 @@ select.form-select {
   .panel-page.user-navigation #form-asignar-unidad select,
   .panel-page.user-navigation #form-nuevo-modelo input,
   .panel-page.user-navigation #form-nuevo-modelo select,
-  .panel-page.user-navigation #form-nuevo-cliente input {
+  .panel-page.user-navigation #form-nuevo-cliente input,
+  .panel-page.user-navigation #form-reset-password input {
     height: 20px !important;
     font-size: 8.5px !important;
     padding: 1px 3px !important;
@@ -2255,7 +2275,8 @@ select.form-select {
   .panel-page.user-navigation #form-nueva-unidad button,
   .panel-page.user-navigation #form-asignar-unidad button,
   .panel-page.user-navigation #form-nuevo-modelo button,
-  .panel-page.user-navigation #form-nuevo-cliente button {
+  .panel-page.user-navigation #form-nuevo-cliente button,
+  .panel-page.user-navigation #form-reset-password button {
     height: 20px !important;
     font-size: 8.5px !important;
     padding: 1px 5px !important;
@@ -2564,16 +2585,19 @@ select.form-select {
     border-radius: 999px !important;
   }
   #modal-demos-mount-point #form-crear-demo,
+  #modal-demos-mount-point #form-crear-comando,
   #modal-demos-mount-point #form-agregar-paso {
     padding: 4px 6px !important;
     margin-bottom: 4px !important;
     border-radius: 6px !important;
   }
   #modal-demos-mount-point #form-crear-demo h4,
+  #modal-demos-mount-point #form-crear-comando h4,
   #modal-demos-mount-point #form-agregar-paso h4 {
     display: none !important;
   }
-  #modal-demos-mount-point #form-crear-demo .row {
+  #modal-demos-mount-point #form-crear-demo .row,
+  #modal-demos-mount-point #form-crear-comando .row {
     display: grid !important;
     grid-template-columns: 1fr 1.3fr auto !important;
     gap: 4px !important;
@@ -2581,13 +2605,15 @@ select.form-select {
     margin: 0 !important;
   }
   #modal-demos-mount-point #form-crear-demo .row > div,
+  #modal-demos-mount-point #form-crear-comando .row > div,
   #modal-demos-mount-point #form-agregar-paso .row > div {
     width: auto !important;
     max-width: none !important;
     padding: 0 !important;
     margin: 0 !important;
   }
-  #modal-demos-mount-point #form-crear-demo .row > div:nth-child(3) {
+  #modal-demos-mount-point #form-crear-demo .row > div:nth-child(3),
+  #modal-demos-mount-point #form-crear-comando .row > div:nth-child(3) {
     grid-column: auto !important;
     display: flex !important;
     gap: 3px !important;
@@ -2704,16 +2730,19 @@ select.form-select {
     border-radius: 999px !important;
   }
   .panel-page.user-navigation #panel-demos #form-crear-demo,
+  .panel-page.user-navigation #panel-demos #form-crear-comando,
   .panel-page.user-navigation #panel-demos #form-agregar-paso {
     padding: 3px 6px !important;
     margin-bottom: 3px !important;
     border-radius: 6px !important;
   }
   .panel-page.user-navigation #panel-demos #form-crear-demo h4,
+  .panel-page.user-navigation #panel-demos #form-crear-comando h4,
   .panel-page.user-navigation #panel-demos #form-agregar-paso h4 {
     display: none !important;
   }
-  .panel-page.user-navigation #panel-demos #form-crear-demo .row {
+  .panel-page.user-navigation #panel-demos #form-crear-demo .row,
+  .panel-page.user-navigation #panel-demos #form-crear-comando .row {
     display: grid !important;
     grid-template-columns: 1fr 1.3fr auto !important;
     gap: 4px !important;
@@ -2721,13 +2750,15 @@ select.form-select {
     margin: 0 !important;
   }
   .panel-page.user-navigation #panel-demos #form-crear-demo .row > div,
+  .panel-page.user-navigation #panel-demos #form-crear-comando .row > div,
   .panel-page.user-navigation #panel-demos #form-agregar-paso .row > div {
     width: auto !important;
     max-width: none !important;
     padding: 0 !important;
     margin: 0 !important;
   }
-  .panel-page.user-navigation #panel-demos #form-crear-demo .row > div:nth-child(3) {
+  .panel-page.user-navigation #panel-demos #form-crear-demo .row > div:nth-child(3),
+  .panel-page.user-navigation #panel-demos #form-crear-comando .row > div:nth-child(3) {
     grid-column: auto !important;
     display: flex !important;
     gap: 3px !important;

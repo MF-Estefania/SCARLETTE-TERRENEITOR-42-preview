@@ -11,7 +11,24 @@ window.SCARLETTE_DEMOS_EDITOR = (() => {
             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="m7 3 14 9-14 9Z"/></svg>
             Editor de Demos del Vehículo #${idVehiculo}
           </h2>
-          <button id="btn-crear-demo-modal" class="neon-button py-2 px-3" style="width:auto; font-size:14px">+ Crear DEMO</button>
+          <div class="d-flex gap-2 align-items-center">
+            <button id="btn-crear-comando-modal" class="outline-button m-0 py-1 px-2" style="width:auto; font-size:12px">+ Movimiento</button>
+            <button id="btn-crear-demo-modal" class="neon-button py-2 px-3" style="width:auto; font-size:14px">+ Crear DEMO</button>
+          </div>
+        </div>
+
+        <!-- Formulario Crear Movimiento Propio del Vehículo -->
+        <div id="form-crear-comando" class="p-3 border rounded mb-3 bg-dark" style="display:none">
+          <h4 class="fs-6 mb-2" style="color:var(--pink-light)">Nuevo Movimiento para Vehículo #${idVehiculo}</h4>
+          <div class="row g-2">
+            <div class="col-md-5"><input id="cmd-nombre" class="form-control form-control-sm" placeholder="Nombre (ej. SUBIR PALA)"></div>
+            <div class="col-md-3"><input id="cmd-codigo" class="form-control form-control-sm" placeholder="Código ESP (ej. P)" maxlength="20"></div>
+            <div class="col-md-4 d-flex gap-2">
+              <button id="btn-guardar-comando" class="neon-button py-1 px-2" style="font-size:13px">Guardar</button>
+              <button id="btn-cancelar-comando" class="outline-button m-0 py-1 px-2" style="font-size:13px">Cerrar</button>
+            </div>
+          </div>
+          <div id="lista-comandos-chips" class="d-flex flex-wrap gap-1 mt-2" style="max-height:58px; overflow-y:auto"></div>
         </div>
 
         <!-- Formulario Crear Demo -->
@@ -52,16 +69,7 @@ window.SCARLETTE_DEMOS_EDITOR = (() => {
               <div class="row g-2 align-items-center">
                 <div class="col-md-4">
                   <select id="paso-comando" class="form-select form-select-sm">
-                    <option value="1">AVANZAR</option>
-                    <option value="2">RETROCEDER</option>
-                    <option value="3">DIAGONAL IZQ</option>
-                    <option value="4">LUCES</option>
-                    <option value="5">DIAGONAL DER</option>
-                    <option value="6">RECTO IZQ</option>
-                    <option value="7">ENDEREZAR</option>
-                    <option value="8">RECTO DER</option>
-                    <option value="10">MÚSICA</option>
-                    <option value="11">GIRO 360°</option>
+                    <option value="">Cargando movimientos...</option>
                   </select>
                 </div>
                 <div class="col-md-3">
@@ -174,9 +182,91 @@ window.SCARLETTE_DEMOS_EDITOR = (() => {
       }
     }
 
+    async function cargarComandosVehiculo() {
+      const selCmd = contenedor.querySelector("#paso-comando");
+      const chipsWrap = contenedor.querySelector("#lista-comandos-chips");
+      try {
+        const lista = await api.solicitar(`/vehiculos/${idVehiculo}/comandos`, { method: "GET" });
+        const activos = Array.isArray(lista)
+          ? lista.filter(c => c.activo && String(c.codigo || "").toUpperCase() !== "J")
+          : [];
+
+        if (selCmd) {
+          if (activos.length === 0) {
+            selCmd.innerHTML = '<option value="">Sin movimientos registrados</option>';
+          } else {
+            selCmd.innerHTML = activos.map(c =>
+              `<option value="${c.id_comando}">${c.nombre} (${c.codigo})</option>`
+            ).join("");
+          }
+        }
+
+        if (chipsWrap) {
+          chipsWrap.innerHTML = activos.map(c => `
+            <span class="badge d-inline-flex align-items-center gap-1" style="background:#2a1a2b; border:1px solid #614765; color:#f6b5d8; font-size:10px; padding:2px 6px">
+              ${c.nombre} <strong style="color:var(--pink-light)">(${c.codigo})</strong>
+              <button type="button" class="btn-eliminar-cmd" data-id="${c.id_comando}" data-nombre="${c.nombre}" title="Eliminar movimiento" style="background:none; border:none; color:#ff80b5; padding:0 0 0 3px; cursor:pointer; font-size:11px; line-height:1">×</button>
+            </span>
+          `).join("");
+
+          chipsWrap.querySelectorAll(".btn-eliminar-cmd").forEach(btn => {
+            btn.addEventListener("click", async () => {
+              const idCmd = btn.getAttribute("data-id");
+              const nomCmd = btn.getAttribute("data-nombre");
+              if (!confirm(`¿Eliminar el movimiento "${nomCmd}" de este vehículo?`)) return;
+              try {
+                await api.solicitar(`/vehiculos/${idVehiculo}/comandos/${idCmd}/eliminar`, { method: "POST" });
+                await cargarComandosVehiculo();
+                document.dispatchEvent(new CustomEvent("scarlette:comandos-actualizados", { detail: { vehiculoId: idVehiculo } }));
+              } catch (e) {
+                alert("No se pudo eliminar el movimiento: " + (e.message || "puede estar en uso en una DEMO o historial"));
+              }
+            });
+          });
+        }
+      } catch (e) {
+        if (selCmd) selCmd.innerHTML = '<option value="">Error al cargar movimientos</option>';
+      }
+    }
+
     // Handlers
     const formCrear = contenedor.querySelector("#form-crear-demo");
+    const formCrearCmd = contenedor.querySelector("#form-crear-comando");
+
+    contenedor.querySelector("#btn-crear-comando-modal")?.addEventListener("click", () => {
+      if (formCrear) formCrear.style.display = "none";
+      if (formCrearCmd) formCrearCmd.style.display = formCrearCmd.style.display === "none" ? "block" : "none";
+    });
+    contenedor.querySelector("#btn-cancelar-comando")?.addEventListener("click", () => {
+      if (formCrearCmd) formCrearCmd.style.display = "none";
+    });
+    contenedor.querySelector("#btn-guardar-comando")?.addEventListener("click", async () => {
+      const nombre = contenedor.querySelector("#cmd-nombre").value.trim().toUpperCase();
+      const codigo = contenedor.querySelector("#cmd-codigo").value.trim().toUpperCase();
+      if (!nombre || !codigo) {
+        alert("Ingresa el nombre y código del movimiento (ej. SUBIR PALA y código P)");
+        return;
+      }
+      try {
+        await api.solicitar(`/vehiculos/${idVehiculo}/comandos`, {
+          method: "POST",
+          body: JSON.stringify({
+            nombre: nombre,
+            codigo: codigo,
+            descripcion: `Movimiento personalizado de vehículo #${idVehiculo}`
+          })
+        });
+        contenedor.querySelector("#cmd-nombre").value = "";
+        contenedor.querySelector("#cmd-codigo").value = "";
+        await cargarComandosVehiculo();
+        document.dispatchEvent(new CustomEvent("scarlette:comandos-actualizados", { detail: { vehiculoId: idVehiculo } }));
+      } catch (e) {
+        alert("Error al crear movimiento: " + (e.message || "desconocido"));
+      }
+    });
+
     contenedor.querySelector("#btn-crear-demo-modal")?.addEventListener("click", () => {
+      if (formCrearCmd) formCrearCmd.style.display = "none";
       formCrear.style.display = formCrear.style.display === "none" ? "block" : "none";
     });
     contenedor.querySelector("#btn-cancelar-demo")?.addEventListener("click", () => {
@@ -195,6 +285,8 @@ window.SCARLETTE_DEMOS_EDITOR = (() => {
           body: JSON.stringify({ nombre, descripcion: desc, activo: true })
         });
         formCrear.style.display = "none";
+        contenedor.querySelector("#demo-nombre").value = "";
+        contenedor.querySelector("#demo-desc").value = "";
         demoSeleccionada = nueva.id_demo;
         await cargarDemos();
         await cargarPasos(demoSeleccionada);
@@ -210,6 +302,10 @@ window.SCARLETTE_DEMOS_EDITOR = (() => {
     contenedor.querySelector("#btn-guardar-paso")?.addEventListener("click", async () => {
       if (!demoSeleccionada) return;
       const idComando = parseInt(contenedor.querySelector("#paso-comando").value, 10);
+      if (!idComando) {
+        alert("Selecciona un movimiento válido");
+        return;
+      }
       const duracion = parseInt(contenedor.querySelector("#paso-duracion").value, 10) || 1500;
       const pausa = parseInt(contenedor.querySelector("#paso-pausa").value, 10) || 500;
 
@@ -256,6 +352,7 @@ window.SCARLETTE_DEMOS_EDITOR = (() => {
       }
     });
 
+    await cargarComandosVehiculo();
     await cargarDemos();
   }
 

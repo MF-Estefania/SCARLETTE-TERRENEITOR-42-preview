@@ -521,6 +521,36 @@ function configurarControlesAvanzados(layout, shell) {
     tabDemo.classList.remove("active");
     subviewDemo.style.display = "none";
     subviewCustom.style.display = "flex";
+    void cargarComandosPersonalizados();
+  });
+
+  // Cargar comandos reales del vehículo activo para Movimiento Personalizado
+  const selCustomCmd = subviewCustom.querySelector("#custom-mov-comando");
+  async function cargarComandosPersonalizados() {
+    const vId = window.SCARLETTE_CONFIG?.VEHICLE_ID;
+    if (!selCustomCmd || !vId) return;
+    try {
+      const lista = await window.SCARLETTE_API.solicitar(`/vehiculos/${vId}/comandos`, { method: "GET" });
+      if (!Array.isArray(lista) || lista.length === 0) return;
+      const activos = lista.filter(c => c.activo && String(c.codigo || "").toUpperCase() !== "J");
+      if (activos.length === 0) return;
+      const previo = selCustomCmd.value;
+      selCustomCmd.innerHTML = activos.map(c =>
+        `<option value="${c.id_comando}">${c.nombre} (${c.codigo})</option>`
+      ).join("");
+      if (activos.some(c => String(c.id_comando) === previo)) {
+        selCustomCmd.value = previo;
+      }
+    } catch (e) {
+      console.warn("SCARLETTE: no se pudieron cargar comandos personalizados:", e);
+    }
+  }
+  void cargarComandosPersonalizados();
+  document.addEventListener("scarlette:panel-cambiado", ev => {
+    if (ev.detail?.vehiculoId) void cargarComandosPersonalizados();
+  });
+  document.addEventListener("scarlette:comandos-actualizados", () => {
+    void cargarComandosPersonalizados();
   });
 
   // Lógica interactiva de Movimiento Personalizado
