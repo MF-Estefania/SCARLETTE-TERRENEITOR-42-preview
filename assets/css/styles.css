@@ -919,3 +919,231 @@ body.user-navigation:has(#user-monitoring-panel:not([hidden])) .preview-notice[h
  body.user-navigation:has(#user-monitoring-panel:not([hidden])) .connection-label,body.user-navigation:has(#user-monitoring-panel:not([hidden])) .connection-state{font-size:10px;overflow-wrap:normal}
 }
 body.user-navigation:has(#user-monitoring-panel:not([hidden])) .topbar{padding-top:calc(8px + env(safe-area-inset-top,0px))}
+
+
+/* =====================================================================
+   SCARLETTE 4.3 - ESTILOS OFICIALES PARA ADMINISTRACIÓN Y TELEMETRÍA HUD
+   ===================================================================== */
+
+/* 1. HUD de Vehículo Conectado */
+.vehicle-hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 14px 20px;
+  margin-bottom: 18px;
+  background: linear-gradient(135deg, rgba(39, 27, 43, 0.95), rgba(16, 16, 23, 0.95));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+.hud-icon-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #3a1532, #1f0d22);
+  border: 1px solid #8a3463;
+  color: var(--pink-light);
+  flex-shrink: 0;
+}
+.hud-title {
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  font-weight: 700;
+  color: var(--pink-light);
+  text-transform: uppercase;
+}
+.hud-name {
+  font-size: 17px;
+  font-weight: 800;
+  color: #ffffff;
+  font-style: italic;
+}
+.hud-meta {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.hud-sn {
+  font-family: monospace;
+  color: var(--pink-light);
+  background: rgba(242, 11, 131, 0.12);
+  padding: 2px 7px;
+  border-radius: 6px;
+  border: 1px solid rgba(242, 11, 131, 0.25);
+  font-size: 11px;
+}
+.hud-select {
+  background-color: #211b29;
+  border: 1px solid #ff4aa9;
+  color: #fff;
+  border-radius: 12px;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  min-width: 220px;
+}
+.hud-select:focus {
+  outline: 2px solid var(--pink-light);
+  box-shadow: 0 0 12px rgba(242, 11, 131, 0.4);
+}
+
+/* 2. Pestañas de Navegación Mejoradas */
+.panel-page.user-navigation .user-panel-tabs button {
+  transition: all 0.25s ease;
+  letter-spacing: 0.5px;
+  background: linear-gradient(145deg, #201724, #120e17);
+  border: 1px solid #5a4163;
+}
+.panel-page.user-navigation .user-panel-tabs button:hover {
+  border-color: var(--pink-light);
+  color: #fff;
+}
+.panel-page.user-navigation .user-panel-tabs [aria-selected="true"] {
+  border-color: #ff65b2 !important;
+  color: #ffffff !important;
+  background: linear-gradient(135deg, rgba(255, 54, 156, 0.35), rgba(140, 3, 69, 0.35)) !important;
+  box-shadow: 0 0 20px rgba(242, 11, 131, 0.45) !important;
+}
+
+/* 3. Métricas del Dashboard Comercial */
+.metric-card {
+  background: linear-gradient(145deg, rgba(46, 28, 48, 0.8), rgba(21, 18, 29, 0.95));
+  border: 1px solid #614765;
+  border-radius: 18px;
+  padding: 16px 20px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 6px 18px rgba(0, 0, 0, 0.35);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+.metric-card:hover {
+  border-color: var(--pink-light);
+  transform: translateY(-2px);
+}
+.metric-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #ff99cf !important;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.metric-value {
+  font-size: 34px;
+  font-weight: 900;
+  color: #ffffff;
+  margin: 0;
+  font-style: italic;
+  line-height: 1.1;
+}
+
+/* 4. Sub-Pestañas de Administración (Scarlette Pills) */
+.scarlette-pills {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid #4d3b55;
+  padding-bottom: 14px;
+  margin-bottom: 20px;
+}
+.scarlette-pill {
+  background: linear-gradient(145deg, #271b2b, #120e17);
+  border: 1px solid #614765;
+  border-radius: 20px;
+  color: #ded0e5;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 18px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.scarlette-pill:hover {
+  border-color: #ff65b2;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(242, 11, 131, 0.25);
+}
+.scarlette-pill.active {
+  background: linear-gradient(135deg, #ff369c, #d20a73);
+  border-color: #ff65b2;
+  color: #ffffff;
+  box-shadow: 0 0 16px rgba(242, 11, 131, 0.5);
+}
+
+/* 5. Badges con la Paleta Oficial SCARLETTE */
+.badge-scarlette-vendido {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(57, 230, 163, 0.15);
+  border: 1px solid #39e6a3;
+  color: #39e6a3;
+  font-weight: 700;
+  border-radius: 12px;
+  padding: 4px 10px;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.badge-scarlette-exhibicion {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255, 193, 7, 0.15);
+  border: 1px solid #ffc107;
+  color: #ffc107;
+  font-weight: 700;
+  border-radius: 12px;
+  padding: 4px 10px;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.badge-scarlette-disponible {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(13, 202, 240, 0.15);
+  border: 1px solid #0dcaf0;
+  color: #0dcaf0;
+  font-weight: 700;
+  border-radius: 12px;
+  padding: 4px 10px;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.badge-scarlette-usuario {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255, 102, 181, 0.18);
+  border: 1px solid #ff66b5;
+  color: #ffbce6;
+  font-weight: 700;
+  border-radius: 12px;
+  padding: 4px 10px;
+  font-size: 11px;
+}
+
+/* Botón pequeño con acento SCARLETTE */
+.outline-button-sm {
+  background: linear-gradient(145deg, #2b1424, #140d16);
+  border: 1px solid #ff4aa9;
+  border-radius: 15px;
+  color: #ffd6ec;
+  padding: 5px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.outline-button-sm:hover {
+  background: #ff369c;
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(242, 11, 131, 0.6);
+}

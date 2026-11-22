@@ -41,7 +41,7 @@ window.SCARLETTE_ADMIN = (() => {
 
   async function cargarAuditoria() {
     try {
-      return await api.solicitar("/admin/auditoria?limite=25", { method: "GET" });
+      return await api.solicitar("/admin/auditoria?limite=30", { method: "GET" });
     } catch (e) {
       console.error("Error al cargar auditoria:", e);
       return [];
@@ -51,9 +51,9 @@ window.SCARLETTE_ADMIN = (() => {
   async function renderizarEn(contenedor) {
     contenedor.innerHTML = `
       <div class="admin-panel-content">
-        <!-- Encabezado de métricas -->
+        <!-- 1. Encabezado de métricas -->
         <div class="glass-card mb-4 p-4">
-          <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+          <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2" style="border-color:#60405b !important">
             <h2 class="card-heading m-0" style="border:none">
               <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
               Dashboard Comercial & Métricas Reales
@@ -61,33 +61,53 @@ window.SCARLETTE_ADMIN = (() => {
             <button id="btn-refrescar-admin" class="neon-button py-2 px-3" style="width:auto; font-size:14px">Actualizar</button>
           </div>
           <div id="admin-metrics-row" class="row g-3">
-            <div class="col-6 col-md-3"><div class="metric-box p-3 border rounded"><small class="text-muted">Modelos</small><h3 id="metric-modelos">-</h3></div></div>
-            <div class="col-6 col-md-3"><div class="metric-box p-3 border rounded"><small class="text-muted">Unidades Físicas</small><h3 id="metric-unidades">-</h3></div></div>
-            <div class="col-6 col-md-3"><div class="metric-box p-3 border rounded"><small class="text-muted">En Exhibición</small><h3 id="metric-exhibicion">-</h3></div></div>
-            <div class="col-6 col-md-3"><div class="metric-box p-3 border rounded"><small class="text-muted">Clientes</small><h3 id="metric-clientes">-</h3></div></div>
+            <div class="col-6 col-md-3">
+              <div class="metric-card">
+                <span class="metric-label">Modelos Registrados</span>
+                <h3 id="metric-modelos" class="metric-value">-</h3>
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="metric-card">
+                <span class="metric-label">Unidades Físicas</span>
+                <h3 id="metric-unidades" class="metric-value">-</h3>
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="metric-card">
+                <span class="metric-label">En Exhibición</span>
+                <h3 id="metric-exhibicion" class="metric-value">-</h3>
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="metric-card">
+                <span class="metric-label">Clientes Compradores</span>
+                <h3 id="metric-clientes" class="metric-value">-</h3>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- Secciones con sub-pestañas -->
+        <!-- 2. Secciones con sub-pestañas estilizadas SCARLETTE -->
         <div class="glass-card p-4">
-          <ul class="nav nav-pills mb-3 gap-2" id="admin-subtabs" role="tablist">
-            <li class="nav-item"><button class="nav-link active" data-bs-target="#tab-unidades" data-bs-toggle="pill">Inventario de Unidades</button></li>
-            <li class="nav-item"><button class="nav-link" data-bs-target="#tab-modelos" data-bs-toggle="pill">Modelos Comerciales</button></li>
-            <li class="nav-item"><button class="nav-link" data-bs-target="#tab-clientes" data-bs-toggle="pill">Clientes</button></li>
-            <li class="nav-item"><button class="nav-link" data-bs-target="#tab-auditoria" data-bs-toggle="pill">Bitácora de Auditoría</button></li>
-          </ul>
+          <div class="scarlette-pills" id="admin-subtabs" role="tablist">
+            <button class="scarlette-pill active" data-target="tab-unidades" type="button">Inventario de Unidades</button>
+            <button class="scarlette-pill" data-target="tab-modelos" type="button">Modelos Comerciales</button>
+            <button class="scarlette-pill" data-target="tab-clientes" type="button">Clientes y Asignaciones</button>
+            <button class="scarlette-pill" data-target="tab-auditoria" type="button">Bitácora de Auditoría</button>
+          </div>
 
-          <div class="tab-content" id="admin-tab-content">
-            <!-- 1. Inventario -->
-            <div class="tab-pane fade show active" id="tab-unidades">
+          <div class="admin-tab-panels">
+            <!-- Pestaña 1: Inventario -->
+            <div class="admin-subtab-pane" id="tab-unidades">
               <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3 class="m-0 fs-5">Unidades Físicas Registradas</h3>
+                <h3 class="m-0 fs-5 text-white">Unidades Físicas Registradas</h3>
                 <button id="btn-nueva-unidad" class="neon-button py-2 px-3" style="width:auto; font-size:14px">+ Nueva Unidad</button>
               </div>
 
-              <!-- Formulario de alta rápido -->
-              <div id="form-nueva-unidad" class="p-3 border rounded mb-3 bg-dark" style="display:none">
-                <h4 class="fs-6 mb-2">Registrar Nueva Unidad Física</h4>
+              <!-- Formulario de alta rápida -->
+              <div id="form-nueva-unidad" class="glass-card p-3 mb-3" style="display:none; background:#1b1522">
+                <h4 class="fs-6 mb-2" style="color:var(--pink-light)">Registrar Nueva Unidad Física</h4>
                 <div class="row g-2">
                   <div class="col-md-3"><input id="new-u-nombre" class="form-control form-control-sm" placeholder="Nombre (ej. Terreneitor 3)"></div>
                   <div class="col-md-3"><input id="new-u-serie" class="form-control form-control-sm" placeholder="Número de Serie (ej. TR01-SN-003)"></div>
@@ -106,44 +126,75 @@ window.SCARLETTE_ADMIN = (() => {
               </div>
 
               <div class="table-responsive">
-                <table class="table table-dark table-hover align-middle">
+                <table class="table table-dark table-hover align-middle m-0" style="background:transparent">
                   <thead>
-                    <tr><th>ID</th><th>Nombre</th><th>Modelo</th><th>Número de Serie</th><th>Estado</th><th>Propietario</th><th>Acción</th></tr>
+                    <tr style="border-bottom: 2px solid #8a3463">
+                      <th style="background:#ff349f18; color:var(--pink-light)">ID</th>
+                      <th style="background:#ff349f18; color:var(--pink-light)">Nombre</th>
+                      <th style="background:#ff349f18; color:var(--pink-light)">Modelo</th>
+                      <th style="background:#ff349f18; color:var(--pink-light)">Número de Serie</th>
+                      <th style="background:#ff349f18; color:var(--pink-light)">Estado Comercial</th>
+                      <th style="background:#ff349f18; color:var(--pink-light)">Propietario</th>
+                      <th style="background:#ff349f18; color:var(--pink-light)">Acción</th>
+                    </tr>
                   </thead>
-                  <tbody id="tbody-unidades"><tr><td colspan="7" class="text-center">Cargando unidades...</td></tr></tbody>
+                  <tbody id="tbody-unidades"><tr><td colspan="7" class="text-center p-3 text-muted">Cargando inventario...</td></tr></tbody>
                 </table>
               </div>
             </div>
 
-            <!-- 2. Modelos -->
-            <div class="tab-pane fade" id="tab-modelos">
-              <h3 class="fs-5 mb-3">Catálogo de Modelos</h3>
+            <!-- Pestaña 2: Modelos -->
+            <div class="admin-subtab-pane" id="tab-modelos" style="display:none">
+              <h3 class="fs-5 mb-3 text-white">Catálogo de Modelos Comerciales</h3>
               <div class="table-responsive">
-                <table class="table table-dark table-hover align-middle">
-                  <thead><tr><th>ID</th><th>Nombre Modelo</th><th>Microcontrolador</th><th>Descripción</th></tr></thead>
-                  <tbody id="tbody-modelos"><tr><td colspan="4" class="text-center">Cargando modelos...</td></tr></tbody>
+                <table class="table table-dark table-hover align-middle m-0" style="background:transparent">
+                  <thead>
+                    <tr style="border-bottom: 2px solid #8a3463">
+                      <th style="background:#ff349f18; color:var(--pink-light)">ID</th>
+                      <th style="background:#ff349f18; color:var(--pink-light)">Nombre Modelo</th>
+                      <th style="background:#ff349f18; color:var(--pink-light)">Microcontrolador</th>
+                      <th style="background:#ff349f18; color:var(--pink-light)">Descripción</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-modelos"><tr><td colspan="4" class="text-center p-3 text-muted">Cargando modelos...</td></tr></tbody>
                 </table>
               </div>
             </div>
 
-            <!-- 3. Clientes -->
-            <div class="tab-pane fade" id="tab-clientes">
-              <h3 class="fs-5 mb-3">Clientes y Asignaciones</h3>
+            <!-- Pestaña 3: Clientes -->
+            <div class="admin-subtab-pane" id="tab-clientes" style="display:none">
+              <h3 class="fs-5 mb-3 text-white">Clientes y Unidades Asignadas</h3>
               <div class="table-responsive">
-                <table class="table table-dark table-hover align-middle">
-                  <thead><tr><th>ID</th><th>Usuario</th><th>Rol</th><th>Unidades Asignadas</th></tr></thead>
-                  <tbody id="tbody-clientes"><tr><td colspan="4" class="text-center">Cargando clientes...</td></tr></tbody>
+                <table class="table table-dark table-hover align-middle m-0" style="background:transparent">
+                  <thead>
+                    <tr style="border-bottom: 2px solid #8a3463">
+                      <th style="background:#ff349f18; color:var(--pink-light)">ID</th>
+                      <th style="background:#ff349f18; color:var(--pink-light)">Nombre Usuario</th>
+                      <th style="background:#ff349f18; color:var(--pink-light)">Rol</th>
+                      <th style="background:#ff349f18; color:var(--pink-light)">Unidades Asignadas</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-clientes"><tr><td colspan="4" class="text-center p-3 text-muted">Cargando clientes...</td></tr></tbody>
                 </table>
               </div>
             </div>
 
-            <!-- 4. Auditoría -->
-            <div class="tab-pane fade" id="tab-auditoria">
-              <h3 class="fs-5 mb-3">Bitácora de Auditoría en Tiempo Real</h3>
+            <!-- Pestaña 4: Auditoría -->
+            <div class="admin-subtab-pane" id="tab-auditoria" style="display:none">
+              <h3 class="fs-5 mb-3 text-white">Bitácora de Auditoría en Tiempo Real</h3>
               <div class="table-responsive">
-                <table class="table table-dark table-sm table-striped">
-                  <thead><tr><th>Fecha/Hora</th><th>Usuario</th><th>Acción</th><th>Recurso</th><th>Detalle</th><th>Resultado</th></tr></thead>
-                  <tbody id="tbody-auditoria"><tr><td colspan="6" class="text-center">Cargando auditoría...</td></tr></tbody>
+                <table class="table table-dark table-sm table-hover align-middle m-0" style="background:transparent">
+                  <thead>
+                    <tr style="border-bottom: 2px solid #8a3463">
+                      <th style="background:#ff349f18; color:var(--pink-light)">Fecha / Hora</th>
+                      <th style="background:#ff349f18; color:var(--pink-light)">Usuario</th>
+                      <th style="background:#ff349f18; color:var(--pink-light)">Acción</th>
+                      <th style="background:#ff349f18; color:var(--pink-light)">Recurso</th>
+                      <th style="background:#ff349f18; color:var(--pink-light)">Detalle</th>
+                      <th style="background:#ff349f18; color:var(--pink-light)">Resultado</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-auditoria"><tr><td colspan="6" class="text-center p-3 text-muted">Cargando auditoría...</td></tr></tbody>
                 </table>
               </div>
             </div>
@@ -151,6 +202,19 @@ window.SCARLETTE_ADMIN = (() => {
         </div>
       </div>
     `;
+
+    // Manejo de sub-pestañas
+    const pills = contenedor.querySelectorAll(".scarlette-pill");
+    const panes = contenedor.querySelectorAll(".admin-subtab-pane");
+    pills.forEach(pill => {
+      pill.addEventListener("click", () => {
+        pills.forEach(p => p.classList.remove("active"));
+        panes.forEach(pane => (pane.style.display = "none"));
+        pill.classList.add("active");
+        const target = contenedor.querySelector(`#${pill.getAttribute("data-target")}`);
+        if (target) target.style.display = "block";
+      });
+    });
 
     // Eventos
     contenedor.querySelector("#btn-refrescar-admin")?.addEventListener("click", () => recargarDatos(contenedor));
@@ -206,25 +270,27 @@ window.SCARLETTE_ADMIN = (() => {
     const unidades = await cargarUnidades();
     const tbodyU = contenedor.querySelector("#tbody-unidades");
     if (tbodyU) {
-      tbodyU.innerHTML = unidades.map(u => `
-        <tr>
-          <td><strong>#${u.id_vehiculo}</strong></td>
-          <td>${u.nombre}</td>
-          <td><span class="badge bg-secondary">${u.modelo || 'TR-01'}</span></td>
-          <td><code>${u.numero_serie || 'S/N'}</code></td>
-          <td>
-            <span class="badge ${u.estado_comercial === 'vendido' ? 'bg-success' : u.estado_comercial === 'exhibicion' ? 'bg-warning text-dark' : 'bg-info'}">
-              ${u.estado_comercial.toUpperCase()}
-            </span>
-          </td>
-          <td>${u.propietario ? `<span class="badge bg-primary">${u.propietario}</span>` : '<em class="text-muted">Stock Empresa</em>'}</td>
-          <td>
-            <button class="btn btn-sm btn-outline-light py-0 btn-asignar" data-id="${u.id_vehiculo}">
-              ${u.id_propietario ? 'Reasignar' : 'Asignar'}
-            </button>
-          </td>
-        </tr>
-      `).join("");
+      tbodyU.innerHTML = unidades.map(u => {
+        let badgeClass = "badge-scarlette-disponible";
+        if (u.estado_comercial === "vendido") badgeClass = "badge-scarlette-vendido";
+        if (u.estado_comercial === "exhibicion") badgeClass = "badge-scarlette-exhibicion";
+
+        return `
+          <tr>
+            <td><strong style="color:var(--pink-light)">#${u.id_vehiculo}</strong></td>
+            <td style="color:#ffffff; font-weight:700">${u.nombre}</td>
+            <td><span class="badge" style="background:#2a1a2b; border:1px solid #614765; color:#f6b5d8">${u.modelo || 'TR-01'}</span></td>
+            <td><span class="hud-sn">${u.numero_serie || 'S/N'}</span></td>
+            <td><span class="${badgeClass}">${u.estado_comercial.toUpperCase()}</span></td>
+            <td>${u.propietario ? `<span class="badge-scarlette-usuario">${u.propietario}</span>` : '<em style="color:#a899b5">Stock Empresa</em>'}</td>
+            <td>
+              <button class="outline-button-sm btn-asignar" data-id="${u.id_vehiculo}">
+                ${u.id_propietario ? 'Reasignar' : 'Asignar'}
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join("");
 
       tbodyU.querySelectorAll(".btn-asignar").forEach(btn => {
         btn.addEventListener("click", async () => {
@@ -254,10 +320,10 @@ window.SCARLETTE_ADMIN = (() => {
     if (tbodyM) {
       tbodyM.innerHTML = modelos.map(m => `
         <tr>
-          <td>#${m.id_modelo}</td>
-          <td><strong>${m.nombre_modelo}</strong></td>
-          <td><span class="badge bg-dark border">${m.microcontrolador}</span></td>
-          <td class="text-muted small">${m.descripcion || '-'}</td>
+          <td><strong style="color:var(--pink-light)">#${m.id_modelo}</strong></td>
+          <td style="color:#ffffff; font-weight:700">${m.nombre_modelo}</td>
+          <td><span class="badge" style="background:#2a1a2b; border:1px solid #614765; color:#f6b5d8">${m.microcontrolador}</span></td>
+          <td style="color:#d5cbe0; font-size:13px">${m.descripcion || '-'}</td>
         </tr>
       `).join("");
     }
@@ -268,10 +334,10 @@ window.SCARLETTE_ADMIN = (() => {
     if (tbodyC) {
       tbodyC.innerHTML = clientes.map(c => `
         <tr>
-          <td>#${c.id_usuario}</td>
-          <td><strong>${c.nombre_usuario}</strong></td>
-          <td><span class="badge bg-info text-dark">${c.rol}</span></td>
-          <td><span class="badge bg-success">${c.unidades_asignadas} unidad(es)</span></td>
+          <td><strong style="color:var(--pink-light)">#${c.id_usuario}</strong></td>
+          <td style="color:#ffffff; font-weight:700">${c.nombre_usuario}</td>
+          <td><span class="badge" style="background:#2a1a2b; border:1px solid #614765; color:var(--pink-light)">${c.rol}</span></td>
+          <td><span class="badge-scarlette-vendido">${c.unidades_asignadas} unidad(es)</span></td>
         </tr>
       `).join("");
     }
@@ -282,12 +348,12 @@ window.SCARLETTE_ADMIN = (() => {
     if (tbodyA) {
       tbodyA.innerHTML = auditoria.map(a => `
         <tr>
-          <td class="small">${a.fecha_hora ? a.fecha_hora.replace('T', ' ').substring(0, 19) : '-'}</td>
-          <td><strong>${a.nombre_usuario || 'sistema'}</strong></td>
-          <td><span class="badge bg-secondary">${a.accion}</span></td>
-          <td class="small text-muted">${a.recurso}</td>
-          <td class="small">${a.detalle || ''}</td>
-          <td><span class="badge ${a.resultado === 'EXITO' ? 'bg-success' : 'bg-danger'}">${a.resultado}</span></td>
+          <td style="color:#d5cbe0; font-size:12px">${a.fecha_hora ? a.fecha_hora.replace('T', ' ').substring(0, 19) : '-'}</td>
+          <td style="color:#ffffff; font-weight:700">${a.nombre_usuario || 'sistema'}</td>
+          <td><span class="badge" style="background:#3a1532; border:1px solid #8a3463; color:var(--pink-light)">${a.accion}</span></td>
+          <td style="font-family:monospace; color:#f6b5d8; font-size:12px">${a.recurso}</td>
+          <td style="color:#ded0e5; font-size:12px">${a.detalle || ''}</td>
+          <td><span class="${a.resultado === 'EXITO' ? 'badge-scarlette-vendido' : 'badge-scarlette-exhibicion'}">${a.resultado}</span></td>
         </tr>
       `).join("");
     }

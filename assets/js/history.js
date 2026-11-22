@@ -1,7 +1,7 @@
 "use strict";
 
 document.addEventListener("scarlette:sesion-verificada", evento => {
-  if (evento.detail?.usuario?.rol !== "usuario" || document.getElementById("movement-history")) return;
+  if (!["usuario", "administradora", "administrador"].includes(evento.detail?.usuario?.rol) || document.getElementById("movement-history")) return;
   const panel = document.getElementById("user-monitoring-panel");
   if (!panel) return;
 
