@@ -1510,10 +1510,13 @@ select.form-select {
     padding: 1px 4px !important;
   }
   .panel-page.user-navigation .admin-panel-content .table-responsive {
-    max-height: 38vh !important;
+    max-height: 36vh !important;
     overflow-y: auto !important;
     overflow-x: auto !important;
     margin: 0 !important;
+  }
+  .panel-page.user-navigation .admin-panel-content #tab-auditoria .table-responsive {
+    max-height: 28vh !important;
   }
   .panel-page.user-navigation .admin-panel-content table {
     width: 100% !important;

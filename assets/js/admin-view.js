@@ -155,7 +155,7 @@ window.SCARLETTE_ADMIN = (() => {
                 </div>
               </div>
 
-              <div class="table-responsive" style="max-height: 48vh; overflow-y: auto;">
+              <div class="table-responsive" style="max-height: 235px; overflow-y: auto;">
                 <table class="table table-dark table-hover table-sm align-middle m-0" style="background:transparent; font-size:13px">
                   <thead>
                     <tr style="border-bottom: 2px solid #8a3463; position:sticky; top:0; background:#1f1522; z-index:2">
@@ -201,15 +201,15 @@ window.SCARLETTE_ADMIN = (() => {
                 </div>
               </div>
 
-              <div class="table-responsive">
+              <div class="table-responsive" style="max-height: 225px; overflow-y: auto;">
                 <table class="table table-dark table-hover align-middle m-0" style="background:transparent">
                   <thead>
-                    <tr style="border-bottom: 2px solid #8a3463">
-                      <th style="background:#ff349f18; color:var(--pink-light)">ID</th>
-                      <th style="background:#ff349f18; color:var(--pink-light)">Nombre Modelo</th>
-                      <th style="background:#ff349f18; color:var(--pink-light)">Microcontrolador</th>
-                      <th class="d-none d-md-table-cell" style="background:#ff349f18; color:var(--pink-light)">Descripción</th>
-                      <th style="background:#ff349f18; color:var(--pink-light)">Acción</th>
+                    <tr style="border-bottom: 2px solid #8a3463; position:sticky; top:0; background:#1f1522; z-index:2">
+                      <th style="background:#2a1529; color:var(--pink-light)">ID</th>
+                      <th style="background:#2a1529; color:var(--pink-light)">Nombre Modelo</th>
+                      <th style="background:#2a1529; color:var(--pink-light)">Microcontrolador</th>
+                      <th class="d-none d-md-table-cell" style="background:#2a1529; color:var(--pink-light)">Descripción</th>
+                      <th style="background:#2a1529; color:var(--pink-light)">Acción</th>
                     </tr>
                   </thead>
                   <tbody id="tbody-modelos"><tr><td colspan="5" class="text-center p-3 text-muted">Cargando modelos...</td></tr></tbody>
@@ -249,15 +249,15 @@ window.SCARLETTE_ADMIN = (() => {
                 </div>
               </div>
 
-              <div class="table-responsive">
+              <div class="table-responsive" style="max-height: 225px; overflow-y: auto;">
                 <table class="table table-dark table-hover align-middle m-0" style="background:transparent">
                   <thead>
-                    <tr style="border-bottom: 2px solid #8a3463">
-                      <th style="background:#ff349f18; color:var(--pink-light)">ID</th>
-                      <th style="background:#ff349f18; color:var(--pink-light)">Nombre Usuario</th>
-                      <th style="background:#ff349f18; color:var(--pink-light)">Rol</th>
-                      <th style="background:#ff349f18; color:var(--pink-light)">Unidades</th>
-                      <th style="background:#ff349f18; color:var(--pink-light)">Acción</th>
+                    <tr style="border-bottom: 2px solid #8a3463; position:sticky; top:0; background:#1f1522; z-index:2">
+                      <th style="background:#2a1529; color:var(--pink-light)">ID</th>
+                      <th style="background:#2a1529; color:var(--pink-light)">Nombre Usuario</th>
+                      <th style="background:#2a1529; color:var(--pink-light)">Rol</th>
+                      <th style="background:#2a1529; color:var(--pink-light)">Unidades</th>
+                      <th style="background:#2a1529; color:var(--pink-light)">Acción</th>
                     </tr>
                   </thead>
                   <tbody id="tbody-clientes"><tr><td colspan="5" class="text-center p-3 text-muted">Cargando clientes...</td></tr></tbody>
@@ -268,16 +268,16 @@ window.SCARLETTE_ADMIN = (() => {
             <!-- Pestaña 4: Auditoría -->
             <div class="admin-subtab-pane" id="tab-auditoria" style="display:none">
               <h3 class="fs-6 mb-2 text-white">Bitácora de Auditoría</h3>
-              <div class="table-responsive">
+              <div class="table-responsive" style="max-height: 225px; overflow-y: auto;">
                 <table class="table table-dark table-sm table-hover align-middle m-0" style="background:transparent">
                   <thead>
-                    <tr style="border-bottom: 2px solid #8a3463">
-                      <th style="background:#ff349f18; color:var(--pink-light)">Fecha / Hora</th>
-                      <th style="background:#ff349f18; color:var(--pink-light)">Usuario</th>
-                      <th style="background:#ff349f18; color:var(--pink-light)">Acción</th>
-                      <th style="background:#ff349f18; color:var(--pink-light)">Recurso</th>
-                      <th class="d-none d-md-table-cell" style="background:#ff349f18; color:var(--pink-light)">Detalle</th>
-                      <th style="background:#ff349f18; color:var(--pink-light)">Resultado</th>
+                    <tr style="border-bottom: 2px solid #8a3463; position:sticky; top:0; background:#1f1522; z-index:2">
+                      <th style="background:#2a1529; color:var(--pink-light)">Fecha / Hora</th>
+                      <th style="background:#2a1529; color:var(--pink-light)">Usuario</th>
+                      <th style="background:#2a1529; color:var(--pink-light)">Acción</th>
+                      <th style="background:#2a1529; color:var(--pink-light)">Recurso</th>
+                      <th class="d-none d-md-table-cell" style="background:#2a1529; color:var(--pink-light)">Detalle</th>
+                      <th style="background:#2a1529; color:var(--pink-light)">Resultado</th>
                     </tr>
                   </thead>
                   <tbody id="tbody-auditoria"><tr><td colspan="6" class="text-center p-3 text-muted">Cargando auditoría...</td></tr></tbody>
