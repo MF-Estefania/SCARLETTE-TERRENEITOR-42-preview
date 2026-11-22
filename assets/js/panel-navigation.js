@@ -17,6 +17,7 @@ document.addEventListener("scarlette:sesion-verificada", async evento => {
   }
 
   // 1. Crear el HUD de Vehículo Conectado (Cabina de Control)
+  const esAdmin = rol === "administradora" || rol === "administrador";
   const hud = document.createElement("div");
   hud.id = "vehicle-hud-banner";
   hud.className = "vehicle-hud glass-card mb-3";
@@ -28,21 +29,20 @@ document.addEventListener("scarlette:sesion-verificada", async evento => {
       <div>
         <div class="d-flex align-items-center flex-wrap gap-2">
           <span class="hud-title">Unidad Conectada:</span>
-          <span id="hud-unit-name" class="hud-name">#1 Terreneitor TR-01</span>
-          <span id="hud-unit-badge" class="badge-scarlette-vendido">Vendido · Asignado</span>
+          <span id="hud-unit-name" class="hud-name">Cargando unidad...</span>
+          <span id="hud-unit-badge" class="badge-scarlette-vendido">Verificando</span>
         </div>
         <div class="hud-meta">
-          <span>Serie: <span id="hud-unit-sn" class="hud-sn">TR01-SN-2026-0001</span></span> · 
-          <span>Control: <strong style="color:#ffffff">ESP8266</strong></span> · 
-          <span>Propietario: <strong id="hud-unit-owner" style="color:var(--pink-light)">usuario</strong></span>
+          <span>Serie: <span id="hud-unit-sn" class="hud-sn">—</span></span> · 
+          <span>Control: <strong id="hud-unit-control" style="color:#ffffff">ESP8266</strong></span> · 
+          <span>Propietario: <strong id="hud-unit-owner" style="color:var(--pink-light)">${usuario.nombre_usuario || "usuario"}</strong></span>
         </div>
       </div>
     </div>
     <div class="d-flex align-items-center gap-2">
       <label for="hud-unit-select" class="small text-muted m-0" style="color:#d5cbe0 !important">Cambiar Unidad:</label>
       <select id="hud-unit-select" class="form-select form-select-sm hud-select">
-        <option value="1">#1 Terreneitor (Vendido)</option>
-        <option value="2">#2 Terreneitor Exhibición (Demo)</option>
+        <option value="">Cargando unidades...</option>
       </select>
     </div>
   `;
@@ -104,36 +104,131 @@ document.addEventListener("scarlette:sesion-verificada", async evento => {
     events.style.display = "none";
   }
 
-  // Selector de HUD
+  // Selector de HUD dinámico según rol y asignaciones reales en RDS
   const hudSelect = hud.querySelector("#hud-unit-select");
-  hudSelect?.addEventListener("change", async () => {
-    const nuevoId = parseInt(hudSelect.value, 10);
-    window.SCARLETTE_CONFIG = Object.assign({}, window.SCARLETTE_CONFIG, { VEHICLE_ID: nuevoId });
+  let unidadesDisponibles = [];
+  let selectedIndex = 0;
+  let switching = false;
 
-    if (nuevoId === 2) {
-      hud.querySelector("#hud-unit-name").textContent = "#2 Terreneitor Exhibición";
-      hud.querySelector("#hud-unit-sn").textContent = "TR01-EXH-2026-0002";
-      hud.querySelector("#hud-unit-badge").className = "badge-scarlette-exhibicion";
-      hud.querySelector("#hud-unit-badge").textContent = "Unidad de Exhibición";
-      hud.querySelector("#hud-unit-owner").textContent = "Empresa (Demo)";
+  function etiquetaEstadoOpcion(estado) {
+    if (estado === "exhibicion") return "Demo";
+    if (estado === "vendido") return "Vendido";
+    if (estado === "mantenimiento") return "Mant.";
+    return "Stock";
+  }
+
+  function aplicarUnidadHUD(u) {
+    const estado = String(u.estado_comercial || "").toLowerCase();
+    const nombreBase = u.nombre || "Terreneitor";
+    const modelo = u.modelo ? String(u.modelo).trim() : "";
+    const titulo = modelo && !nombreBase.toUpperCase().includes(modelo.toUpperCase())
+      ? `#${u.id_vehiculo} ${nombreBase} ${modelo}`
+      : `#${u.id_vehiculo} ${nombreBase}`;
+
+    hud.querySelector("#hud-unit-name").textContent = titulo;
+    hud.querySelector("#hud-unit-sn").textContent = u.numero_serie || "S/N";
+    const ctrlEl = hud.querySelector("#hud-unit-control");
+    if (ctrlEl) ctrlEl.textContent = u.microcontrolador || "ESP8266";
+
+    const badge = hud.querySelector("#hud-unit-badge");
+    if (estado === "exhibicion") {
+      badge.className = "badge-scarlette-exhibicion";
+      badge.textContent = "Unidad de Exhibición";
+    } else if (estado === "vendido") {
+      badge.className = "badge-scarlette-vendido";
+      badge.textContent = "Vendido · Asignado";
+    } else if (estado === "mantenimiento") {
+      badge.className = "badge-scarlette-exhibicion";
+      badge.textContent = "Mantenimiento";
     } else {
-      hud.querySelector("#hud-unit-name").textContent = "#1 Terreneitor TR-01";
-      hud.querySelector("#hud-unit-sn").textContent = "TR01-SN-2026-0001";
-      hud.querySelector("#hud-unit-badge").className = "badge-scarlette-vendido";
-      hud.querySelector("#hud-unit-badge").textContent = "Vendido · Asignado";
-      hud.querySelector("#hud-unit-owner").textContent = "usuario";
+      badge.className = "badge-scarlette-disponible";
+      badge.textContent = "Disponible · Stock";
     }
 
-    // Actualizar telemetría y conexiones
-    window.SCARLETTE_CONNECTIONS?.solicitarActualizacion();
+    const propietario = u.propietario
+      || (!esAdmin ? (usuario.nombre_usuario || "usuario") : (estado === "exhibicion" ? "Empresa (Demo)" : "Stock Empresa"));
+    hud.querySelector("#hud-unit-owner").textContent = propietario;
+  }
+
+  async function cargarUnidadesHUD() {
+    const endpoint = esAdmin ? "/admin/unidades" : "/mis-vehiculos";
+    try {
+      const resp = await window.SCARLETTE_API.solicitar(endpoint, { method: "GET" });
+      unidadesDisponibles = Array.isArray(resp) ? resp : [];
+    } catch (e) {
+      console.warn("SCARLETTE: no se pudo obtener la lista de unidades:", e);
+      unidadesDisponibles = [];
+    }
+
+    if (!hudSelect) return;
+    hudSelect.replaceChildren();
+
+    if (unidadesDisponibles.length === 0) {
+      const opt = document.createElement("option");
+      opt.value = "";
+      opt.textContent = "Sin unidades asignadas";
+      hudSelect.appendChild(opt);
+      hudSelect.disabled = true;
+
+      hud.querySelector("#hud-unit-name").textContent = "Sin unidad asignada";
+      hud.querySelector("#hud-unit-sn").textContent = "—";
+      const badge = hud.querySelector("#hud-unit-badge");
+      badge.className = "badge-scarlette-exhibicion";
+      badge.textContent = "Sin asignación";
+      hud.querySelector("#hud-unit-owner").textContent = usuario.nombre_usuario || "usuario";
+
+      window.SCARLETTE_CONFIG = Object.assign({}, window.SCARLETTE_CONFIG, { VEHICLE_ID: null });
+      window.SCARLETTE_CONTROLS?.cargarDemos?.();
+      return;
+    }
+
+    unidadesDisponibles.forEach(u => {
+      const opt = document.createElement("option");
+      opt.value = String(u.id_vehiculo);
+      opt.textContent = `#${u.id_vehiculo} ${u.nombre} (${etiquetaEstadoOpcion(u.estado_comercial)})`;
+      hudSelect.appendChild(opt);
+    });
+    hudSelect.disabled = false;
+
+    const idActual = Number(window.SCARLETTE_CONFIG?.VEHICLE_ID);
+    const unidadInicial = unidadesDisponibles.find(u => Number(u.id_vehiculo) === idActual) || unidadesDisponibles[0];
+    const idAnterior = idActual;
+
+    hudSelect.value = String(unidadInicial.id_vehiculo);
+    window.SCARLETTE_CONFIG = Object.assign({}, window.SCARLETTE_CONFIG, { VEHICLE_ID: Number(unidadInicial.id_vehiculo) });
+    aplicarUnidadHUD(unidadInicial);
+
+    if (Number(unidadInicial.id_vehiculo) !== idAnterior) {
+      window.SCARLETTE_WS?.reconectar?.();
+      window.SCARLETTE_CONNECTIONS?.solicitarActualizacion?.();
+      window.SCARLETTE_CONTROLS?.cargarDemos?.();
+      document.dispatchEvent(new CustomEvent("scarlette:panel-cambiado", {
+        detail: { panel: tabConfigs[selectedIndex]?.id || "control", vehiculoId: Number(unidadInicial.id_vehiculo) }
+      }));
+    }
+  }
+
+  hudSelect?.addEventListener("change", async () => {
+    const nuevoId = parseInt(hudSelect.value, 10);
+    const unidad = unidadesDisponibles.find(u => Number(u.id_vehiculo) === nuevoId);
+    if (!unidad) return;
+
+    window.SCARLETTE_CONFIG = Object.assign({}, window.SCARLETTE_CONFIG, { VEHICLE_ID: nuevoId });
+    aplicarUnidadHUD(unidad);
+
+    // Actualizar telemetría, WebSocket, DEMOs y vista activa
+    window.SCARLETTE_WS?.reconectar?.();
+    window.SCARLETTE_CONNECTIONS?.solicitarActualizacion?.();
+    window.SCARLETTE_CONTROLS?.cargarDemos?.();
+
+    if (tabConfigs[selectedIndex]?.id === "demos" && window.SCARLETTE_DEMOS_EDITOR) {
+      await window.SCARLETTE_DEMOS_EDITOR.renderizarEn(panels[selectedIndex], nuevoId);
+    }
+
     document.dispatchEvent(new CustomEvent("scarlette:panel-cambiado", {
       detail: { panel: tabConfigs[selectedIndex]?.id || "control", vehiculoId: nuevoId }
     }));
   });
-
-  // Manejador de cambio de pestañas
-  let selectedIndex = 0;
-  let switching = false;
 
   const buttons = tabConfigs.map((cfg, index) => {
     const tab = document.createElement("button");
@@ -172,8 +267,12 @@ document.addEventListener("scarlette:sesion-verificada", async evento => {
         if (cfg.id === "admin" && window.SCARLETTE_ADMIN) {
           await window.SCARLETTE_ADMIN.renderizarEn(panels[index]);
         } else if (cfg.id === "demos" && window.SCARLETTE_DEMOS_EDITOR) {
-          const vId = window.SCARLETTE_CONFIG?.VEHICLE_ID || 1;
-          await window.SCARLETTE_DEMOS_EDITOR.renderizarEn(panels[index], vId);
+          const vId = window.SCARLETTE_CONFIG?.VEHICLE_ID;
+          if (vId) {
+            await window.SCARLETTE_DEMOS_EDITOR.renderizarEn(panels[index], vId);
+          } else {
+            panels[index].innerHTML = '<div class="glass-card p-3 text-center text-muted">Aún no tienes una unidad asignada para administrar DEMOs.</div>';
+          }
         }
 
         document.dispatchEvent(new CustomEvent("scarlette:panel-cambiado", {
@@ -189,6 +288,7 @@ document.addEventListener("scarlette:sesion-verificada", async evento => {
 
   // Mostrar el panel inicial
   panels[0].hidden = false;
+  await cargarUnidadesHUD();
   if (tabConfigs[0].id === "admin" && window.SCARLETTE_ADMIN) {
     await window.SCARLETTE_ADMIN.renderizarEn(panels[0]);
   }

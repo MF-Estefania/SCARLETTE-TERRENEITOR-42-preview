@@ -152,8 +152,15 @@ window.SCARLETTE_WS = (() => {
         throw new Error("AWS no devolvió un ticket WebSocket.");
       }
 
+      const cfg = window.SCARLETTE_CONFIG || config;
+      const vId = cfg?.VEHICLE_ID;
+      if (!vId) {
+        indicadorWebSocket("Sin unidad", false);
+        return;
+      }
+
       const url =
-        `${config.WS_BASE_URL}/ws/vehiculos/${config.VEHICLE_ID}` +
+        `${cfg.WS_BASE_URL}/ws/vehiculos/${vId}` +
         `?ticket=${encodeURIComponent(respuesta.ticket)}`;
 
       const conexion = new WebSocket(url);
@@ -238,6 +245,22 @@ window.SCARLETTE_WS = (() => {
     indicadorWebSocket("Desconectado");
   }
 
+  function reconectar() {
+    if (temporizador) {
+      clearTimeout(temporizador);
+      temporizador = null;
+    }
+    if (socket) {
+      const conexion = socket;
+      socket = null;
+      conexion.close();
+    }
+    intentos = 0;
+    activo = true;
+    conectando = false;
+    conectar();
+  }
+
   document.addEventListener(
     "scarlette:sesion-verificada",
     iniciar
@@ -248,6 +271,7 @@ window.SCARLETTE_WS = (() => {
   return Object.freeze({
     iniciar,
     detener,
+    reconectar,
     registrarEvento
   });
 })();

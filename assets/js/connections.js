@@ -64,8 +64,14 @@ window.SCARLETTE_CONNECTIONS = (() => {
         actualizarIndicador(2, salud.rds_status === "disponible" ? "Disponible" : "No disponible", salud.rds_status === "disponible");
       }
 
+      const vId = window.SCARLETTE_CONFIG?.VEHICLE_ID;
+      if (!vId) {
+        publicarEstado("empty", null);
+        return;
+      }
+
       const datos = await api.solicitar(
-        `/vehiculos/${config.VEHICLE_ID}/estado`,
+        `/vehiculos/${vId}/estado`,
         { method: "GET" }
       );
 
@@ -77,7 +83,7 @@ window.SCARLETTE_CONNECTIONS = (() => {
       }
 
       // El estado físico no determina la disponibilidad de API/RDS.
-      const valido = datos && !Array.isArray(datos) && datos.id_vehiculo === config.VEHICLE_ID &&
+      const valido = datos && !Array.isArray(datos) && datos.id_vehiculo === vId &&
         ["comando", "codigo", "fecha_actualizacion"].every(campo =>
           Object.prototype.hasOwnProperty.call(datos, campo) &&
           (datos[campo] === null || typeof datos[campo] === "string"));

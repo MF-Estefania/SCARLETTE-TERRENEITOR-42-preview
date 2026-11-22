@@ -3,7 +3,7 @@
 
 window.SCARLETTE_CONTROLS = (() => {
   const api = window.SCARLETTE_API;
-  const ID_VEHICULO = window.SCARLETTE_CONFIG.VEHICLE_ID;
+  const obtenerIdVehiculo = () => window.SCARLETTE_CONFIG?.VEHICLE_ID;
 
   const COMANDOS = Object.freeze({
     avanzar: 1,
@@ -37,10 +37,11 @@ window.SCARLETTE_CONTROLS = (() => {
   }
 
   async function procesarMovimiento() {
-    if (movimientoEnCurso || paradasPendientes || movimientoPendiente === null) return;
+    const idVehiculo = obtenerIdVehiculo();
+    if (!idVehiculo || movimientoEnCurso || paradasPendientes || movimientoPendiente === null) return;
     const idComando = movimientoPendiente;
     movimientoPendiente = null;
-    const peticion = api.solicitar(`/vehiculos/${ID_VEHICULO}/movimientos`, {
+    const peticion = api.solicitar(`/vehiculos/${idVehiculo}/movimientos`, {
       method: "POST",
       body: JSON.stringify({ id_comando: idComando, origen: "scarlette_web" })
     });
@@ -61,13 +62,14 @@ window.SCARLETTE_CONTROLS = (() => {
   }
 
   async function detenerVehiculo() {
-    if (!controlesActivos) return;
+    const idVehiculo = obtenerIdVehiculo();
+    if (!controlesActivos || !idVehiculo) return;
     reiniciarJoystick();
     movimientoPendiente = null;
     paradasPendientes += 1;
     const anterior = movimientoEnCurso;
     const solicitarStop = () => api.solicitar(
-      `/vehiculos/${ID_VEHICULO}/detener`, { method: "POST" }
+      `/vehiculos/${idVehiculo}/detener`, { method: "POST" }
     );
     let fallo = null;
     try {
@@ -270,9 +272,20 @@ window.SCARLETTE_CONTROLS = (() => {
     const selector = document.getElementById("demo");
     if (!selector) return;
 
+    const idVehiculo = obtenerIdVehiculo();
+    if (!idVehiculo) {
+      selector.replaceChildren();
+      const opcion = document.createElement("option");
+      opcion.value = "";
+      opcion.textContent = "Sin unidad asignada";
+      selector.appendChild(opcion);
+      selector.disabled = true;
+      return;
+    }
+
     try {
       const demos = await api.solicitar(
-        `/vehiculos/${ID_VEHICULO}/demos`,
+        `/vehiculos/${idVehiculo}/demos`,
         { method: "GET" }
       );
 
@@ -302,7 +315,8 @@ window.SCARLETTE_CONTROLS = (() => {
   }
 
   async function ejecutarDemo() {
-    if (!controlesActivos || demoEnCurso) return;
+    const idVehiculo = obtenerIdVehiculo();
+    if (!controlesActivos || demoEnCurso || !idVehiculo) return;
 
     const selector = document.getElementById("demo");
     const idDemo = Number(selector?.value);
@@ -316,7 +330,7 @@ window.SCARLETTE_CONTROLS = (() => {
 
     try {
       const resultado = await api.solicitar(
-        `/vehiculos/${ID_VEHICULO}/demos/${idDemo}/iniciar`,
+        `/vehiculos/${idVehiculo}/demos/${idDemo}/iniciar`,
         { method: "POST" }
       );
 
@@ -328,11 +342,12 @@ window.SCARLETTE_CONTROLS = (() => {
   }
 
   async function cancelarDemo() {
-    if (!controlesActivos) return;
+    const idVehiculo = obtenerIdVehiculo();
+    if (!controlesActivos || !idVehiculo) return;
 
     try {
       await api.solicitar(
-        `/vehiculos/${ID_VEHICULO}/demos/cancelar`,
+        `/vehiculos/${idVehiculo}/demos/cancelar`,
         { method: "POST" }
       );
 
@@ -378,6 +393,7 @@ window.SCARLETTE_CONTROLS = (() => {
   return Object.freeze({
     ejecutarMovimiento,
     detenerVehiculo,
+    cargarDemos,
     async prepararOcultacion() {
       // No duplicar una parada ya en vuelo; conservar CONTROL en ese caso.
       if (paradasPendientes) return false;
