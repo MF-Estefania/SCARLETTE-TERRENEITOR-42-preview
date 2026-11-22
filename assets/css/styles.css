@@ -1244,252 +1244,102 @@
    RESPONSIVA MOVIL 4.3 (CELULAR VERTICAL Y HORIZONTAL - ZERO SCROLL)
    ===================================================================== */
 
-/* 1. CELULAR VERTICAL (PORTRAIT: MAX-WIDTH 767.98px) */
-@media (max-width: 767.98px) {
-  /* Topbar ultra compacta */
+/* Selects consistentes: elimina la doble flecha en todos los navegadores */
+select.hud-select,
+select.form-select {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ff66b5' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 10px center !important;
+  background-size: 12px 10px !important;
+}
+
+/* Pantallas intermedias (tablets / laptops con escala DPI ~800px a 1199px) */
+@media (min-width: 768px) and (max-width: 1199.98px) {
   .panel-page .topbar {
-    padding: 6px 10px 8px;
-    gap: 6px;
-  }
-  .panel-page .brand > .icon {
-    width: 28px;
-    height: 28px;
-  }
-  .panel-page .brand-name {
-    font-size: 19px;
-  }
-  .panel-page .brand p {
-    font-size: 10px;
-    margin: 0;
-  }
-  .panel-page .topbar > .connections {
-    gap: 4px;
+    padding: 6px 14px !important;
+    gap: 8px !important;
+    flex-wrap: nowrap !important;
   }
   .panel-page .connection {
-    padding: 3px 6px;
-    gap: 4px;
-    border-radius: 8px;
+    padding: 3px 6px !important;
+    gap: 4px !important;
   }
   .panel-page .connection > .icon {
-    width: 16px;
-    height: 16px;
+    width: 18px !important;
+    height: 18px !important;
   }
-  .panel-page .connection-label,
+  .panel-page .connection-label {
+    font-size: 10px !important;
+    white-space: nowrap !important;
+  }
   .panel-page .connection-state {
-    font-size: 9.5px;
-    line-height: 1.15;
+    font-size: 9.5px !important;
+    white-space: nowrap !important;
   }
   .panel-page .logout-button {
-    min-height: 32px;
-    padding: 4px 8px;
-    font-size: 11px;
-  }
-
-  /* App shell y espaciado */
-  .panel-page .app-shell {
-    padding: 6px 8px 4px;
-  }
-  .panel-page .preview-notice {
-    font-size: 10px;
-    margin-bottom: 4px;
-    gap: 4px;
-  }
-
-  /* HUD de Vehículo Conectado compacto */
-  .panel-page.user-navigation .vehicle-hud {
-    padding: 6px 10px;
-    gap: 6px;
-    margin-bottom: 6px;
-    border-radius: 12px;
-  }
-  .panel-page.user-navigation .hud-icon-box {
-    width: 26px;
-    height: 26px;
-  }
-  .panel-page.user-navigation .hud-icon-box .icon {
-    width: 15px;
-    height: 15px;
-  }
-  .panel-page.user-navigation .hud-title {
-    font-size: 8.5px;
-    letter-spacing: 0.8px;
-  }
-  .panel-page.user-navigation .hud-name {
-    font-size: 13px;
-  }
-  .panel-page.user-navigation .hud-meta {
-    font-size: 10px;
-  }
-  .panel-page.user-navigation .hud-select {
-    min-width: 135px;
-    font-size: 10.5px;
-    padding: 3px 6px;
-    height: 28px;
-  }
-
-  /* Pestañas de Navegación compactas */
-  .panel-page.user-navigation .user-panel-tabs {
-    gap: 4px;
-    margin-bottom: 6px;
-  }
-  .panel-page.user-navigation .user-panel-tabs button {
-    min-height: 34px;
-    padding: 4px 6px;
-    font-size: 11px;
-    border-radius: 8px;
-  }
-
-  /* PESTAÑA ADMINISTRACIÓN (Móvil Vertical) */
-  .panel-page.user-navigation .admin-panel-content .glass-card {
-    padding: 8px 10px !important;
-    margin-bottom: 6px !important;
-    border-radius: 12px;
-  }
-  .panel-page.user-navigation #admin-metrics-row {
-    --bs-gutter-x: 4px;
-    --bs-gutter-y: 4px;
-  }
-  .panel-page.user-navigation .metric-card {
-    padding: 6px 8px !important;
-    border-radius: 10px !important;
-  }
-  .panel-page.user-navigation .metric-label {
-    font-size: 8.5px !important;
-    letter-spacing: 0.5px !important;
-    margin-bottom: 2px !important;
-  }
-  .panel-page.user-navigation .metric-value {
-    font-size: 18px !important;
-  }
-  .panel-page.user-navigation .scarlette-pills {
-    gap: 4px !important;
-    padding-bottom: 6px !important;
-    margin-bottom: 8px !important;
-  }
-  .panel-page.user-navigation .scarlette-pill {
-    padding: 3px 8px !important;
-    font-size: 10.5px !important;
-    border-radius: 10px !important;
-  }
-  .panel-page.user-navigation .admin-panel-content .table-responsive {
-    max-height: 42vh !important;
-  }
-  .panel-page.user-navigation .admin-panel-content table th,
-  .panel-page.user-navigation .admin-panel-content table td {
-    padding: 4px 6px !important;
-    font-size: 10.5px !important;
-  }
-
-  /* PESTAÑA CONTROL (Móvil Vertical) */
-  .panel-page.user-navigation .control-layout {
-    gap: 6px;
-  }
-  .panel-page.user-navigation .joystick {
-    width: min(100%, 150px);
-    margin: 6px auto;
-  }
-  .panel-page.user-navigation .joystick-card,
-  .panel-page.user-navigation .additional-card,
-  .panel-page.user-navigation .demo-card {
-    padding: 8px 10px;
-    border-radius: 12px;
-  }
-  .panel-page.user-navigation .card-heading {
-    font-size: 12px;
-    padding-bottom: 4px;
-  }
-  .panel-page.user-navigation .card-heading .icon {
-    width: 16px;
-    height: 16px;
-  }
-  .panel-page.user-navigation .movement-grid {
-    gap: 4px;
-    margin-top: 4px;
-  }
-  .panel-page.user-navigation .movement {
-    min-height: 48px;
-    font-size: 10px;
-    padding: 2px;
-    border-radius: 10px;
-  }
-  .panel-page.user-navigation .movement .icon {
-    width: 18px;
-    height: 18px;
-  }
-  .panel-page.user-navigation .emergency-stop {
-    min-width: 160px;
-    font-size: 15px;
-    padding: 6px 14px;
-    height: 40px;
-    min-height: 40px;
-  }
-
-  /* PESTAÑA MONITOREO (Móvil Vertical) */
-  .panel-page.user-navigation #user-monitoring-panel {
-    gap: 6px;
-    padding: 0 !important;
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-  }
-  .panel-page.user-navigation #user-monitoring-panel .last-movement,
-  .panel-page.user-navigation #user-monitoring-panel .movement-history {
-    padding: 8px 10px !important;
-    border-radius: 12px;
-    margin-bottom: 0 !important;
-  }
-  .panel-page.user-navigation #user-monitoring-panel .last-movement-fields {
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-    gap: 4px;
-    margin: 4px 0;
-  }
-  .panel-page.user-navigation #user-monitoring-panel .last-movement-fields dt {
-    font-size: 8.5px;
-  }
-  .panel-page.user-navigation #user-monitoring-panel .last-movement-fields dd {
-    font-size: 12px;
-  }
-  .panel-page.user-navigation #user-monitoring-panel .history-table-scroll {
-    max-height: 38vh !important;
-    margin-top: 6px;
-  }
-  .panel-page.user-navigation #user-monitoring-panel .history-table th,
-  .panel-page.user-navigation #user-monitoring-panel .history-table td {
-    padding: 4px 6px !important;
-    font-size: 10.5px !important;
-  }
-  .panel-page.user-navigation .page-footer {
-    padding: 4px 0;
-    font-size: 9px;
+    font-size: 11px !important;
+    padding: 4px 8px !important;
+    white-space: nowrap !important;
   }
 }
 
-/* 2. CELULAR HORIZONTAL (LANDSCAPE: MAX-HEIGHT 520px) */
-@media (orientation: landscape) and (max-height: 520px) {
-  .panel-page {
-    overflow-y: auto;
+/* 1. CELULAR VERTICAL (PORTRAIT: MAX-WIDTH 767.98px) */
+@media (max-width: 767.98px) {
+  /* Reset general para eliminar scroll de página */
+  html, body {
+    overflow-x: hidden;
   }
+  .panel-page {
+    min-height: 100svh;
+  }
+
+  /* Topbar ultra compacta de 2 filas fijas */
   .panel-page .topbar {
-    padding: 3px 8px 4px !important;
+    padding: 4px 8px 6px !important;
     gap: 4px !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    border-bottom-width: 1px !important;
+  }
+  .panel-page .topbar > .brand {
+    order: 1;
+    flex: 1 1 auto;
+    gap: 6px !important;
   }
   .panel-page .brand > .icon {
-    width: 22px !important;
-    height: 22px !important;
+    width: 24px !important;
+    height: 24px !important;
   }
   .panel-page .brand-name {
-    font-size: 15px !important;
+    font-size: 17px !important;
   }
   .panel-page .brand p {
-    display: none !important;
+    font-size: 9.5px !important;
+    margin: 0 !important;
+  }
+  .panel-page .topbar > .logout-button {
+    order: 2;
+    min-height: 26px !important;
+    padding: 2px 8px !important;
+    font-size: 10px !important;
   }
   .panel-page .topbar > .connections {
-    gap: 4px !important;
+    order: 3;
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 3px !important;
+    padding: 0 !important;
+    border: none !important;
   }
   .panel-page .connection {
     padding: 2px 4px !important;
     gap: 3px !important;
     border-radius: 6px !important;
+    justify-content: center !important;
   }
   .panel-page .connection > .icon {
     width: 14px !important;
@@ -1498,27 +1348,26 @@
   .panel-page .connection-label,
   .panel-page .connection-state {
     font-size: 8.5px !important;
-  }
-  .panel-page .logout-button {
-    min-height: 26px !important;
-    padding: 2px 6px !important;
-    font-size: 10px !important;
+    line-height: 1.1 !important;
+    white-space: nowrap !important;
   }
 
-  /* App shell landscape */
+  /* App shell y espaciado */
   .panel-page .app-shell {
-    padding: 4px 8px 2px !important;
+    padding: 4px 6px 4px !important;
   }
   .panel-page .preview-notice {
     display: none !important;
   }
 
-  /* HUD en landscape */
+  /* HUD de Vehículo Conectado compacto (3 filas limpias) */
   .panel-page.user-navigation .vehicle-hud {
-    padding: 3px 8px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 5px 8px !important;
+    gap: 3px !important;
     margin-bottom: 4px !important;
-    border-radius: 8px !important;
-    gap: 6px !important;
+    border-radius: 10px !important;
   }
   .panel-page.user-navigation .hud-icon-box {
     width: 22px !important;
@@ -1530,53 +1379,61 @@
   }
   .panel-page.user-navigation .hud-title {
     font-size: 8px !important;
+    letter-spacing: 0.5px !important;
   }
   .panel-page.user-navigation .hud-name {
     font-size: 12px !important;
   }
   .panel-page.user-navigation .hud-meta {
     font-size: 9px !important;
+    margin: 0 !important;
   }
   .panel-page.user-navigation .hud-select {
-    min-width: 120px !important;
-    font-size: 9.5px !important;
-    padding: 2px 4px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    font-size: 10px !important;
+    padding: 2px 20px 2px 6px !important;
     height: 24px !important;
   }
 
-  /* Pestañas de navegación en landscape */
+  /* Pestañas de Navegación compactas */
   .panel-page.user-navigation .user-panel-tabs {
-    gap: 4px !important;
+    gap: 3px !important;
     margin-bottom: 4px !important;
   }
   .panel-page.user-navigation .user-panel-tabs button {
-    min-height: 26px !important;
-    padding: 2px 6px !important;
-    font-size: 10px !important;
+    min-height: 30px !important;
+    padding: 3px 4px !important;
+    font-size: 10.5px !important;
     border-radius: 6px !important;
   }
 
-  /* ADMINISTRACIÓN en landscape */
+  /* PESTAÑA ADMINISTRACIÓN (Móvil Vertical) */
   .panel-page.user-navigation .admin-panel-content .glass-card {
     padding: 6px 8px !important;
     margin-bottom: 4px !important;
     border-radius: 10px !important;
+  }
+  .panel-page.user-navigation #admin-metrics-row {
+    --bs-gutter-x: 3px !important;
+    --bs-gutter-y: 3px !important;
   }
   .panel-page.user-navigation .metric-card {
     padding: 4px 6px !important;
     border-radius: 8px !important;
   }
   .panel-page.user-navigation .metric-label {
-    font-size: 8px !important;
+    font-size: 7.5px !important;
+    letter-spacing: 0.3px !important;
     margin-bottom: 1px !important;
   }
   .panel-page.user-navigation .metric-value {
-    font-size: 16px !important;
+    font-size: 15px !important;
   }
   .panel-page.user-navigation .scarlette-pills {
     gap: 3px !important;
+    padding-bottom: 4px !important;
     margin-bottom: 4px !important;
-    padding-bottom: 3px !important;
   }
   .panel-page.user-navigation .scarlette-pill {
     padding: 2px 6px !important;
@@ -1584,66 +1441,128 @@
     border-radius: 8px !important;
   }
   .panel-page.user-navigation .admin-panel-content .table-responsive {
-    max-height: 32vh !important;
+    max-height: 36vh !important;
   }
   .panel-page.user-navigation .admin-panel-content table th,
   .panel-page.user-navigation .admin-panel-content table td {
     padding: 3px 5px !important;
-    font-size: 10px !important;
+    font-size: 9.5px !important;
   }
 
-  /* CONTROL en landscape */
+  /* PESTAÑA CONTROL (Móvil Vertical) */
   .panel-page.user-navigation .control-layout {
     display: grid !important;
-    grid-template-columns: 120px 1.4fr 1.2fr !important;
-    gap: 6px !important;
-    align-items: stretch !important;
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr) !important;
+    gap: 4px !important;
+    margin: 0 !important;
   }
-  .panel-page.user-navigation .joystick {
-    width: min(100%, 105px) !important;
-    margin: 2px auto !important;
+  .panel-page.user-navigation .joystick-column {
+    grid-column: 1 !important;
+    width: 100% !important;
   }
-  .panel-page.user-navigation .joystick-card,
-  .panel-page.user-navigation .additional-card,
-  .panel-page.user-navigation .demo-card {
-    padding: 4px 6px !important;
-    border-radius: 8px !important;
+  .panel-page.user-navigation .center-column {
+    grid-column: 2 !important;
+    width: 100% !important;
   }
   .panel-page.user-navigation .center-column > .vehicle-art {
     display: none !important;
   }
+  .panel-page.user-navigation .demo-column {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    margin-top: 4px !important;
+  }
+  .panel-page.user-navigation .joystick-card,
+  .panel-page.user-navigation .additional-card,
+  .panel-page.user-navigation .demo-card {
+    padding: 6px 8px !important;
+    border-radius: 10px !important;
+    min-height: 0 !important;
+    height: auto !important;
+  }
+  .panel-page.user-navigation .card-heading {
+    font-size: 11px !important;
+    padding-bottom: 3px !important;
+    min-height: 0 !important;
+  }
+  .panel-page.user-navigation .card-heading .icon {
+    width: 14px !important;
+    height: 14px !important;
+  }
+  .panel-page.user-navigation .joystick {
+    width: min(100%, 120px) !important;
+    height: 120px !important;
+    margin: 2px auto !important;
+  }
+  .panel-page.user-navigation .joystick-card > .info-box {
+    display: none !important;
+  }
   .panel-page.user-navigation .movement-grid {
-    grid-template-columns: repeat(4, 1fr) !important;
+    grid-template-columns: repeat(2, 1fr) !important;
     gap: 3px !important;
     margin-top: 2px !important;
   }
   .panel-page.user-navigation .movement {
-    min-height: 38px !important;
-    font-size: 9px !important;
+    min-height: 32px !important;
+    font-size: 8.5px !important;
     padding: 1px !important;
     border-radius: 6px !important;
+    line-height: 1.1 !important;
   }
   .panel-page.user-navigation .movement .icon {
-    width: 15px !important;
-    height: 15px !important;
+    width: 14px !important;
+    height: 14px !important;
   }
-  .panel-page.user-navigation .emergency-stop {
-    min-width: 140px !important;
-    height: 34px !important;
-    min-height: 34px !important;
-    font-size: 13px !important;
-    padding: 4px 10px !important;
+  .panel-page.user-navigation .lights-estimation,
+  .panel-page.user-navigation .lights-estimation-status {
+    display: none !important;
+  }
+  .panel-page.user-navigation .demo-card .form-label {
+    font-size: 9.5px !important;
+    margin: 2px 0 !important;
+  }
+  .panel-page.user-navigation .demo-card .form-select {
+    font-size: 10px !important;
+    height: 24px !important;
+    min-height: 24px !important;
+    padding: 2px 20px 2px 6px !important;
+  }
+  .panel-page.user-navigation .demo-card .neon-button,
+  .panel-page.user-navigation .demo-card .outline-button,
+  .panel-page.user-navigation #btn-abrir-editor-demos {
+    font-size: 10px !important;
+    padding: 3px 6px !important;
+    height: 26px !important;
+    min-height: 26px !important;
+    margin: 2px 0 !important;
+  }
+  .panel-page.user-navigation .demo-card .info-box {
+    display: none !important;
   }
   .panel-page.user-navigation .stop-band {
-    padding: 2px 0 !important;
+    position: static !important;
+    margin: 4px auto 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    display: flex !important;
+    justify-content: center !important;
+  }
+  .panel-page.user-navigation .stop-band::before,
+  .panel-page.user-navigation .stop-band::after {
+    display: none !important;
+  }
+  .panel-page.user-navigation .emergency-stop {
+    width: 100% !important;
+    max-width: 280px !important;
+    font-size: 13px !important;
+    padding: 4px 10px !important;
+    height: 34px !important;
+    min-height: 34px !important;
   }
 
-  /* MONITOREO en landscape */
+  /* PESTAÑA MONITOREO (Móvil Vertical) */
   .panel-page.user-navigation #user-monitoring-panel {
-    display: grid !important;
-    grid-template-columns: 1fr 1.6fr !important;
-    gap: 6px !important;
-    align-items: stretch !important;
+    gap: 4px !important;
     padding: 0 !important;
     background: transparent !important;
     border: none !important;
@@ -1652,17 +1571,344 @@
   .panel-page.user-navigation #user-monitoring-panel .last-movement,
   .panel-page.user-navigation #user-monitoring-panel .movement-history {
     padding: 6px 8px !important;
-    border-radius: 8px !important;
+    border-radius: 10px !important;
     margin-bottom: 0 !important;
   }
+  .panel-page.user-navigation #user-monitoring-panel .last-movement-fields {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 4px !important;
+    margin: 2px 0 !important;
+  }
+  .panel-page.user-navigation #user-monitoring-panel .last-movement-fields dt {
+    font-size: 8px !important;
+    margin-bottom: 2px !important;
+  }
+  .panel-page.user-navigation #user-monitoring-panel .last-movement-fields dd {
+    font-size: 11px !important;
+  }
   .panel-page.user-navigation #user-monitoring-panel .history-table-scroll {
-    max-height: 28vh !important;
+    max-height: 30vh !important;
     margin-top: 4px !important;
   }
   .panel-page.user-navigation #user-monitoring-panel .history-table th,
   .panel-page.user-navigation #user-monitoring-panel .history-table td {
     padding: 3px 5px !important;
     font-size: 9.5px !important;
+  }
+  .panel-page.user-navigation .page-footer {
+    padding: 2px 0 !important;
+    font-size: 8.5px !important;
+    margin-top: 4px !important;
+  }
+}
+
+/* 2. CELULAR HORIZONTAL (LANDSCAPE: MAX-HEIGHT 520px) */
+@media (orientation: landscape) and (max-height: 520px) {
+  html, body {
+    overflow-x: hidden;
+  }
+  .panel-page {
+    min-height: 100svh;
+  }
+  .panel-page .topbar {
+    padding: 2px 8px 3px !important;
+    gap: 4px !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+  }
+  .panel-page .brand {
+    gap: 5px !important;
+  }
+  .panel-page .brand > .icon {
+    width: 20px !important;
+    height: 20px !important;
+  }
+  .panel-page .brand-name {
+    font-size: 14px !important;
+  }
+  .panel-page .brand p {
+    display: none !important;
+  }
+  .panel-page .topbar > .connections {
+    gap: 3px !important;
+    display: flex !important;
+    flex: 1 1 auto !important;
+    max-width: 480px !important;
+    border: none !important;
+    padding: 0 6px !important;
+  }
+  .panel-page .connection {
+    padding: 1px 4px !important;
+    gap: 3px !important;
+    border-radius: 5px !important;
+    flex: 1 1 auto !important;
+  }
+  .panel-page .connection > .icon {
+    width: 12px !important;
+    height: 12px !important;
+  }
+  .panel-page .connection-label,
+  .panel-page .connection-state {
+    font-size: 8px !important;
+    line-height: 1.1 !important;
+    white-space: nowrap !important;
+  }
+  .panel-page .logout-button {
+    min-height: 22px !important;
+    padding: 1px 6px !important;
+    font-size: 9.5px !important;
+    white-space: nowrap !important;
+  }
+
+  /* App shell landscape */
+  .panel-page .app-shell {
+    padding: 2px 6px 2px !important;
+  }
+  .panel-page .preview-notice {
+    display: none !important;
+  }
+
+  /* HUD en landscape: ultra compacto de 1 línea */
+  .panel-page.user-navigation .vehicle-hud {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 2px 6px !important;
+    margin-bottom: 3px !important;
+    border-radius: 6px !important;
+    gap: 6px !important;
+  }
+  .panel-page.user-navigation .hud-icon-box {
+    width: 18px !important;
+    height: 18px !important;
+  }
+  .panel-page.user-navigation .hud-icon-box .icon {
+    width: 11px !important;
+    height: 11px !important;
+  }
+  .panel-page.user-navigation .hud-title {
+    font-size: 7.5px !important;
+  }
+  .panel-page.user-navigation .hud-name {
+    font-size: 11px !important;
+  }
+  .panel-page.user-navigation .hud-meta {
+    font-size: 8.5px !important;
+    margin: 0 !important;
+  }
+  .panel-page.user-navigation .hud-select {
+    min-width: 110px !important;
+    font-size: 9px !important;
+    padding: 1px 18px 1px 4px !important;
+    height: 22px !important;
+  }
+
+  /* Pestañas de navegación en landscape */
+  .panel-page.user-navigation .user-panel-tabs {
+    gap: 3px !important;
+    margin-bottom: 3px !important;
+  }
+  .panel-page.user-navigation .user-panel-tabs button {
+    min-height: 24px !important;
+    padding: 1px 6px !important;
+    font-size: 9.5px !important;
+    border-radius: 5px !important;
+  }
+
+  /* ADMINISTRACIÓN en landscape */
+  .panel-page.user-navigation .admin-panel-content .glass-card {
+    padding: 4px 6px !important;
+    margin-bottom: 3px !important;
+    border-radius: 8px !important;
+  }
+  .panel-page.user-navigation .metric-card {
+    padding: 2px 4px !important;
+    border-radius: 6px !important;
+  }
+  .panel-page.user-navigation .metric-label {
+    font-size: 7.5px !important;
+    margin-bottom: 0 !important;
+  }
+  .panel-page.user-navigation .metric-value {
+    font-size: 14px !important;
+  }
+  .panel-page.user-navigation .scarlette-pills {
+    gap: 2px !important;
+    margin-bottom: 3px !important;
+    padding-bottom: 2px !important;
+  }
+  .panel-page.user-navigation .scarlette-pill {
+    padding: 1px 5px !important;
+    font-size: 9px !important;
+    border-radius: 6px !important;
+  }
+  .panel-page.user-navigation .admin-panel-content .table-responsive {
+    max-height: 140px !important;
+  }
+  .panel-page.user-navigation .admin-panel-content table th,
+  .panel-page.user-navigation .admin-panel-content table td {
+    padding: 2px 4px !important;
+    font-size: 9px !important;
+  }
+
+  /* CONTROL en landscape (3 columnas perfectamente balanceadas) */
+  .panel-page.user-navigation .control-layout {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.45fr) minmax(0, 1.25fr) !important;
+    gap: 4px !important;
+    margin: 0 !important;
+    align-items: stretch !important;
+  }
+  .panel-page.user-navigation .joystick-column,
+  .panel-page.user-navigation .center-column,
+  .panel-page.user-navigation .demo-column {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .panel-page.user-navigation .joystick {
+    width: 95px !important;
+    height: 95px !important;
+    margin: 2px auto !important;
+  }
+  .panel-page.user-navigation .direction {
+    width: 28px !important;
+    height: 28px !important;
+    padding: 2px !important;
+  }
+  .panel-page.user-navigation .direction .icon {
+    width: 14px !important;
+    height: 14px !important;
+  }
+  .panel-page.user-navigation .joystick-center {
+    width: 28px !important;
+    height: 28px !important;
+    inset: auto !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+  }
+  .panel-page.user-navigation .joystick-card,
+  .panel-page.user-navigation .additional-card,
+  .panel-page.user-navigation .demo-card {
+    padding: 3px 5px !important;
+    border-radius: 6px !important;
+    min-height: 0 !important;
+    height: 100% !important;
+  }
+  .panel-page.user-navigation .card-heading {
+    font-size: 10px !important;
+    padding-bottom: 2px !important;
+    min-height: 0 !important;
+  }
+  .panel-page.user-navigation .card-heading .icon {
+    width: 13px !important;
+    height: 13px !important;
+  }
+  .panel-page.user-navigation .center-column > .vehicle-art {
+    display: none !important;
+  }
+  .panel-page.user-navigation .movement-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 2px !important;
+    margin-top: 2px !important;
+  }
+  .panel-page.user-navigation .movement {
+    min-height: 32px !important;
+    font-size: 8.5px !important;
+    padding: 1px !important;
+    border-radius: 5px !important;
+    line-height: 1.1 !important;
+  }
+  .panel-page.user-navigation .movement .icon {
+    width: 13px !important;
+    height: 13px !important;
+  }
+  .panel-page.user-navigation .lights-estimation,
+  .panel-page.user-navigation .lights-estimation-status,
+  .panel-page.user-navigation .joystick-card > .info-box,
+  .panel-page.user-navigation .demo-card > .info-box {
+    display: none !important;
+  }
+  .panel-page.user-navigation .demo-card .form-label {
+    font-size: 8.5px !important;
+    margin: 1px 0 !important;
+  }
+  .panel-page.user-navigation .demo-card .form-select {
+    font-size: 9px !important;
+    height: 22px !important;
+    min-height: 22px !important;
+    padding: 1px 16px 1px 4px !important;
+  }
+  .panel-page.user-navigation .demo-card .neon-button,
+  .panel-page.user-navigation .demo-card .outline-button,
+  .panel-page.user-navigation #btn-abrir-editor-demos {
+    font-size: 9px !important;
+    padding: 2px 4px !important;
+    height: 22px !important;
+    min-height: 22px !important;
+    margin: 1px 0 !important;
+  }
+  .panel-page.user-navigation .stop-band {
+    position: static !important;
+    margin: 2px auto 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    display: flex !important;
+    justify-content: center !important;
+  }
+  .panel-page.user-navigation .stop-band::before,
+  .panel-page.user-navigation .stop-band::after {
+    display: none !important;
+  }
+  .panel-page.user-navigation .emergency-stop {
+    width: 100% !important;
+    max-width: 240px !important;
+    height: 28px !important;
+    min-height: 28px !important;
+    font-size: 12px !important;
+    padding: 1px 8px !important;
+  }
+
+  /* MONITOREO en landscape */
+  .panel-page.user-navigation #user-monitoring-panel {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr) !important;
+    gap: 4px !important;
+    align-items: stretch !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  .panel-page.user-navigation #user-monitoring-panel .last-movement,
+  .panel-page.user-navigation #user-monitoring-panel .movement-history {
+    padding: 4px 6px !important;
+    border-radius: 6px !important;
+    margin-bottom: 0 !important;
+  }
+  .panel-page.user-navigation #user-monitoring-panel .last-movement-fields {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 3px !important;
+    margin: 1px 0 !important;
+  }
+  .panel-page.user-navigation #user-monitoring-panel .last-movement-fields dt {
+    font-size: 7.5px !important;
+  }
+  .panel-page.user-navigation #user-monitoring-panel .last-movement-fields dd {
+    font-size: 10px !important;
+  }
+  .panel-page.user-navigation #user-monitoring-panel .history-table-scroll {
+    max-height: 135px !important;
+    margin-top: 2px !important;
+  }
+  .panel-page.user-navigation #user-monitoring-panel .history-table th,
+  .panel-page.user-navigation #user-monitoring-panel .history-table td {
+    padding: 2px 4px !important;
+    font-size: 9px !important;
   }
 
   .panel-page .page-footer {
