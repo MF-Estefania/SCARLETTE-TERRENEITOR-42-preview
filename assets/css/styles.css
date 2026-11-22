@@ -1265,6 +1265,9 @@ select.form-select {
   padding: 8px !important;
   box-sizing: border-box !important;
 }
+#modal-demos-overlay .text-muted {
+  color: #c4b5cd !important;
+}
 #modal-demos-overlay > .glass-card {
   max-width: 900px !important;
   margin: 10px auto !important;
