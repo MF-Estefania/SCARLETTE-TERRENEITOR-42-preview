@@ -61,7 +61,7 @@ document.addEventListener("scarlette:sesion-verificada", evento => {
     const hasMovement = Boolean(data && (data.comando || data.codigo || data.fecha_actualizacion));
     fields.hidden = !hasMovement;
     values[0].textContent = data?.comando || "—";
-    values[1].textContent = data?.codigo || "—";
+    values[1].innerHTML = `<span class="badge" style="background:#2a1a2b; border:1px solid #614765; color:var(--pink-light); font-size:11px; padding:2px 6px">${data?.codigo || '—'}</span>`;
     values[2].textContent = (data?.fecha_actualizacion || "—").replace(/^(\d{4}-\d{2}-\d{2})T(?=\d{2}:)/, "$1 ");
     retry.hidden = snapshot.estado !== "error";
     card.dataset.state = snapshot.estado;

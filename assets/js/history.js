@@ -98,19 +98,21 @@ document.addEventListener("scarlette:sesion-verificada", evento => {
       // El orden y la exclusión de pasos DEMO corresponden al contrato REST.
       records.slice(0, 10).forEach(record => {
         const row = document.createElement("tr");
-        const date = String(record.fecha_hora ?? "—").replace(/^(\d{4}-\d{2}-\d{2})T(?=\d{2}:)/, "$1 ");
+        const fullDate = String(record.fecha_hora ?? "—").replace(/^(\d{4}-\d{2}-\d{2})T(?=\d{2}:)/, "$1 ");
+        const shortDate = fullDate.replace(/^\d{4}-/, '');
         
         const tdCmd = document.createElement("td");
-        tdCmd.innerHTML = `<strong style="color:#ffffff">${record.comando || '—'}</strong>`;
+        tdCmd.innerHTML = `<strong style="color:#ffffff; font-size:10px; line-height:1.1">${record.comando || '—'}</strong>`;
         
         const tdCod = document.createElement("td");
-        tdCod.innerHTML = `<span class="badge" style="background:#2a1a2b; border:1px solid #614765; color:var(--pink-light)">${record.codigo || '—'}</span>`;
+        tdCod.innerHTML = `<span class="badge" style="background:#2a1a2b; border:1px solid #614765; color:var(--pink-light); font-size:9px; padding:1px 4px">${record.codigo || '—'}</span>`;
         
         const tdDate = document.createElement("td");
-        tdDate.innerHTML = `<span style="color:#d5cbe0; font-family:monospace; font-size:12px">${date}</span>`;
+        tdDate.innerHTML = `<span title="${fullDate}" style="color:#d5cbe0; font-family:monospace; font-size:9.5px; white-space:nowrap">${shortDate}</span>`;
         
+        const origText = (record.origen === "scarlette_web" || !record.origen) ? "web" : record.origen;
         const tdOrig = document.createElement("td");
-        tdOrig.innerHTML = `<span class="badge-scarlette-usuario">${record.origen || 'web'}</span>`;
+        tdOrig.innerHTML = `<span class="badge-scarlette-usuario" title="${record.origen || 'web'}" style="padding:1px 5px; font-size:8.5px; white-space:nowrap">${origText}</span>`;
         
         row.append(tdCmd, tdCod, tdDate, tdOrig);
         rows.append(row);

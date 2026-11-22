@@ -101,7 +101,7 @@ window.SCARLETTE_ADMIN = (() => {
             <!-- Pestaña 1: Inventario -->
             <div class="admin-subtab-pane" id="tab-unidades">
               <div class="d-flex justify-content-between align-items-center mb-2">
-                <h3 class="m-0 fs-6 text-white">Unidades Físicas Registradas en Flota</h3>
+                <h3 class="m-0 fs-6 text-white">Unidades Físicas</h3>
                 <button id="btn-nueva-unidad" class="neon-button py-1 px-3" style="width:auto; font-size:13px">+ Nueva Unidad</button>
               </div>
 
@@ -130,12 +130,12 @@ window.SCARLETTE_ADMIN = (() => {
                   <thead>
                     <tr style="border-bottom: 2px solid #8a3463; position:sticky; top:0; background:#1f1522; z-index:2">
                       <th style="color:var(--pink-light)">ID</th>
-                      <th style="color:var(--pink-light)">Unidad / Nombre</th>
-                      <th style="color:var(--pink-light)">Modelo</th>
-                      <th style="color:var(--pink-light)">Número de Serie</th>
-                      <th style="color:var(--pink-light)">Microcontrolador</th>
-                      <th style="color:var(--pink-light)">Estado Comercial</th>
-                      <th style="color:var(--pink-light)">Propietario Asignado</th>
+                      <th style="color:var(--pink-light)">Unidad</th>
+                      <th class="d-none d-md-table-cell" style="color:var(--pink-light)">Modelo</th>
+                      <th style="color:var(--pink-light)">Serie</th>
+                      <th class="d-none d-md-table-cell" style="color:var(--pink-light)">Micro</th>
+                      <th style="color:var(--pink-light)">Estado</th>
+                      <th style="color:var(--pink-light)">Propietario</th>
                       <th style="color:var(--pink-light)">Acción</th>
                     </tr>
                   </thead>
@@ -146,13 +146,13 @@ window.SCARLETTE_ADMIN = (() => {
 
             <!-- Pestaña 2: Modelos -->
             <div class="admin-subtab-pane" id="tab-modelos" style="display:none">
-              <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3 class="fs-5 m-0 text-white">Catálogo de Modelos Comerciales</h3>
-                <button id="btn-nuevo-modelo" class="neon-button py-2 px-3" style="width:auto; font-size:14px">+ Nuevo Modelo</button>
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h3 class="fs-6 m-0 text-white">Modelos Comerciales</h3>
+                <button id="btn-nuevo-modelo" class="neon-button py-1 px-3" style="width:auto; font-size:13px">+ Nuevo Modelo</button>
               </div>
 
               <!-- Formulario de nuevo modelo -->
-              <div id="form-nuevo-modelo" class="glass-card p-3 mb-3" style="display:none; background:#1b1522">
+              <div id="form-nuevo-modelo" class="glass-card p-3 mb-2" style="display:none; background:#1b1522">
                 <h4 class="fs-6 mb-2" style="color:var(--pink-light)">Registrar Nuevo Modelo Comercial</h4>
                 <div class="row g-2">
                   <div class="col-md-4"><input id="new-m-nombre" class="form-control form-control-sm" placeholder="Nombre (ej. TR-02 Monster Edition)"></div>
@@ -178,7 +178,7 @@ window.SCARLETTE_ADMIN = (() => {
                       <th style="background:#ff349f18; color:var(--pink-light)">ID</th>
                       <th style="background:#ff349f18; color:var(--pink-light)">Nombre Modelo</th>
                       <th style="background:#ff349f18; color:var(--pink-light)">Microcontrolador</th>
-                      <th style="background:#ff349f18; color:var(--pink-light)">Descripción</th>
+                      <th class="d-none d-md-table-cell" style="background:#ff349f18; color:var(--pink-light)">Descripción</th>
                     </tr>
                   </thead>
                   <tbody id="tbody-modelos"><tr><td colspan="4" class="text-center p-3 text-muted">Cargando modelos...</td></tr></tbody>
@@ -188,7 +188,7 @@ window.SCARLETTE_ADMIN = (() => {
 
             <!-- Pestaña 3: Clientes -->
             <div class="admin-subtab-pane" id="tab-clientes" style="display:none">
-              <h3 class="fs-5 mb-3 text-white">Clientes y Unidades Asignadas</h3>
+              <h3 class="fs-6 mb-2 text-white">Clientes y Asignaciones</h3>
               <div class="table-responsive">
                 <table class="table table-dark table-hover align-middle m-0" style="background:transparent">
                   <thead>
@@ -206,7 +206,7 @@ window.SCARLETTE_ADMIN = (() => {
 
             <!-- Pestaña 4: Auditoría -->
             <div class="admin-subtab-pane" id="tab-auditoria" style="display:none">
-              <h3 class="fs-5 mb-3 text-white">Bitácora de Auditoría en Tiempo Real</h3>
+              <h3 class="fs-6 mb-2 text-white">Bitácora de Auditoría</h3>
               <div class="table-responsive">
                 <table class="table table-dark table-sm table-hover align-middle m-0" style="background:transparent">
                   <thead>
@@ -215,7 +215,7 @@ window.SCARLETTE_ADMIN = (() => {
                       <th style="background:#ff349f18; color:var(--pink-light)">Usuario</th>
                       <th style="background:#ff349f18; color:var(--pink-light)">Acción</th>
                       <th style="background:#ff349f18; color:var(--pink-light)">Recurso</th>
-                      <th style="background:#ff349f18; color:var(--pink-light)">Detalle</th>
+                      <th class="d-none d-md-table-cell" style="background:#ff349f18; color:var(--pink-light)">Detalle</th>
                       <th style="background:#ff349f18; color:var(--pink-light)">Resultado</th>
                     </tr>
                   </thead>
@@ -338,14 +338,17 @@ window.SCARLETTE_ADMIN = (() => {
         return `
           <tr>
             <td><strong style="color:var(--pink-light)">#${u.id_vehiculo}</strong></td>
-            <td style="color:#ffffff; font-weight:700">${u.nombre}</td>
-            <td><span class="badge" style="background:#2a1a2b; border:1px solid #614765; color:#f6b5d8">${u.modelo || 'TR-01'}</span></td>
-            <td><span class="hud-sn">${u.numero_serie || 'S/N'}</span></td>
-            <td><span class="badge" style="background:#1f192b; border:1px solid #5a4163; color:#e0d2ea">${u.microcontrolador || 'ESP8266'}</span></td>
-            <td><span class="${badgeClass}">${u.estado_comercial.toUpperCase()}</span></td>
-            <td>${u.propietario ? `<span class="badge-scarlette-usuario">${u.propietario}</span>` : '<em style="color:#a899b5">Stock Empresa</em>'}</td>
             <td>
-              <button class="outline-button-sm btn-asignar" data-id="${u.id_vehiculo}">
+              <div style="color:#ffffff; font-weight:700; line-height:1.2">${u.nombre}</div>
+              <div class="d-md-none" style="font-size:9px; color:#ffbce6; margin-top:1px">${u.modelo || 'TR-01'} · ${u.microcontrolador || 'ESP8266'}</div>
+            </td>
+            <td class="d-none d-md-table-cell"><span class="badge" style="background:#2a1a2b; border:1px solid #614765; color:#f6b5d8">${u.modelo || 'TR-01'}</span></td>
+            <td><span class="hud-sn" style="white-space:nowrap; font-size:9.5px; padding:2px 5px">${u.numero_serie || 'S/N'}</span></td>
+            <td class="d-none d-md-table-cell"><span class="badge" style="background:#1f192b; border:1px solid #5a4163; color:#e0d2ea">${u.microcontrolador || 'ESP8266'}</span></td>
+            <td><span class="${badgeClass}" style="font-size:9.5px; padding:2px 6px">${u.estado_comercial.toUpperCase()}</span></td>
+            <td>${u.propietario ? `<span class="badge-scarlette-usuario" style="font-size:9.5px; padding:2px 6px">${u.propietario}</span>` : '<em style="color:#a899b5; font-size:9.5px">Stock</em>'}</td>
+            <td>
+              <button class="outline-button-sm btn-asignar" data-id="${u.id_vehiculo}" style="padding:2px 7px; font-size:10px">
                 ${u.id_propietario ? 'Reasignar' : 'Asignar'}
               </button>
             </td>
@@ -382,9 +385,12 @@ window.SCARLETTE_ADMIN = (() => {
       tbodyM.innerHTML = modelos.map(m => `
         <tr>
           <td><strong style="color:var(--pink-light)">#${m.id_modelo}</strong></td>
-          <td style="color:#ffffff; font-weight:700">${m.nombre_modelo}</td>
-          <td><span class="badge" style="background:#2a1a2b; border:1px solid #614765; color:#f6b5d8">${m.microcontrolador}</span></td>
-          <td style="color:#d5cbe0; font-size:13px">${m.descripcion || '-'}</td>
+          <td>
+            <div style="color:#ffffff; font-weight:700">${m.nombre_modelo}</div>
+            <div class="d-md-none text-muted" style="font-size:9px">${m.descripcion || '-'}</div>
+          </td>
+          <td><span class="badge" style="background:#2a1a2b; border:1px solid #614765; color:#f6b5d8; font-size:9.5px">${m.microcontrolador}</span></td>
+          <td class="d-none d-md-table-cell" style="color:#d5cbe0; font-size:12px">${m.descripcion || '-'}</td>
         </tr>
       `).join("");
     }
@@ -409,12 +415,12 @@ window.SCARLETTE_ADMIN = (() => {
     if (tbodyA) {
       tbodyA.innerHTML = auditoria.map(a => `
         <tr>
-          <td style="color:#d5cbe0; font-size:12px">${a.fecha_hora ? a.fecha_hora.replace('T', ' ').substring(0, 19) : '-'}</td>
-          <td style="color:#ffffff; font-weight:700">${a.nombre_usuario || 'sistema'}</td>
-          <td><span class="badge" style="background:#3a1532; border:1px solid #8a3463; color:var(--pink-light)">${a.accion}</span></td>
-          <td style="font-family:monospace; color:#f6b5d8; font-size:12px">${a.recurso}</td>
-          <td style="color:#ded0e5; font-size:12px">${a.detalle || ''}</td>
-          <td><span class="${a.resultado === 'EXITO' ? 'badge-scarlette-vendido' : 'badge-scarlette-exhibicion'}">${a.resultado}</span></td>
+          <td style="color:#d5cbe0; font-size:9.5px; font-family:monospace; white-space:nowrap">${a.fecha_hora ? a.fecha_hora.replace('T', ' ').substring(5, 16) : '-'}</td>
+          <td style="color:#ffffff; font-weight:700; font-size:10px">${a.nombre_usuario || 'sistema'}</td>
+          <td><span class="badge" style="background:#3a1532; border:1px solid #8a3463; color:var(--pink-light); font-size:9px; padding:1px 4px">${a.accion}</span></td>
+          <td style="font-family:monospace; color:#f6b5d8; font-size:9.5px">${a.recurso}</td>
+          <td class="d-none d-md-table-cell" style="color:#ded0e5; font-size:11px">${a.detalle || ''}</td>
+          <td><span class="${a.resultado === 'EXITO' ? 'badge-scarlette-vendido' : 'badge-scarlette-exhibicion'}" style="font-size:9px; padding:1px 5px">${a.resultado}</span></td>
         </tr>
       `).join("");
     }
