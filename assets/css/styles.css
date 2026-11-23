@@ -780,6 +780,10 @@
 }
 
 /* Indicador de luces: estado estimado, sin alterar medidas ni distribución. */
+.panel-page .movement[data-command="4"].control-active {
+  border-color: #d95fa2;
+  box-shadow: inset 0 0 10px #f20b8333, 0 0 8px #f20b8355;
+}
 .panel-page .movement[data-command="4"].lights-active {
   border-color: var(--pink-light);
   background: linear-gradient(145deg, #a52962, #4a1236);

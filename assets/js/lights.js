@@ -9,10 +9,10 @@ window.SCARLETTE_LIGHTS = (() => {
   let pendientes = 0;
   const observadas = new WeakSet();
   const descripciones = Object.freeze({
-    unknown: "Estado de luces desconocido. Sin confirmación física del vehículo.",
-    control: "Control de luces activado, estado estimado. Sin confirmación física del vehículo.",
-    on: "Luces estimadas encendidas. Sin confirmación física del vehículo.",
-    off: "Luces estimadas apagadas. Sin confirmación física del vehículo."
+    unknown: "Estado de control y luces desconocido. Sin confirmación física del vehículo.",
+    control: "Control encendido, estado de luces estimado. Sin confirmación física del vehículo.",
+    on: "Control encendido y luces estimadas encendidas. Sin confirmación física del vehículo.",
+    off: "Control encendido y luces estimadas apagadas. Sin confirmación física del vehículo."
   });
 
   function setState(estado) {
@@ -40,7 +40,10 @@ window.SCARLETTE_LIGHTS = (() => {
     }
 
     const descripcion = descripciones[estado];
+    const controlActivo = controlEstimado === "active" || estado === "control";
+    boton.classList.toggle("control-active", controlActivo);
     boton.classList.toggle("lights-active", estado === "on");
+    boton.dataset.controlState = controlActivo ? "active" : controlEstimado;
     boton.dataset.lightsState = estado;
     boton.setAttribute("aria-description", descripcion);
     boton.title = descripcion;
@@ -60,9 +63,10 @@ window.SCARLETTE_LIGHTS = (() => {
     if (estado) {
       estado.textContent = pendientes > 0 ? "Solicitud de luces pendiente…" :
         paso === null ? "Estado desconocido. Confirma el estado inicial para iniciar la estimación." :
-        paso === 0 ? "Referencia inicial confirmada por ti. La próxima pulsación estimará luces encendidas." :
-        lucesEstimadas === "on" ? "Luces encendidas (estimado, sin confirmación física)." :
-        "Luces apagadas (estimado, sin confirmación física).";
+        paso === 0 ? "Referencia confirmada. La 1.ª pulsación encenderá control y luces (estimado)." :
+        paso === 1 ? "Control y luces encendidos (estimado, sin confirmación física)." :
+        lucesEstimadas === "on" ? "Control activo · Luces encendidas (estimado, sin confirmación física)." :
+        "Control activo · Luces apagadas (estimado, sin confirmación física).";
     }
   }
 
