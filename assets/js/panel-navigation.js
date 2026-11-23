@@ -868,7 +868,11 @@ function configurarControlesAvanzados(layout, shell) {
     try {
       await window.SCARLETTE_API.solicitar(`/vehiculos/${vId}/movimientos`, {
         method: "POST",
-        body: JSON.stringify({ id_comando: idComando, origen: "scarlette_personalizado" })
+        body: JSON.stringify({
+          id_comando: idComando,
+          origen: "scarlette_personalizado",
+          duracion_ms: duracionMs
+        })
       });
 
       statusLbl.textContent = `Movimiento activo. Parada en ${(duracionMs / 1000).toFixed(1)}s.`;
