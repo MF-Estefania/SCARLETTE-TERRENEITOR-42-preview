@@ -718,7 +718,7 @@ function configurarControlesAvanzados(layout, shell) {
       </div>
       <div class="d-flex align-items-center gap-2 mt-1">
         <input type="number" id="input-grados" class="form-control form-control-sm text-center" min="15" max="720" step="15" value="90" style="width:70px; padding:4px; font-size:12px">
-        <span class="small text-muted" style="font-size:11px">grados (≈ <span id="lbl-ms-estimado" style="color:var(--pink-light)">483</span> ms)</span>
+        <span class="small text-muted" style="font-size:11px">grados (≈ <span id="lbl-ms-estimado" style="color:var(--pink-light)">241</span> ms)</span>
       </div>
     </div>
 
@@ -817,8 +817,8 @@ function configurarControlesAvanzados(layout, shell) {
     });
   });
 
-  // Calibración medida en físico: 360° = 1.93 s (1930 ms)
-  const MS_POR_360_GRADOS = 1930;
+  // Calibración medida en físico con temporizador local ESP8266: 360° = 965 ms (90° = 241 ms)
+  const MS_POR_360_GRADOS = 965;
 
   subviewCustom.querySelectorAll(".chip-grados").forEach(chip => {
     chip.addEventListener("click", () => {
@@ -854,7 +854,7 @@ function configurarControlesAvanzados(layout, shell) {
       duracionMs = Math.round((g / 360) * MS_POR_360_GRADOS);
     }
 
-    if (duracionMs < 200) duracionMs = 200;
+    if (duracionMs < 100) duracionMs = 100;
     if (duracionMs > 12000) duracionMs = 12000;
 
     ejecutandoCustom = true;
