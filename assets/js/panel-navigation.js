@@ -718,7 +718,7 @@ function configurarControlesAvanzados(layout, shell) {
       </div>
       <div class="d-flex align-items-center gap-2 mt-1">
         <input type="number" id="input-grados" class="form-control form-control-sm text-center" min="15" max="720" step="15" value="90" style="width:70px; padding:4px; font-size:12px">
-        <span class="small text-muted" style="font-size:11px">grados (≈ <span id="lbl-ms-estimado" style="color:var(--pink-light)">800</span> ms)</span>
+        <span class="small text-muted" style="font-size:11px">grados (≈ <span id="lbl-ms-estimado" style="color:var(--pink-light)">483</span> ms)</span>
       </div>
     </div>
 
@@ -817,19 +817,22 @@ function configurarControlesAvanzados(layout, shell) {
     });
   });
 
+  // Calibración medida en físico: 360° = 1.93 s (1930 ms)
+  const MS_POR_360_GRADOS = 1930;
+
   subviewCustom.querySelectorAll(".chip-grados").forEach(chip => {
     chip.addEventListener("click", () => {
       subviewCustom.querySelectorAll(".chip-grados").forEach(c => c.classList.remove("active"));
       chip.classList.add("active");
       const g = parseInt(chip.getAttribute("data-grados"), 10);
       inputGrados.value = g;
-      lblMs.textContent = Math.round((g / 360) * 3200);
+      lblMs.textContent = Math.round((g / 360) * MS_POR_360_GRADOS);
     });
   });
 
   inputGrados.addEventListener("input", () => {
     const g = parseInt(inputGrados.value, 10) || 0;
-    lblMs.textContent = Math.round((g / 360) * 3200);
+    lblMs.textContent = Math.round((g / 360) * MS_POR_360_GRADOS);
   });
 
   let ejecutandoCustom = false;
@@ -848,7 +851,7 @@ function configurarControlesAvanzados(layout, shell) {
       duracionMs = Math.round(parseFloat(inputTiempo.value || 2.0) * 1000);
     } else {
       const g = parseInt(inputGrados.value || 90, 10);
-      duracionMs = Math.round((g / 360) * 3200);
+      duracionMs = Math.round((g / 360) * MS_POR_360_GRADOS);
     }
 
     if (duracionMs < 200) duracionMs = 200;
