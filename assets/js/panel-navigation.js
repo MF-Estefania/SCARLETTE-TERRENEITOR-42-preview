@@ -718,7 +718,7 @@ function configurarControlesAvanzados(layout, shell) {
       </div>
       <div class="d-flex align-items-center gap-2 mt-1">
         <input type="number" id="input-grados" class="form-control form-control-sm text-center" min="15" max="720" step="15" value="90" style="width:70px; padding:4px; font-size:12px">
-        <span class="small text-muted" style="font-size:11px">grados (≈ <span id="lbl-ms-estimado" style="color:var(--pink-light)">241</span> ms)</span>
+        <span class="small text-muted" style="font-size:11px">grados (≈ <span id="lbl-ms-estimado" style="color:var(--pink-light)">283</span> ms)</span>
       </div>
     </div>
 
@@ -817,8 +817,11 @@ function configurarControlesAvanzados(layout, shell) {
     });
   });
 
-  // Calibración medida en físico con temporizador local ESP8266: 360° = 965 ms (90° = 241 ms)
-  const MS_POR_360_GRADOS = 965;
+  // Calibración física con compensación de arranque RF/motor:
+  // t(θ) = t0 + (θ / 360) * T_giro -> 45°=169ms, 90°=283ms, 180°=510ms, 360°=965ms
+  const MS_ARRANQUE_GIRO = 55;
+  const MS_GIRO_360 = 910;
+  const calcularMsGrados = g => (g > 0 ? Math.round(MS_ARRANQUE_GIRO + (g / 360) * MS_GIRO_360) : 0);
 
   subviewCustom.querySelectorAll(".chip-grados").forEach(chip => {
     chip.addEventListener("click", () => {
@@ -826,13 +829,13 @@ function configurarControlesAvanzados(layout, shell) {
       chip.classList.add("active");
       const g = parseInt(chip.getAttribute("data-grados"), 10);
       inputGrados.value = g;
-      lblMs.textContent = Math.round((g / 360) * MS_POR_360_GRADOS);
+      lblMs.textContent = calcularMsGrados(g);
     });
   });
 
   inputGrados.addEventListener("input", () => {
     const g = parseInt(inputGrados.value, 10) || 0;
-    lblMs.textContent = Math.round((g / 360) * MS_POR_360_GRADOS);
+    lblMs.textContent = calcularMsGrados(g);
   });
 
   let ejecutandoCustom = false;
@@ -851,7 +854,7 @@ function configurarControlesAvanzados(layout, shell) {
       duracionMs = Math.round(parseFloat(inputTiempo.value || 2.0) * 1000);
     } else {
       const g = parseInt(inputGrados.value || 90, 10);
-      duracionMs = Math.round((g / 360) * MS_POR_360_GRADOS);
+      duracionMs = calcularMsGrados(g);
     }
 
     if (duracionMs < 100) duracionMs = 100;
@@ -859,12 +862,13 @@ function configurarControlesAvanzados(layout, shell) {
 
     ejecutandoCustom = true;
     btnEjecutar.disabled = true;
-    btnEjecutar.textContent = `⏳ Ejecutando (${(duracionMs / 1000).toFixed(1)}s)...`;
+    btnEjecutar.textContent = `⏳ Ejecutando (${(duracionMs / 1000).toFixed(2)}s)...`;
     statusLbl.style.color = "var(--pink-light)";
     statusLbl.textContent = `Enviando comando #${idComando} a unidad #${vId}...`;
     progBox.style.display = "block";
     progBar.style.width = "0%";
 
+    let animInterval = null;
     try {
       await window.SCARLETTE_API.solicitar(`/vehiculos/${vId}/movimientos`, {
         method: "POST",
@@ -875,27 +879,31 @@ function configurarControlesAvanzados(layout, shell) {
         })
       });
 
-      statusLbl.textContent = `Movimiento activo. Parada en ${(duracionMs / 1000).toFixed(1)}s.`;
+      statusLbl.textContent = `Movimiento activo (${duracionMs} ms exactos en ESP8266).`;
 
       const inicio = Date.now();
-      const animInterval = setInterval(() => {
+      animInterval = setInterval(() => {
         const transcurrido = Date.now() - inicio;
         const pct = Math.min(100, (transcurrido / duracionMs) * 100);
         progBar.style.width = `${pct}%`;
-        if (transcurrido >= duracionMs) clearInterval(animInterval);
-      }, 50);
+        if (transcurrido >= duracionMs) {
+          clearInterval(animInterval);
+          animInterval = null;
+        }
+      }, 30);
 
-      await new Promise(res => setTimeout(res, duracionMs));
-
-      // Enviar STOP automático
-      await window.SCARLETTE_API.solicitar(`/vehiculos/${vId}/detener`, { method: "POST" });
+      // Esperar la duración exacta + margen breve (150 ms) sin disparar STOP prematuro
+      // para no competir con el temporizador local duracion_ms del ESP8266.
+      await new Promise(res => setTimeout(res, duracionMs + 150));
+      progBar.style.width = "100%";
       statusLbl.style.color = "#39e6a3";
-      statusLbl.textContent = `✓ Movimiento completado y detenido.`;
+      statusLbl.textContent = `✓ Movimiento completado (${duracionMs} ms).`;
     } catch (err) {
       statusLbl.style.color = "#ff6b6b";
       statusLbl.textContent = `Error: ${err.message || "desconocido"}`;
       await window.SCARLETTE_API.solicitar(`/vehiculos/${vId}/detener`, { method: "POST" }).catch(() => {});
     } finally {
+      if (animInterval) clearInterval(animInterval);
       ejecutandoCustom = false;
       btnEjecutar.disabled = false;
       btnEjecutar.textContent = "▶ Ejecutar Movimiento";
