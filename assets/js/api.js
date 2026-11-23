@@ -6,8 +6,10 @@
 window.SCARLETTE_API = (() => {
   const config = window.SCARLETTE_CONFIG;
   const CLAVE_SESION = "scarlette_access_token";
+  const CLAVE_GUEST = "scarlette_guest_token";
 
   let tokenSesion = sessionStorage.getItem(CLAVE_SESION);
+  let tokenInvitado = sessionStorage.getItem(CLAVE_GUEST);
 
   function establecerToken(token) {
     tokenSesion = token || null;
@@ -23,8 +25,23 @@ window.SCARLETTE_API = (() => {
     return tokenSesion;
   }
 
+  function establecerTokenInvitado(token) {
+    tokenInvitado = token || null;
+
+    if (tokenInvitado) {
+      sessionStorage.setItem(CLAVE_GUEST, tokenInvitado);
+    } else {
+      sessionStorage.removeItem(CLAVE_GUEST);
+    }
+  }
+
+  function obtenerTokenInvitado() {
+    return tokenInvitado;
+  }
+
   function limpiarToken() {
     establecerToken(null);
+    establecerTokenInvitado(null);
   }
 
   async function solicitar(ruta, opciones = {}) {
@@ -39,6 +56,10 @@ window.SCARLETTE_API = (() => {
 
     if (tokenSesion) {
       encabezados.set("Authorization", `Bearer ${tokenSesion}`);
+    }
+
+    if (tokenInvitado) {
+      encabezados.set("X-Guest-Token", tokenInvitado);
     }
 
     if (opciones.body !== undefined && !(opciones.body instanceof FormData)) {
@@ -99,6 +120,8 @@ window.SCARLETTE_API = (() => {
     solicitar,
     establecerToken,
     obtenerToken,
+    establecerTokenInvitado,
+    obtenerTokenInvitado,
     limpiarToken
   });
 })();

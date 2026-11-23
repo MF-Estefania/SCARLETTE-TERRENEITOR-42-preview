@@ -60,6 +60,14 @@ document.addEventListener("DOMContentLoaded", () => {
     boton.textContent = "Cerrando sesión...";
 
     try {
+      const tokenInv = window.SCARLETTE_API?.obtenerTokenInvitado?.();
+      if (window.SCARLETTE_USUARIO?.rol === "invitado" && tokenInv) {
+        const vId = window.SCARLETTE_CONFIG?.VEHICLE_ID || window.SCARLETTE_CONFIG?.EXHIBITION_VEHICLE_ID || 2;
+        await window.SCARLETTE_API.solicitar("/invitado/liberar-demo", {
+          method: "POST",
+          body: JSON.stringify({ id_vehiculo: vId, token_sesion: tokenInv })
+        }).catch(() => {});
+      }
       await window.SCARLETTE_AUTH.cerrarSesion();
     } catch (error) {
       console.warn(

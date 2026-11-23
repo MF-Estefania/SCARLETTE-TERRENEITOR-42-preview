@@ -10,9 +10,9 @@ document.addEventListener("scarlette:sesion-verificada", async evento => {
   // Añadir la clase fundamental para activar todos los estilos de navegación de SCARLETTE
   document.body.classList.add("user-navigation");
 
-  // Modo Invitado (demostración temporal en unidad 2)
+  // Modo Invitado (demostración temporal + catálogo comercial)
   if (rol === "invitado") {
-    configurarModoInvitado(shell);
+    await configurarModoInvitado(shell);
     return;
   }
 
@@ -299,56 +299,284 @@ document.addEventListener("scarlette:sesion-verificada", async evento => {
   }
 });
 
-function configurarModoInvitado(shell) {
+async function configurarModoInvitado(shell) {
+  const api = window.SCARLETTE_API;
+  const idInicial = window.SCARLETTE_CONFIG.EXHIBITION_VEHICLE_ID || 2;
   window.SCARLETTE_CONFIG = Object.assign({}, window.SCARLETTE_CONFIG, {
-    VEHICLE_ID: window.SCARLETTE_CONFIG.EXHIBITION_VEHICLE_ID || 2
+    VEHICLE_ID: idInicial
   });
 
-  let segundosRestantes = 180;
+  const layout = shell.querySelector(".control-layout");
+  const stopBand = shell.querySelector(".stop-band");
+  const events = shell.querySelector(".events-disclosure");
+
+  // Ocultar la bandeja repetitiva de eventos WebSocket (igual que en Admin/Usuario) para garantizar 0 scroll
+  if (events) {
+    events.hidden = true;
+    events.style.display = "none";
+  }
+
+  // 1. Banner HUD de Invitado (mismas clases que Admin/Usuario para heredar 100% la responsiva)
+  let segundosRestantes = 900; // 15 minutos
+  let intervalo = null;
+  let tokenReservaActual = api.obtenerTokenInvitado?.() || null;
+
   const banner = document.createElement("div");
-  banner.className = "vehicle-hud glass-card mb-3 d-flex align-items-center justify-content-between";
+  banner.id = "vehicle-hud-banner";
+  banner.className = "vehicle-hud glass-card mb-3";
   banner.innerHTML = `
     <div class="d-flex align-items-center gap-3">
       <div class="hud-icon-box">
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 13 8 7h8l3 6M3 13h18v5h-2m-14 0H3v-5m5 5h8M9 10h6"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="18" r="3"/></svg>
       </div>
       <div>
-        <div class="d-flex align-items-center gap-2">
-          <span class="badge-scarlette-exhibicion">Demostración Temporal</span>
-          <strong class="text-white">Unidad #2 Terreneitor Exhibición</strong>
+        <div class="d-flex align-items-center flex-wrap gap-2">
+          <span class="badge-scarlette-exhibicion">Invitado</span>
+          <span id="hud-unit-name" class="hud-name">Unidad #${idInicial} Terreneitor Exhibición</span>
         </div>
         <div class="hud-meta">
-          <span>Tiempo Restante: <strong id="timer-invitado" style="color:#ffc107; font-size:14px">03:00</strong></span> · 
-          <span>Comandos habilitados en vivo</span>
+          <span>Tiempo Restante: <strong id="timer-invitado" style="color:#ffc107">15:00</strong></span> ·
+          <span id="guest-session-state">Conectando demostración en vivo...</span>
         </div>
       </div>
     </div>
-    <button id="btn-finalizar-demo-invitado" class="outline-button-sm">Finalizar Demostración</button>
+    <div class="d-flex align-items-center gap-2">
+      <button id="btn-finalizar-demo-invitado" type="button" class="outline-button-sm" style="white-space:nowrap">Finalizar Demostración</button>
+    </div>
   `;
 
-  shell.insertBefore(banner, shell.firstChild);
+  // 2. Pestañas de Invitado: libre cambio entre DEMO EN VIVO y CATÁLOGO en cualquier momento
+  const navigation = document.createElement("div");
+  navigation.id = "user-panel-tabs";
+  navigation.className = "user-panel-tabs";
+  navigation.setAttribute("role", "tablist");
+  navigation.setAttribute("aria-label", "Navegación de invitado");
 
-  const timerElem = banner.querySelector("#timer-invitado");
-  const intervalo = setInterval(() => {
-    segundosRestantes--;
-    if (segundosRestantes <= 0) {
-      clearInterval(intervalo);
-      alert("Tu tiempo de demostración ha concluido. El vehículo se detuvo con seguridad.");
-      window.SCARLETTE_API.solicitar(`/vehiculos/${window.SCARLETTE_CONFIG.VEHICLE_ID}/detener`, { method: "POST" }).finally(() => {
-        window.location.replace("index.html");
-      });
-      return;
-    }
-    const mins = String(Math.floor(segundosRestantes / 60)).padStart(2, "0");
-    const secs = String(segundosRestantes % 60).padStart(2, "0");
-    if (timerElem) timerElem.textContent = `${mins}:${secs}`;
-  }, 1000);
+  const guestTabs = [
+    { id: "control", label: "DEMO EN VIVO", panelId: "panel-control", className: "user-control-panel" },
+    { id: "catalogo", label: "CATÁLOGO", panelId: "panel-catalogo", className: "guest-catalog-panel" }
+  ];
 
-  banner.querySelector("#btn-finalizar-demo-invitado")?.addEventListener("click", async () => {
-    clearInterval(intervalo);
-    await window.SCARLETTE_API.solicitar(`/vehiculos/${window.SCARLETTE_CONFIG.VEHICLE_ID}/detener`, { method: "POST" });
-    window.location.replace("index.html");
+  const panels = guestTabs.map(cfg => {
+    const sec = document.createElement("section");
+    sec.id = cfg.panelId;
+    sec.className = cfg.className;
+    sec.setAttribute("role", "tabpanel");
+    sec.setAttribute("aria-labelledby", `tab-${cfg.id}`);
+    sec.tabIndex = 0;
+    sec.hidden = true;
+    return sec;
   });
+
+  shell.insertBefore(banner, layout);
+  shell.insertBefore(navigation, layout);
+  panels.forEach(p => shell.insertBefore(p, layout));
+
+  // Mover el control existente al panel DEMO EN VIVO (conserva 100% la responsiva de Control)
+  const controlPanel = panels[0];
+  if (controlPanel && layout) {
+    controlPanel.append(layout, stopBand);
+  }
+  const catalogPanel = panels[1];
+
+  let selectedIndex = 0;
+  const tabButtons = guestTabs.map((cfg, idx) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.id = `tab-${cfg.id}`;
+    btn.textContent = cfg.label;
+    btn.setAttribute("role", "tab");
+    btn.setAttribute("aria-controls", cfg.panelId);
+    btn.setAttribute("aria-selected", String(idx === 0));
+    btn.tabIndex = idx === 0 ? 0 : -1;
+    navigation.append(btn);
+    btn.addEventListener("click", () => activarPestana(idx));
+    return btn;
+  });
+
+  async function activarPestana(idx) {
+    if (selectedIndex === idx && !panels[idx].hidden) return;
+    if (guestTabs[selectedIndex]?.id === "control" && window.SCARLETTE_CONTROLS?.prepararOcultacion) {
+      try {
+        await window.SCARLETTE_CONTROLS.prepararOcultacion();
+      } catch (e) {
+        console.warn("Aviso al pausar control invitado:", e);
+      }
+    }
+    panels[selectedIndex].hidden = true;
+    selectedIndex = idx;
+    panels[selectedIndex].hidden = false;
+    tabButtons.forEach((b, i) => {
+      b.setAttribute("aria-selected", String(i === selectedIndex));
+      b.tabIndex = i === selectedIndex ? 0 : -1;
+    });
+    if (guestTabs[idx].id === "catalogo") {
+      await cargarCatalogoInvitado();
+    }
+  }
+
+  function actualizarReloj() {
+    const timerElem = banner.querySelector("#timer-invitado");
+    if (!timerElem) return;
+    const mins = String(Math.floor(Math.max(segundosRestantes, 0) / 60)).padStart(2, "0");
+    const secs = String(Math.max(segundosRestantes, 0) % 60).padStart(2, "0");
+    timerElem.textContent = `${mins}:${secs}`;
+  }
+
+  async function finalizarYRedirigir(motivoAlerta = null) {
+    if (intervalo) {
+      clearInterval(intervalo);
+      intervalo = null;
+    }
+    if (motivoAlerta) alert(motivoAlerta);
+    const vId = window.SCARLETTE_CONFIG?.VEHICLE_ID || idInicial;
+    try {
+      if (tokenReservaActual) {
+        await api.solicitar("/invitado/liberar-demo", {
+          method: "POST",
+          body: JSON.stringify({ id_vehiculo: vId, token_sesion: tokenReservaActual })
+        });
+      } else {
+        await api.solicitar(`/vehiculos/${vId}/detener`, { method: "POST" });
+      }
+    } catch (e) {
+      console.warn("Aviso al liberar demostración:", e);
+    } finally {
+      try {
+        await window.SCARLETTE_AUTH?.cerrarSesion?.();
+      } catch {
+        // continuar al login
+      }
+      api.limpiarToken();
+      window.location.replace("index.html");
+    }
+  }
+
+  async function iniciarReservaVehiculo(idVehiculo, nombreUnidad = null) {
+    const estadoEl = banner.querySelector("#guest-session-state");
+    const nombreEl = banner.querySelector("#hud-unit-name");
+    const vAnterior = window.SCARLETTE_CONFIG?.VEHICLE_ID;
+
+    // Si cambia de unidad en exhibición, liberar reserva previa primero
+    if (tokenReservaActual && vAnterior && vAnterior !== idVehiculo) {
+      await api.solicitar("/invitado/liberar-demo", {
+        method: "POST",
+        body: JSON.stringify({ id_vehiculo: vAnterior, token_sesion: tokenReservaActual })
+      }).catch(() => {});
+      tokenReservaActual = null;
+      api.establecerTokenInvitado(null);
+    }
+
+    window.SCARLETTE_CONFIG = Object.assign({}, window.SCARLETTE_CONFIG, { VEHICLE_ID: idVehiculo });
+    if (nombreEl) {
+      nombreEl.textContent = nombreUnidad
+        ? `Unidad #${idVehiculo} ${nombreUnidad}`
+        : `Unidad #${idVehiculo} Terreneitor Exhibición`;
+    }
+
+    try {
+      const res = await api.solicitar("/invitado/solicitar-demo", {
+        method: "POST",
+        body: JSON.stringify({ id_vehiculo: idVehiculo })
+      });
+      tokenReservaActual = res.token_sesion;
+      api.establecerTokenInvitado(tokenReservaActual);
+      segundosRestantes = Number(res.duracion_segundos) || 900;
+      actualizarReloj();
+      if (estadoEl) estadoEl.textContent = "Comandos habilitados en vivo";
+
+      if (intervalo) clearInterval(intervalo);
+      intervalo = setInterval(() => {
+        segundosRestantes--;
+        actualizarReloj();
+        if (segundosRestantes <= 0) {
+          void finalizarYRedirigir("Tu tiempo de demostración (15 min) ha concluido. El vehículo se detuvo con seguridad.");
+        }
+      }, 1000);
+    } catch (err) {
+      if (estadoEl) {
+        estadoEl.textContent = err.message || "Unidad temporalmente ocupada — explora el Catálogo";
+      }
+    }
+
+    // Reconectar WebSocket y cargar comandos + DEMOs reales de la unidad en exhibición
+    window.SCARLETTE_WS?.reconectar?.();
+    window.SCARLETTE_CONNECTIONS?.solicitarActualizacion?.();
+    await window.SCARLETTE_CONTROLS?.cargarComandos?.();
+    await window.SCARLETTE_CONTROLS?.cargarDemos?.();
+  }
+
+  async function cargarCatalogoInvitado() {
+    catalogPanel.innerHTML = `
+      <div class="glass-card guest-catalog-card">
+        <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom" style="border-color:#60405b !important">
+          <h2 class="card-heading m-0" style="border:none; font-size:16px">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 13 8 7h8l3 6M3 13h18v5h-2m-14 0H3v-5m5 5h8M9 10h6"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="18" r="3"/></svg>
+            Catálogo Comercial de Vehículos IoT
+          </h2>
+          <button id="btn-refrescar-catalogo" type="button" class="neon-button py-1 px-3" style="width:auto; font-size:12px">↻ Actualizar</button>
+        </div>
+        <div id="guest-catalog-grid" class="guest-catalog-grid">
+          <div class="text-center p-3 text-muted">Cargando catálogo comercial...</div>
+        </div>
+      </div>
+    `;
+
+    catalogPanel.querySelector("#btn-refrescar-catalogo")?.addEventListener("click", () => {
+      void cargarCatalogoInvitado();
+    });
+
+    const grid = catalogPanel.querySelector("#guest-catalog-grid");
+    try {
+      const modelos = await api.solicitar("/invitado/catalogo", { method: "GET" });
+      if (!Array.isArray(modelos) || modelos.length === 0) {
+        grid.innerHTML = '<div class="text-center p-3 text-muted">No hay modelos disponibles en el catálogo por el momento.</div>';
+        return;
+      }
+
+      grid.innerHTML = modelos.map(m => {
+        const tieneExhibicion = Number(m.unidades_exhibicion) > 0 && m.id_vehiculo_exhibicion;
+        return `
+          <article class="guest-model-card">
+            <div class="d-flex justify-content-between align-items-center gap-2 mb-1">
+              <span class="badge" style="background:#2a1a2b; border:1px solid #614765; color:var(--pink-light); font-size:10px">Modelo #${m.id_modelo}</span>
+              <span class="badge" style="background:#1f192b; border:1px solid #5a4163; color:#e0d2ea; font-size:10px">${m.microcontrolador || "ESP8266"}</span>
+            </div>
+            <h3 class="guest-model-title">${m.nombre_modelo}</h3>
+            <p class="guest-model-desc">${m.descripcion || "Vehículo IoT con control bidireccional y telemetría en tiempo real."}</p>
+            <div class="guest-model-footer">
+              ${tieneExhibicion
+                ? `<span class="badge-scarlette-exhibicion" style="font-size:10px; padding:2px 8px">En Exhibición (${m.unidades_exhibicion})</span>
+                   <button type="button" class="neon-button py-1 px-3 btn-probar-modelo" data-vehiculo="${m.id_vehiculo_exhibicion}" data-nombre="${m.nombre_modelo}" style="width:auto; font-size:11px">▶ Probar en Vivo</button>`
+                : `<span class="badge-scarlette-disponible" style="font-size:10px; padding:2px 8px">Disponible para compra</span>
+                   <span class="guest-order-hint">Solicita con administración</span>`
+              }
+            </div>
+          </article>
+        `;
+      }).join("");
+
+      grid.querySelectorAll(".btn-probar-modelo").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const vId = parseInt(btn.getAttribute("data-vehiculo"), 10);
+          const nom = btn.getAttribute("data-nombre");
+          await iniciarReservaVehiculo(vId, nom);
+          await activarPestana(0);
+        });
+      });
+    } catch (e) {
+      grid.innerHTML = '<div class="text-center p-3 text-danger">No se pudo consultar el catálogo comercial.</div>';
+    }
+  }
+
+  banner.querySelector("#btn-finalizar-demo-invitado")?.addEventListener("click", () => {
+    void finalizarYRedirigir(null);
+  });
+
+  // Mostrar DEMO EN VIVO inicialmente y pre-cargar reserva + WebSocket + catálogo
+  panels[0].hidden = false;
+  await iniciarReservaVehiculo(idInicial, "Terreneitor Exhibición");
+  void cargarCatalogoInvitado();
 }
 
 function configurarControlesAvanzados(layout, shell) {
