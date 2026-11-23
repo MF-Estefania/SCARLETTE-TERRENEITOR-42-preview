@@ -33,8 +33,11 @@ window.SCARLETTE_LIGHTS = (() => {
   }
 
   function mostrar(estado) {
-    const boton = document.querySelector('.movement[data-command="28"]');
-    if (!boton) return false;
+    const boton = document.querySelector('.movement[data-command="4"]');
+    if (!boton) {
+      actualizarConfirmacion();
+      return false;
+    }
 
     const descripcion = descripciones[estado];
     boton.classList.toggle("lights-active", estado === "on");
