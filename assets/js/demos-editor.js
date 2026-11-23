@@ -157,7 +157,7 @@ window.SCARLETTE_DEMOS_EDITOR = (() => {
             <td>${p.duracion_ms} ms</td>
             <td>${p.pausa_ms} ms</td>
             <td>
-              <button class="btn btn-sm btn-outline-danger py-0 btn-eliminar-paso" data-id="${p.id_demo_movimiento}">X</button>
+              <button class="btn btn-sm btn-outline-danger py-0 btn-eliminar-paso" data-id="${p.id_demo_movimiento}" data-orden="${p.orden}">X</button>
             </td>
           </tr>
         `).join("");
@@ -165,7 +165,8 @@ window.SCARLETTE_DEMOS_EDITOR = (() => {
         tbody.querySelectorAll(".btn-eliminar-paso").forEach(btn => {
           btn.addEventListener("click", async () => {
             const idMov = btn.getAttribute("data-id");
-            if (!confirm(`¿Eliminar paso #${idMov}?`)) return;
+            const ordenPaso = btn.getAttribute("data-orden") || idMov;
+            if (!confirm(`¿Eliminar paso #${ordenPaso}?`)) return;
             try {
               await api.solicitar(`/vehiculos/${idVehiculo}/demos/${idDemo}/movimientos/${idMov}/eliminar`, {
                 method: "POST"
@@ -307,9 +308,10 @@ window.SCARLETTE_DEMOS_EDITOR = (() => {
         return;
       }
       const duracion = parseInt(contenedor.querySelector("#paso-duracion").value, 10) || 1500;
-      const pausa = parseInt(contenedor.querySelector("#paso-pausa").value, 10) || 500;
+      const pausaRaw = parseInt(contenedor.querySelector("#paso-pausa").value, 10);
+      const pausa = Number.isNaN(pausaRaw) ? 500 : Math.max(0, pausaRaw);
 
-      // Calcular siguiente orden
+      // Calcular siguiente orden consecutivo
       const filas = contenedor.querySelectorAll("#tbody-pasos-demo tr");
       let orden = 1;
       if (filas.length > 0 && !filas[0].querySelector("td[colspan]")) {
