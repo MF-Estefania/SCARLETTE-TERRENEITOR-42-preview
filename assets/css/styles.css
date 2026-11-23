@@ -3018,3 +3018,560 @@ select.form-select {
     display: none !important;
   }
 }
+
+/* ============================================================
+   RESPONSIVA PANTALLA DE LOGIN (.login-page) — 0 SCROLL
+   Estrictamente acotado a .login-page para no afectar panel.html
+   ============================================================ */
+
+/* 1. Escritorio y Laptop (1280x800, 1366x768, 1280x720) */
+@media (min-width: 992px) {
+  .login-page {
+    min-height: 100vh;
+    min-height: 100svh;
+  }
+  .login-page .topbar {
+    padding: 10px 26px 14px;
+    gap: 16px;
+    flex-wrap: nowrap;
+  }
+  .login-page .topbar .brand > .icon {
+    width: 44px;
+    height: 44px;
+  }
+  .login-page .topbar .brand-name {
+    font-size: clamp(22px, 2vw, 30px);
+  }
+  .login-page .topbar .brand p {
+    font-size: 12px;
+    margin-top: 2px;
+  }
+  .login-page .login-shell {
+    flex: 1;
+    padding: 10px 24px;
+    display: flex;
+    align-items: center;
+  }
+  .login-page .login-shell > .row {
+    --bs-gutter-y: 0;
+    --bs-gutter-x: 2rem;
+  }
+  .login-page .login-intro h1 {
+    font-size: clamp(36px, 3.8vw, 54px);
+    margin: 10px 0;
+  }
+  .login-page .login-intro .intro-copy {
+    font-size: 15px;
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+  .login-page .login-intro .vehicle-art {
+    width: min(100%, 500px);
+    margin: 12px 0;
+  }
+  .login-page .login-card {
+    padding: 18px 24px;
+    max-width: 440px;
+  }
+  .login-page .login-lock {
+    width: 36px;
+    height: 36px;
+    margin-bottom: 10px;
+    border-radius: 12px;
+  }
+  .login-page .login-lock .icon {
+    width: 20px;
+    height: 20px;
+  }
+  .login-page .login-card h2 {
+    font-size: 24px;
+    margin: 4px 0;
+  }
+  .login-page .login-card .muted {
+    font-size: 12.5px;
+    line-height: 1.4;
+    margin-bottom: 6px;
+  }
+  .login-page .login-card .form-label {
+    font-size: 13px;
+    margin: 8px 0 4px;
+  }
+  .login-page .login-card .form-select,
+  .login-page .login-card .form-control {
+    padding: 9px 14px;
+    font-size: 14px;
+    border-radius: 12px;
+  }
+  .login-page .login-card .form-select {
+    padding-right: 34px;
+  }
+  .login-page .login-card .neon-button {
+    margin: 14px 0 12px;
+    padding: 10px 14px;
+    font-size: 16px;
+  }
+  .login-page .login-card .info-box {
+    padding: 8px 11px;
+    font-size: 11.5px;
+    line-height: 1.35;
+    border-radius: 13px;
+  }
+  .login-page .login-card .info-box .icon {
+    width: 19px;
+    height: 19px;
+  }
+  .login-page .login-footnote {
+    margin-top: 10px;
+    font-size: 10px;
+  }
+  .login-page .login-footer {
+    padding: 6px 24px 10px;
+    font-size: 11.5px;
+  }
+}
+
+/* Laptop con altura reducida (ej. 1366x768, 1280x720) */
+@media (min-width: 992px) and (max-height: 780px) {
+  .login-page .topbar {
+    padding: 8px 24px 11px;
+  }
+  .login-page .login-shell {
+    padding: 6px 24px;
+  }
+  .login-page .login-intro h1 {
+    font-size: clamp(32px, 3.4vw, 46px);
+    margin: 8px 0;
+  }
+  .login-page .login-intro .vehicle-art {
+    width: min(100%, 450px);
+    margin: 8px 0 10px;
+  }
+  .login-page .login-card {
+    padding: 14px 22px;
+  }
+  .login-page .login-lock {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 6px;
+  }
+  .login-page .login-card h2 {
+    font-size: 22px;
+    margin: 2px 0;
+  }
+  .login-page .login-card .form-label {
+    margin: 6px 0 3px;
+  }
+  .login-page .login-card .form-select,
+  .login-page .login-card .form-control {
+    padding: 8px 12px;
+  }
+  .login-page .login-card .neon-button {
+    margin: 12px 0 10px;
+    padding: 9px 14px;
+  }
+  .login-page .login-footnote {
+    margin-top: 8px;
+  }
+  .login-page .login-footer {
+    padding: 4px 24px 8px;
+  }
+}
+
+/* 2. Tablet Vertical (768px - 991px) */
+@media (min-width: 768px) and (max-width: 991.98px) and (orientation: portrait) {
+  .login-page .topbar {
+    padding: 12px 20px 14px;
+    flex-wrap: nowrap;
+  }
+  .login-page .login-shell {
+    padding: 12px 20px;
+  }
+  .login-page .login-shell > .row {
+    --bs-gutter-y: 12px;
+  }
+  .login-page .login-intro {
+    text-align: center;
+  }
+  .login-page .login-intro h1 {
+    font-size: 36px;
+    margin: 8px 0;
+  }
+  .login-page .login-intro .intro-copy {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  .login-page .login-intro .vehicle-art {
+    width: min(360px, 100%);
+    margin: 8px auto 10px;
+  }
+  .login-page .login-intro .intro-tags {
+    justify-content: center;
+  }
+  .login-page .login-card {
+    padding: 18px 22px;
+  }
+  .login-page .login-lock {
+    display: none;
+  }
+  .login-page .login-card .form-label {
+    margin: 8px 0 4px;
+  }
+  .login-page .login-card .form-control,
+  .login-page .login-card .form-select {
+    padding: 10px 14px;
+  }
+  .login-page .login-card .neon-button {
+    margin: 14px 0 12px;
+    padding: 11px;
+  }
+  .login-page .login-footnote {
+    margin-top: 10px;
+  }
+}
+
+/* 3. Celular Vertical estándar (390x844, 412x915, etc.) — 0 scroll */
+@media (max-width: 767.98px) and (orientation: portrait) {
+  .login-page .topbar {
+    padding: 8px 12px 10px;
+    gap: 8px;
+    flex-wrap: nowrap;
+  }
+  .login-page .header-caption {
+    display: none;
+  }
+  .login-page .login-shell {
+    padding: 6px 10px;
+  }
+  .login-page .login-shell > .row {
+    --bs-gutter-y: 6px;
+  }
+  .login-page .login-intro h1 {
+    font-size: 26px;
+    margin: 3px 0;
+  }
+  .login-page .login-intro .vehicle-art {
+    width: min(240px, 100%);
+    margin: 4px auto 6px;
+  }
+  .login-page .login-card {
+    padding: 10px 14px;
+  }
+  .login-page .login-card .neon-button {
+    margin: 8px 0 8px;
+  }
+  .login-page .login-footnote {
+    margin-top: 6px;
+  }
+  .login-page .login-footer {
+    padding: 4px 10px max(6px, env(safe-area-inset-bottom));
+    font-size: 10px;
+    line-height: 1.3;
+  }
+}
+
+/* 3b. Celular Vertical compacto (360x740, 375x667) — todo visible sin recortes */
+@media (max-width: 767.98px) and (max-height: 760px) and (orientation: portrait) {
+  .login-page .topbar {
+    padding: 6px 10px 7px;
+  }
+  .login-page .brand > .icon {
+    width: 30px;
+    height: 30px;
+  }
+  .login-page .brand-name {
+    font-size: 20px;
+  }
+  .login-page .brand p {
+    font-size: 11px;
+    margin-top: 0;
+  }
+  .login-page .login-shell {
+    padding: 4px 10px;
+  }
+  .login-page .login-shell > .row {
+    --bs-gutter-y: 4px;
+  }
+  .login-page .login-intro .eyebrow {
+    font-size: 8.5px;
+  }
+  .login-page .login-intro h1 {
+    font-size: 22px;
+    line-height: 1.04;
+    margin: 2px 0;
+  }
+  .login-page .intro-copy {
+    font-size: 11px;
+    line-height: 1.25;
+  }
+  .login-page .login-intro .vehicle-art {
+    width: min(185px, 100%);
+    margin: 3px auto 4px;
+  }
+  .login-page .intro-tags span {
+    padding: 2px 7px;
+    font-size: 8.5px;
+  }
+  .login-page .login-card {
+    padding: 8px 12px;
+    border-radius: 14px;
+  }
+  .login-page .login-card > .eyebrow {
+    font-size: 8.5px;
+  }
+  .login-page .login-card h2 {
+    font-size: 19px;
+    margin: 1px 0;
+  }
+  .login-page .login-card .muted {
+    font-size: 11px;
+    margin-bottom: 3px;
+  }
+  .login-page .login-card .form-label {
+    font-size: 11px;
+    margin: 3px 0 1px;
+  }
+  .login-page .login-card .form-control,
+  .login-page .login-card .form-select {
+    font-size: 14px;
+    min-height: 36px;
+    height: 36px;
+    padding: 5px 10px;
+    border-radius: 10px;
+  }
+  .login-page .login-card .form-select {
+    padding-right: 30px;
+  }
+  .login-page .login-card .neon-button {
+    min-height: 38px;
+    height: 38px;
+    font-size: 14px;
+    padding: 6px;
+    margin: 7px 0 6px;
+  }
+  .login-page .login-card .neon-button .icon {
+    width: 18px;
+    height: 18px;
+  }
+  .login-page .login-card .info-box {
+    font-size: 10px;
+    line-height: 1.25;
+    padding: 5px 8px;
+    gap: 6px;
+  }
+  .login-page .login-card .info-box .icon {
+    width: 15px;
+    height: 15px;
+  }
+  .login-page .login-footnote {
+    font-size: 9px;
+    margin-top: 5px;
+  }
+  .login-page .login-footer {
+    font-size: 9.5px;
+    line-height: 1.25;
+    padding: 3px 8px 5px;
+  }
+}
+
+/* 4. Celular Horizontal (844x390, 740x360, 932x430, 667x375) — 2 columnas, 0 scroll */
+@media (max-height: 520px) and (orientation: landscape) {
+  .login-page {
+    min-height: 100vh;
+    min-height: 100svh;
+  }
+  .login-page .topbar {
+    padding: 4px 14px 6px;
+    gap: 10px;
+    flex-wrap: nowrap;
+  }
+  .login-page .topbar:after {
+    height: 3px;
+    bottom: -3px;
+  }
+  .login-page .brand {
+    gap: 8px;
+  }
+  .login-page .brand > .icon {
+    width: 26px;
+    height: 26px;
+  }
+  .login-page .brand-name {
+    font-size: 17px;
+    line-height: 1.1;
+  }
+  .login-page .brand p {
+    font-size: 9.5px;
+    margin-top: 0;
+    line-height: 1.1;
+  }
+  .login-page .header-caption {
+    display: block;
+    font-size: 8.5px;
+    letter-spacing: 1.2px;
+    white-space: nowrap;
+  }
+  .login-page .login-shell {
+    flex: 1;
+    max-width: 100%;
+    padding: 4px 14px;
+    display: flex;
+    align-items: center;
+  }
+  .login-page .login-shell > .row {
+    display: grid !important;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 12px;
+    align-items: center;
+    width: 100%;
+    margin: 0;
+    --bs-gutter-x: 0;
+    --bs-gutter-y: 0;
+  }
+  .login-page .login-shell > .row > section {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  .login-page .login-intro {
+    text-align: left;
+  }
+  .login-page .login-intro .eyebrow {
+    font-size: 8.5px;
+    letter-spacing: 1.4px;
+  }
+  .login-page .login-intro h1 {
+    font-size: 24px;
+    line-height: 1.05;
+    letter-spacing: -0.6px;
+    margin: 4px 0;
+  }
+  .login-page .intro-copy {
+    font-size: 11px;
+    line-height: 1.25;
+    margin: 0 0 6px;
+  }
+  .login-page .login-intro .vehicle-art {
+    width: min(100%, 260px);
+    aspect-ratio: 2.9;
+    margin: 4px 0 6px;
+    border-radius: 12px;
+  }
+  .login-page .intro-tags {
+    justify-content: flex-start;
+    gap: 6px;
+  }
+  .login-page .intro-tags span {
+    font-size: 8.5px;
+    padding: 2px 8px;
+  }
+  .login-page .login-card {
+    max-width: 100%;
+    margin: 0;
+    padding: 8px 12px;
+    border-radius: 14px;
+  }
+  .login-page .login-lock {
+    display: none;
+  }
+  .login-page .login-card > .eyebrow {
+    font-size: 8px;
+    letter-spacing: 1.3px;
+  }
+  .login-page .login-card h2 {
+    font-size: 17px;
+    margin: 1px 0;
+  }
+  .login-page .login-card .muted {
+    font-size: 10px;
+    line-height: 1.2;
+    margin: 0 0 4px;
+  }
+  .login-page #login-form fieldset {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: 8px;
+    row-gap: 0;
+    align-items: end;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .login-page #login-form label[for="account"] {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+  .login-page #login-form #account {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+  .login-page #login-form label[for="username"] {
+    grid-column: 1;
+    grid-row: 3;
+  }
+  .login-page #login-form #username {
+    grid-column: 1;
+    grid-row: 4;
+  }
+  .login-page #login-form label[for="password"] {
+    grid-column: 2;
+    grid-row: 3;
+  }
+  .login-page #login-form #password {
+    grid-column: 2;
+    grid-row: 4;
+  }
+  .login-page #login-form .neon-button {
+    grid-column: 1 / -1;
+    grid-row: 5;
+  }
+  .login-page .login-card .form-label {
+    font-size: 10px;
+    margin: 4px 0 2px;
+  }
+  .login-page .login-card .form-control,
+  .login-page .login-card .form-select {
+    font-size: 12px;
+    min-height: 30px;
+    height: 30px;
+    padding: 4px 10px;
+    border-radius: 9px;
+  }
+  .login-page .login-card .form-select {
+    padding-right: 28px;
+  }
+  .login-page .login-card .neon-button {
+    min-height: 32px;
+    height: 32px;
+    font-size: 13px;
+    padding: 4px 10px;
+    margin: 7px 0 5px;
+    gap: 8px;
+    border-radius: 16px;
+  }
+  .login-page .login-card .neon-button .icon {
+    width: 16px;
+    height: 16px;
+  }
+  .login-page .login-card .info-box {
+    font-size: 9.5px;
+    line-height: 1.2;
+    padding: 4px 8px;
+    gap: 6px;
+    border-radius: 9px;
+  }
+  .login-page .login-card .info-box .icon {
+    width: 14px;
+    height: 14px;
+  }
+  .login-page .login-footnote {
+    font-size: 8.5px;
+    margin-top: 4px;
+  }
+  .login-page .login-footer {
+    padding: 2px 12px 4px;
+    font-size: 9px;
+    line-height: 1.2;
+  }
+}
