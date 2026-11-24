@@ -160,7 +160,7 @@ window.SCARLETTE_ADMIN = (() => {
                 </div>
               </div>
 
-              <div class="table-responsive" style="max-height: 235px; overflow-y: auto;">
+              <div class="table-responsive" style="max-height: 225px; overflow-y: auto;">
                 <table class="table table-dark table-hover table-sm align-middle m-0" style="background:transparent; font-size:13px">
                   <thead>
                     <tr style="border-bottom: 2px solid #8a3463; position:sticky; top:0; background:#1f1522; z-index:2">
