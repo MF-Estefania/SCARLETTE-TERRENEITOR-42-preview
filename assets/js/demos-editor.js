@@ -241,13 +241,17 @@ window.SCARLETTE_DEMOS_EDITOR = (() => {
     contenedor.querySelector("#btn-cancelar-comando")?.addEventListener("click", () => {
       if (formCrearCmd) formCrearCmd.style.display = "none";
     });
-    contenedor.querySelector("#btn-guardar-comando")?.addEventListener("click", async () => {
+    const btnGuardarCmd = contenedor.querySelector("#btn-guardar-comando");
+    btnGuardarCmd?.addEventListener("click", async () => {
+      if (btnGuardarCmd.disabled) return;
       const nombre = contenedor.querySelector("#cmd-nombre").value.trim().toUpperCase();
       const codigo = contenedor.querySelector("#cmd-codigo").value.trim().toUpperCase();
       if (!nombre || !codigo) {
         alert("Ingresa el nombre y código del movimiento (ej. SUBIR PALA y código P)");
         return;
       }
+      btnGuardarCmd.disabled = true;
+      btnGuardarCmd.textContent = "Guardando...";
       try {
         await api.solicitar(`/vehiculos/${idVehiculo}/comandos`, {
           method: "POST",
@@ -263,6 +267,9 @@ window.SCARLETTE_DEMOS_EDITOR = (() => {
         document.dispatchEvent(new CustomEvent("scarlette:comandos-actualizados", { detail: { vehiculoId: idVehiculo } }));
       } catch (e) {
         alert("Error al crear movimiento: " + (e.message || "desconocido"));
+      } finally {
+        btnGuardarCmd.disabled = false;
+        btnGuardarCmd.textContent = "Guardar";
       }
     });
 
