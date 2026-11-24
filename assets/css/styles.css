@@ -3040,6 +3040,7 @@ select.form-select {
   justify-content: center;
   padding: 12px;
   border-radius: inherit;
+  overflow: hidden;
   background: rgba(12, 9, 18, 0.72);
   backdrop-filter: blur(2px);
 }
@@ -3067,6 +3068,12 @@ select.form-select {
   color: #e6deec;
   font-size: 10.5px;
   line-height: 1.35;
+}
+@media (max-width: 767.98px) {
+  .panel-page .admin-sold-lock-overlay { padding: 4px; }
+  .panel-page .admin-sold-lock-box { padding: 5px 6px; border-radius: 10px; max-width: 100%; }
+  .panel-page .admin-sold-lock-title { font-size: 9.5px; line-height: 1.15; margin-bottom: 2px; }
+  .panel-page .admin-sold-lock-desc { font-size: 8px; line-height: 1.2; }
 }
 @media (max-height: 520px) and (orientation: landscape) {
   .panel-page .admin-sold-lock-overlay { padding: 4px; }
