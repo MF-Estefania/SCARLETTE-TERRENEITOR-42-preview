@@ -3019,6 +3019,62 @@ select.form-select {
   }
 }
 
+/* Privacidad operativa: bloqueo visual sin alterar alturas ni scroll cuando admin ve unidad vendida */
+.panel-page #panel-control.admin-control-locked .joystick-card {
+  position: relative;
+}
+.panel-page #panel-control.admin-control-locked .movement[data-command],
+.panel-page #panel-control.admin-control-locked .emergency-stop,
+.panel-page #panel-control.admin-control-locked .demo-card .neon-button,
+.panel-page #panel-control.admin-control-locked .demo-card .outline-button,
+.panel-page #panel-control.admin-control-locked #btn-ejecutar-custom {
+  opacity: 0.45 !important;
+  cursor: not-allowed !important;
+}
+.panel-page .admin-sold-lock-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  border-radius: inherit;
+  background: rgba(12, 9, 18, 0.72);
+  backdrop-filter: blur(2px);
+}
+.panel-page .admin-sold-lock-overlay[hidden] {
+  display: none !important;
+}
+.panel-page .admin-sold-lock-box {
+  background: rgba(28, 17, 36, 0.95);
+  border: 1px solid var(--pink-light);
+  border-radius: 14px;
+  padding: 10px 12px;
+  text-align: center;
+  max-width: 240px;
+  box-shadow: 0 6px 20px rgba(242, 11, 131, 0.25);
+}
+.panel-page .admin-sold-lock-title {
+  display: block;
+  color: var(--pink-light);
+  font-weight: 700;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+.panel-page .admin-sold-lock-desc {
+  margin: 0;
+  color: #e6deec;
+  font-size: 10.5px;
+  line-height: 1.35;
+}
+@media (max-height: 520px) and (orientation: landscape) {
+  .panel-page .admin-sold-lock-overlay { padding: 4px; }
+  .panel-page .admin-sold-lock-box { padding: 5px 7px; border-radius: 9px; max-width: 190px; }
+  .panel-page .admin-sold-lock-title { font-size: 9.5px; margin-bottom: 2px; }
+  .panel-page .admin-sold-lock-desc { font-size: 8px; line-height: 1.2; }
+}
+
 /* ============================================================
    RESPONSIVA PANTALLA DE LOGIN (.login-page) — 0 SCROLL
    Estrictamente acotado a .login-page para no afectar panel.html

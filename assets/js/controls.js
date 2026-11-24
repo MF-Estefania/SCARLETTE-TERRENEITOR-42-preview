@@ -78,7 +78,7 @@ window.SCARLETTE_CONTROLS = (() => {
 
   // Solo una petici?n de movimiento en vuelo; se conserva la intenci?n m?s reciente.
   function ejecutarMovimiento(idComando) {
-    if (!controlesActivos || paradaFallida) return;
+    if (!controlesActivos || paradaFallida || window.SCARLETTE_CONFIG?.ADMIN_CONTROL_BLOQUEADO) return;
     movimientoPendiente = idComando === comandoEnCurso && !paradasPendientes ? null : idComando;
     return procesarMovimiento();
   }
@@ -111,7 +111,7 @@ window.SCARLETTE_CONTROLS = (() => {
 
   async function detenerVehiculo() {
     const idVehiculo = obtenerIdVehiculo();
-    if (!controlesActivos || !idVehiculo) return;
+    if (!controlesActivos || !idVehiculo || window.SCARLETTE_CONFIG?.ADMIN_CONTROL_BLOQUEADO) return;
     reiniciarJoystick();
     movimientoPendiente = null;
     paradasPendientes += 1;
@@ -364,7 +364,7 @@ window.SCARLETTE_CONTROLS = (() => {
 
   async function ejecutarDemo() {
     const idVehiculo = obtenerIdVehiculo();
-    if (!controlesActivos || demoEnCurso || !idVehiculo) return;
+    if (!controlesActivos || demoEnCurso || !idVehiculo || window.SCARLETTE_CONFIG?.ADMIN_CONTROL_BLOQUEADO) return;
 
     const selector = document.getElementById("demo");
     const idDemo = Number(selector?.value);
@@ -391,7 +391,7 @@ window.SCARLETTE_CONTROLS = (() => {
 
   async function cancelarDemo() {
     const idVehiculo = obtenerIdVehiculo();
-    if (!controlesActivos || !idVehiculo) return;
+    if (!controlesActivos || !idVehiculo || window.SCARLETTE_CONFIG?.ADMIN_CONTROL_BLOQUEADO) return;
 
     try {
       await api.solicitar(

@@ -117,6 +117,51 @@ document.addEventListener("scarlette:sesion-verificada", async evento => {
     return "Stock";
   }
 
+  function aplicarBloqueoControlAdmin(bloqueado) {
+    window.SCARLETTE_CONFIG = Object.assign({}, window.SCARLETTE_CONFIG, {
+      ADMIN_CONTROL_BLOQUEADO: Boolean(bloqueado)
+    });
+    if (!controlPanel) return;
+
+    controlPanel.classList.toggle("admin-control-locked", Boolean(bloqueado));
+    const selectores = [
+      ".direction",
+      ".joystick-center",
+      ".movement[data-command]",
+      ".emergency-stop",
+      ".demo-card .neon-button",
+      ".demo-card .outline-button",
+      "#btn-ejecutar-custom"
+    ];
+    selectores.forEach(sel => {
+      controlPanel.querySelectorAll(sel).forEach(el => {
+        el.disabled = Boolean(bloqueado);
+      });
+    });
+
+    const joyCard = controlPanel.querySelector(".joystick-card");
+    if (!joyCard) return;
+    let overlay = joyCard.querySelector("#admin-sold-lock-overlay");
+    if (bloqueado) {
+      if (!overlay) {
+        overlay = document.createElement("div");
+        overlay.id = "admin-sold-lock-overlay";
+        overlay.className = "admin-sold-lock-overlay";
+        overlay.setAttribute("role", "status");
+        overlay.innerHTML = `
+          <div class="admin-sold-lock-box">
+            <span class="admin-sold-lock-title">🔒 Control exclusivo del propietario</span>
+            <p class="admin-sold-lock-desc">Unidad vendida (monitoreo en solo lectura). Cambia el estado a <strong>Mantenimiento</strong> en Administración para soporte técnico.</p>
+          </div>
+        `;
+        joyCard.appendChild(overlay);
+      }
+      overlay.hidden = false;
+    } else if (overlay) {
+      overlay.hidden = true;
+    }
+  }
+
   function aplicarUnidadHUD(u) {
     const estado = String(u.estado_comercial || "").toLowerCase();
     const nombreBase = u.nombre || "Terreneitor";
@@ -138,7 +183,7 @@ document.addEventListener("scarlette:sesion-verificada", async evento => {
       badge.textContent = "Unidad de Exhibición";
     } else if (estado === "vendido") {
       badge.className = "badge-scarlette-vendido";
-      badge.textContent = "Vendido · Asignado";
+      badge.textContent = esAdmin ? "Vendido · Solo monitoreo" : "Vendido · Asignado";
     } else if (estado === "mantenimiento") {
       badge.className = "badge-scarlette-exhibicion";
       badge.textContent = "Mantenimiento";
@@ -150,6 +195,10 @@ document.addEventListener("scarlette:sesion-verificada", async evento => {
     const propietario = u.propietario
       || (!esAdmin ? (usuario.nombre_usuario || "usuario") : (estado === "exhibicion" ? "Empresa (Demo)" : "Stock Empresa"));
     hud.querySelector("#hud-unit-owner").textContent = propietario;
+
+    if (esAdmin) {
+      aplicarBloqueoControlAdmin(estado === "vendido");
+    }
   }
 
   async function cargarUnidadesHUD() {
@@ -845,7 +894,7 @@ function configurarControlesAvanzados(layout, shell) {
   const progBar = subviewCustom.querySelector("#barra-progreso");
 
   btnEjecutar.addEventListener("click", async () => {
-    if (ejecutandoCustom) return;
+    if (ejecutandoCustom || window.SCARLETTE_CONFIG?.ADMIN_CONTROL_BLOQUEADO) return;
     const vId = window.SCARLETTE_CONFIG?.VEHICLE_ID || 1;
     const idComando = parseInt(subviewCustom.querySelector("#custom-mov-comando").value, 10);
 
