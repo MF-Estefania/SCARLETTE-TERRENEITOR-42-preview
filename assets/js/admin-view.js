@@ -644,7 +644,8 @@ window.SCARLETTE_ADMIN = (() => {
     const tbodyM = contenedor.querySelector("#tbody-modelos");
     if (tbodyM) {
       tbodyM.innerHTML = modelosCache.map(m => {
-        const imgUrl = m.imagen_url || "assets/img/vehiculo-terreneitor.jpg";
+        const rawUrl = m.imagen_url || "assets/img/vehiculo-terreneitor.jpg";
+        const imgUrl = rawUrl.startsWith("assets/img/") ? `${rawUrl}?v=neon-1` : rawUrl;
         return `
         <tr>
           <td><strong style="color:var(--pink-light)">#${m.id_modelo}</strong></td>
@@ -722,19 +723,13 @@ window.SCARLETTE_ADMIN = (() => {
         if (u.estado_comercial === "vendido") badgeClass = "badge-scarlette-vendido";
         if (u.estado_comercial === "exhibicion") badgeClass = "badge-scarlette-exhibicion";
         const modeloLabel = u.nombre_modelo || u.modelo || "TR-01";
-        const imgUnit = u.imagen_url || "assets/img/vehiculo-terreneitor.jpg";
 
         return `
           <tr>
             <td><strong style="color:var(--pink-light)">#${u.id_vehiculo}</strong></td>
             <td>
-              <div class="d-flex align-items-center gap-2">
-                <img class="admin-vehicle-thumb admin-vehicle-thumb-sm" src="${imgUnit}" alt="${u.nombre}" loading="lazy">
-                <div>
-                  <div style="color:#ffffff; font-weight:700; line-height:1.2">${u.nombre}</div>
-                  <div class="d-md-none" style="font-size:9px; color:#ffbce6; margin-top:1px">${modeloLabel} · ${u.microcontrolador || 'ESP8266'}</div>
-                </div>
-              </div>
+              <div style="color:#ffffff; font-weight:700; line-height:1.2">${u.nombre}</div>
+              <div class="d-md-none" style="font-size:9px; color:#ffbce6; margin-top:1px">${modeloLabel} · ${u.microcontrolador || 'ESP8266'}</div>
             </td>
             <td class="d-none d-md-table-cell"><span class="badge" style="background:#2a1a2b; border:1px solid #614765; color:#f6b5d8">${modeloLabel}</span></td>
             <td><span class="hud-sn" style="white-space:nowrap; font-size:9.5px; padding:2px 5px">${u.numero_serie || 'S/N'}</span></td>

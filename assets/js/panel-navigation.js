@@ -210,7 +210,7 @@ document.addEventListener("scarlette:sesion-verificada", async evento => {
         artImg.alt = "Terreneitor rosa y negro sobre una plataforma luminosa, junto al logotipo Scarlette";
       } else {
         artBox.classList.add("custom-vehicle-photo");
-        artImg.src = imgModelo;
+        artImg.src = imgModelo.startsWith("assets/img/") ? `${imgModelo}?v=neon-1` : imgModelo;
         artImg.alt = `${u.nombre || u.nombre_modelo || "Vehículo IoT"}`;
       }
     }
@@ -604,7 +604,8 @@ async function configurarModoInvitado(shell) {
 
       grid.innerHTML = modelos.map(m => {
         const tieneExhibicion = Number(m.unidades_exhibicion) > 0 && m.id_vehiculo_exhibicion;
-        const imgUrl = m.imagen_url || "assets/img/vehiculo-terreneitor.jpg";
+        const rawUrl = m.imagen_url || "assets/img/vehiculo-terreneitor.jpg";
+        const imgUrl = rawUrl.startsWith("assets/img/") ? `${rawUrl}?v=neon-1` : rawUrl;
         return `
           <article class="guest-model-card">
             <div class="guest-model-media">
