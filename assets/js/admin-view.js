@@ -190,12 +190,21 @@ window.SCARLETTE_ADMIN = (() => {
               <div id="form-nuevo-modelo" class="glass-card p-2 mb-2" style="display:none; background:#1b1522">
                 <h4 id="titulo-form-modelo" class="mb-1" style="color:var(--pink-light); font-size:13px">Registrar Nuevo Modelo Comercial</h4>
                 <div class="row g-2">
-                  <div class="col-md-4"><input id="new-m-nombre" class="form-control form-control-sm" placeholder="Nombre (ej. TR-02 Monster Edition)"></div>
-                  <div class="col-md-3">
+                  <div class="col-md-3"><input id="new-m-nombre" class="form-control form-control-sm" placeholder="Nombre (ej. TR-02 Monster Edition)"></div>
+                  <div class="col-md-2">
                     <select id="new-m-micro" class="form-select form-select-sm">
-                      <option value="ESP8266">ESP8266 NodeMCU</option>
-                      <option value="ESP32">ESP32 Dual-Core</option>
-                      <option value="Raspberry Pi Pico W">Raspberry Pi Pico W</option>
+                      <option value="ESP8266">ESP8266</option>
+                      <option value="ESP32">ESP32</option>
+                      <option value="Raspberry Pi Pico W">Pico W</option>
+                    </select>
+                  </div>
+                  <div class="col-md-2">
+                    <select id="new-m-imagen" class="form-select form-select-sm" aria-label="Imagen del modelo">
+                      <option value="assets/img/vehiculo-terreneitor.jpg">Img: Terreneitor</option>
+                      <option value="assets/img/vehiculo-excavadora.jpg">Img: Excavadora</option>
+                      <option value="assets/img/vehiculo-montacargas.jpg">Img: Montacargas</option>
+                      <option value="assets/img/vehiculo-volteo.jpg">Img: Volteo</option>
+                      <option value="assets/img/scarlette-terreneitor.png">Img: Banner TR-01</option>
                     </select>
                   </div>
                   <div class="col-md-3"><input id="new-m-desc" class="form-control form-control-sm" placeholder="Descripción de ingeniería"></div>
@@ -447,6 +456,8 @@ window.SCARLETTE_ADMIN = (() => {
       contenedor.querySelector("#new-m-nombre").value = "";
       contenedor.querySelector("#new-m-desc").value = "";
       contenedor.querySelector("#new-m-micro").value = "ESP8266";
+      const selImg = contenedor.querySelector("#new-m-imagen");
+      if (selImg) selImg.value = "assets/img/vehiculo-terreneitor.jpg";
       formModelo.style.display = abrir ? "block" : "none";
     });
     contenedor.querySelector("#btn-cancelar-modelo")?.addEventListener("click", () => {
@@ -456,6 +467,7 @@ window.SCARLETTE_ADMIN = (() => {
     btnGuardarModelo?.addEventListener("click", async () => {
       const nombre = contenedor.querySelector("#new-m-nombre").value.trim();
       const micro = contenedor.querySelector("#new-m-micro").value;
+      const imagenUrl = contenedor.querySelector("#new-m-imagen")?.value || null;
       const desc = contenedor.querySelector("#new-m-desc").value.trim();
       if (!nombre) {
         alert("Ingresa el nombre del modelo");
@@ -465,6 +477,7 @@ window.SCARLETTE_ADMIN = (() => {
         const payload = {
           nombre_modelo: nombre,
           microcontrolador: micro,
+          imagen_url: imagenUrl,
           descripcion: desc || "Modelo comercial IoT",
           activo: true
         };
@@ -630,12 +643,19 @@ window.SCARLETTE_ADMIN = (() => {
     }
     const tbodyM = contenedor.querySelector("#tbody-modelos");
     if (tbodyM) {
-      tbodyM.innerHTML = modelosCache.map(m => `
+      tbodyM.innerHTML = modelosCache.map(m => {
+        const imgUrl = m.imagen_url || "assets/img/vehiculo-terreneitor.jpg";
+        return `
         <tr>
           <td><strong style="color:var(--pink-light)">#${m.id_modelo}</strong></td>
           <td>
-            <div style="color:#ffffff; font-weight:700">${m.nombre_modelo}</div>
-            <div class="d-md-none text-muted" style="font-size:9px">${m.descripcion || '-'}</div>
+            <div class="d-flex align-items-center gap-2">
+              <img class="admin-vehicle-thumb" src="${imgUrl}" alt="${m.nombre_modelo}" loading="lazy">
+              <div>
+                <div style="color:#ffffff; font-weight:700">${m.nombre_modelo}</div>
+                <div class="d-md-none text-muted" style="font-size:9px">${m.descripcion || '-'}</div>
+              </div>
+            </div>
           </td>
           <td><span class="badge" style="background:#2a1a2b; border:1px solid #614765; color:#f6b5d8; font-size:9.5px">${m.microcontrolador}</span></td>
           <td class="d-none d-md-table-cell" style="color:#d5cbe0; font-size:12px">${m.descripcion || '-'}</td>
@@ -646,7 +666,8 @@ window.SCARLETTE_ADMIN = (() => {
             </div>
           </td>
         </tr>
-      `).join("");
+      `;
+      }).join("");
 
       tbodyM.querySelectorAll(".btn-editar-modelo").forEach(btn => {
         btn.addEventListener("click", () => {
@@ -661,6 +682,16 @@ window.SCARLETTE_ADMIN = (() => {
           if (btnGuardarModelo) btnGuardarModelo.textContent = "Actualizar";
           contenedor.querySelector("#new-m-nombre").value = m.nombre_modelo || "";
           contenedor.querySelector("#new-m-micro").value = m.microcontrolador || "ESP8266";
+          const selImg = contenedor.querySelector("#new-m-imagen");
+          if (selImg && m.imagen_url) {
+            if (!Array.from(selImg.options).some(o => o.value === m.imagen_url)) {
+              const opt = document.createElement("option");
+              opt.value = m.imagen_url;
+              opt.textContent = m.imagen_url;
+              selImg.appendChild(opt);
+            }
+            selImg.value = m.imagen_url;
+          }
           contenedor.querySelector("#new-m-desc").value = m.descripcion || "";
           if (formModelo) formModelo.style.display = "block";
         });
@@ -691,13 +722,19 @@ window.SCARLETTE_ADMIN = (() => {
         if (u.estado_comercial === "vendido") badgeClass = "badge-scarlette-vendido";
         if (u.estado_comercial === "exhibicion") badgeClass = "badge-scarlette-exhibicion";
         const modeloLabel = u.nombre_modelo || u.modelo || "TR-01";
+        const imgUnit = u.imagen_url || "assets/img/vehiculo-terreneitor.jpg";
 
         return `
           <tr>
             <td><strong style="color:var(--pink-light)">#${u.id_vehiculo}</strong></td>
             <td>
-              <div style="color:#ffffff; font-weight:700; line-height:1.2">${u.nombre}</div>
-              <div class="d-md-none" style="font-size:9px; color:#ffbce6; margin-top:1px">${modeloLabel} · ${u.microcontrolador || 'ESP8266'}</div>
+              <div class="d-flex align-items-center gap-2">
+                <img class="admin-vehicle-thumb admin-vehicle-thumb-sm" src="${imgUnit}" alt="${u.nombre}" loading="lazy">
+                <div>
+                  <div style="color:#ffffff; font-weight:700; line-height:1.2">${u.nombre}</div>
+                  <div class="d-md-none" style="font-size:9px; color:#ffbce6; margin-top:1px">${modeloLabel} · ${u.microcontrolador || 'ESP8266'}</div>
+                </div>
+              </div>
             </td>
             <td class="d-none d-md-table-cell"><span class="badge" style="background:#2a1a2b; border:1px solid #614765; color:#f6b5d8">${modeloLabel}</span></td>
             <td><span class="hud-sn" style="white-space:nowrap; font-size:9.5px; padding:2px 5px">${u.numero_serie || 'S/N'}</span></td>

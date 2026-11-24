@@ -196,6 +196,25 @@ document.addEventListener("scarlette:sesion-verificada", async evento => {
       || (!esAdmin ? (usuario.nombre_usuario || "usuario") : (estado === "exhibicion" ? "Empresa (Demo)" : "Stock Empresa"));
     hud.querySelector("#hud-unit-owner").textContent = propietario;
 
+    // Actualizar imagen central de CONTROL según el modelo de la unidad activa
+    const artBox = controlPanel?.querySelector(".vehicle-art");
+    const artImg = artBox?.querySelector("img");
+    if (artBox && artImg) {
+      const imgModelo = String(u.imagen_url || "").trim();
+      const usarBannerTerreneitor = !imgModelo
+        || imgModelo.endsWith("scarlette-terreneitor.png")
+        || (Number(u.id_modelo) === 1 && imgModelo.endsWith("vehiculo-terreneitor.jpg"));
+      if (usarBannerTerreneitor) {
+        artBox.classList.remove("custom-vehicle-photo");
+        artImg.src = "assets/img/scarlette-terreneitor.png";
+        artImg.alt = "Terreneitor rosa y negro sobre una plataforma luminosa, junto al logotipo Scarlette";
+      } else {
+        artBox.classList.add("custom-vehicle-photo");
+        artImg.src = imgModelo;
+        artImg.alt = `${u.nombre || u.nombre_modelo || "Vehículo IoT"}`;
+      }
+    }
+
     if (esAdmin) {
       aplicarBloqueoControlAdmin(estado === "vendido");
     }
@@ -585,8 +604,12 @@ async function configurarModoInvitado(shell) {
 
       grid.innerHTML = modelos.map(m => {
         const tieneExhibicion = Number(m.unidades_exhibicion) > 0 && m.id_vehiculo_exhibicion;
+        const imgUrl = m.imagen_url || "assets/img/vehiculo-terreneitor.jpg";
         return `
           <article class="guest-model-card">
+            <div class="guest-model-media">
+              <img src="${imgUrl}" alt="${m.nombre_modelo}" loading="lazy">
+            </div>
             <div class="d-flex justify-content-between align-items-center gap-2 mb-1">
               <span class="badge" style="background:#2a1a2b; border:1px solid #614765; color:var(--pink-light); font-size:10px">Modelo #${m.id_modelo}</span>
               <span class="badge" style="background:#1f192b; border:1px solid #5a4163; color:#e0d2ea; font-size:10px">${m.microcontrolador || "ESP8266"}</span>
