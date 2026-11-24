@@ -1,4 +1,5 @@
 *.pem
 *.sql
+!migraciones/*.sql
 .venv/
 __pycache__/
